@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-          <div>
+          <div class="bg-blue-500 p-8">
                   kikaoconnect frontend
           </div>
     </>
