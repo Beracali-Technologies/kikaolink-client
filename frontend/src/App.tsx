@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react';
 
 
 function App() {
@@ -6,8 +6,10 @@ function App() {
 
   return (
     <>
-          <div class="bg-blue-500 p-8">
-                  kikaoconnect frontend
+          <div className="bg-blue-500 py-8 p-8">
+                  <h2 className="text-3xl font-bold underline">
+                      kikaoconnect frontend
+                  </h2>
           </div>
     </>
   )
