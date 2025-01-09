@@ -1,10 +1,10 @@
-
+import styles from '../../assets/styles/global.module.css';
 
 
 function Hero() {
 
     return (
-        <div className={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className={styles.centerizing}>
             Hero Page
         </div>
     )

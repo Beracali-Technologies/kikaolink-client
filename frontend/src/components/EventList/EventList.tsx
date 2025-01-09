@@ -1,10 +1,10 @@
-
+import styles from '../../assets/styles/global.module.css';
 
 
 const EventList = () => {
 
     return (
-        <div className={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className={styles.centerizing}>
               EventList page
         </div>
     )

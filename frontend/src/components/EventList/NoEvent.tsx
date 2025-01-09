@@ -1,8 +1,11 @@
+import styles from '../../assets/styles/global.module.css';
+
+
 
 const NoEvent = () => {
 
     return (
-            <div className={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div className={styles.centerizing}>
                   No Event Page.
             </div>
     )
