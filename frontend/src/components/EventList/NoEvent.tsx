@@ -2,7 +2,7 @@
 const NoEvent = () => {
 
     return (
-            <div>
+            <div className={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   No Event Page.
             </div>
     )

@@ -1,15 +1,18 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import routes from './Routes/routes';
+
 
 function App() {
 
 
   return (
-    <>
-          <div className="bg-blue-500 py-8 p-8">
-                  <h2 className="text-3xl font-bold underline">
-                      kikaoconnect frontend
-                  </h2>
-          </div>
-    </>
+    <Router>
+          <Routes>
+                {routes.map((route, index) => (
+                      <Route key={index} path={route.path} element={route.element} />
+                ))}
+          </Routes>
+    </Router>
   )
 }
 
