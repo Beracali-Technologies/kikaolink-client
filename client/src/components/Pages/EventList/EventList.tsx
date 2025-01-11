@@ -20,7 +20,7 @@ const EventList: React.FC = () => {
 
                                                 {/*Search Icon*/}
                                                 <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                                        <SearchIcon />
+                                                        <SearchIcon className="font-bold" />
                                                 </span>
                                   </div>
 
