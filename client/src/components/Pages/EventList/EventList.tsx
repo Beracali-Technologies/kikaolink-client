@@ -25,8 +25,8 @@ const EventList: React.FC = () => {
                                   </div>
 
                                   {/* Create Event Button */}
-                                    <button className="bg-orange-500 text-white px-4 py-2 flex items-center space-x-2">
-                                              <span className="font-bold text-xl border-white">+</span>
+                                    <button className="bg-orange-500 text-white px-4 py-2 flex items-center space-x-2 border border-white">
+                                              <span className="font-bold text-xl">+</span>
                                               <span>Create Event</span>
                                     </button>
                           </div>
