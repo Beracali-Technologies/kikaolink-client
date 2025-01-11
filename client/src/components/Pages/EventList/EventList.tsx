@@ -1,11 +1,14 @@
-import styles from '../../../assets/styles/global.module.css';
+import React from 'react';
 
 
-const EventList = () => {
+const EventList: React.FC = () => {
 
     return (
-        <div className={styles.centerizing}>
-                My Events
+        <div className="text-xl">
+                {/*Header*/}
+                <div className="text-xl">
+                      Event list
+                </div>
         </div>
     )
 }
