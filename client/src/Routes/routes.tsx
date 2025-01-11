@@ -9,7 +9,7 @@ import NotFound from '../components/Pages/NotFound/NotFound';
 /*Before nesting the routes */
 
 export default [
-    { path: "/", element: <Hero /> },
+    { path: "/hero", element: <Hero /> },
     { path: "/login", element: <Login /> },
     { path: "/signup", element: <Signup /> },
     { path: "/eventlist", element: <EventList /> },
