@@ -1,9 +1,11 @@
-import Hero from '../components/Pages/HeroPage/Hero';
-import EventList from '../components/Pages/EventList/EventList';
-import NoEvent from '../components/Pages/EventList/NoEvent';
-import Login from '../components/Pages/Auth/Login/Login';
-import Signup from '../components/Pages/Auth/Signup/Signup';
-import NotFound from '../components/Pages/NotFound/NotFound';
+import { lazy } from 'react';
+
+const Hero = lazy(() => import('../components/Pages/HeroPage/Hero'));
+const EventList = lazy(() => import('../components/Pages/EventList/EventList'));
+const NoEvent = lazy(() => import('../components/Pages/EventList/NoEvent'));
+const Login = lazy(() => import('../components/Pages/Auth/Login/Login'));
+const Signup = lazy(() => import('../components/Pages/Auth/Signup/Signup'));
+const NotFound = lazy(() => import('../components/Pages/NotFound/NotFound'));
 
 
 /*Before nesting the routes */
