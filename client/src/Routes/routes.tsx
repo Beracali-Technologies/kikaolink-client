@@ -1,9 +1,9 @@
-import Hero from '../components/HeroPage/Hero';
-import EventList from '../components/EventList/EventList';
-import NoEvent from '../components/EventList/NoEvent';
-import Login from '../components/Auth/Login/Login';
-import Signup from '../components/Auth/Signup/Signup';
-import NotFound from '../components/NotFound/NotFound';
+import Hero from '../components/Pages/HeroPage/Hero';
+import EventList from '../components/Pages/EventList/EventList';
+import NoEvent from '../components/Pages/EventList/NoEvent';
+import Login from '../components/Pages/Auth/Login/Login';
+import Signup from '../components/Pages/Auth/Signup/Signup';
+import NotFound from '../components/Pages/NotFound/NotFound';
 
 
 /*Before nesting the routes */

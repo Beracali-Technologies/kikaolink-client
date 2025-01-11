@@ -1,4 +1,4 @@
-import styles from '../../assets/styles/global.module.css';
+import styles from '../../../assets/styles/global.module.css';
 
 
 
