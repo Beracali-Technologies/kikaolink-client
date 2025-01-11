@@ -7,13 +7,13 @@ function App() {
 
   return (
     <Router>
-          <Routes>
-                <Route path="/" element={<Layout />}>
-                        {routes.map((route, index) => (
-                              <Route key={index} path={route.path} element={route.element} />
-                        ))}
-                </Route>
-          </Routes>
+          <Layout>
+                <Routes>
+                              {routes.map((route, index) => (
+                                    <Route key={index} path={route.path} element={route.element} />
+                              ))}
+                </Routes>
+          </Layout>
     </Router>
   )
 }
