@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { EventParticular, SiteContent, RegistrationForm } from '../../../assets/Icons/Icons';
+import { EventParticular, SiteContent, RegistrationForm, ChevronLeft } from '../../../assets/Icons/Icons';
 
 const Sidebar: React.FC = () => {
 
@@ -10,12 +10,24 @@ const Sidebar: React.FC = () => {
         {name: 'Site content', path: '/siteContent', icon: <SiteContent className="font-bold" />},
     ];
 
+      const [isCollapsed, setIsCollapsed] = useState(false);
+
+      useEffect(() => {
+          console.log("isCollapsed value is updated", isCollapsed);
+      },[isCollapsed]);
 
     return (
         <div className="h-screen bg-gray-800 text-white flex flex-col">
-              <div className="p-4 font-bold text-xl">
-                    KikaoConnect
+                <div className="p-4 flex justify-between gap-4">
+                      <div className="p-4 font-bold text-xl">
+                            KikaoConnect
+                      </div>
+
+                      <button onClick={() => setIsCollapsed(!isCollapsed)} className="font-bold text-white focus:outline-none">
+                              <ChevronLeft className="font-bold" />
+                      </button>
                 </div>
+
 
                 <nav className="flex-grow">
                     {menuItems.map((item) => (
