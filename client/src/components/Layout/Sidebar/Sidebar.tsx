@@ -17,14 +17,14 @@ const Sidebar: React.FC = () => {
       },[isCollapsed]);
 
     return (
-        <div className="h-screen bg-gray-800 text-white flex flex-col">
+        <div className={`h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 ${isCollapsed ? `w-16` : `w-56`}`}>
                 <div className="p-4 flex justify-between gap-4">
-                      <div className="p-4 font-bold text-xl">
+                      <span className={`py-3 font-bold text-xl transition-opacity duration-300 ${isCollapsed ? `opacity-0 w-0` : `opacity-100 w-auto`}`}>
                             KikaoConnect
-                      </div>
+                      </span>
 
                       <button onClick={() => setIsCollapsed(!isCollapsed)} className="font-bold text-white focus:outline-none">
-                              <ChevronLeft className="font-bold" />
+                              <ChevronLeft className={`font-bold transform transition-transform duration-300 ${isCollapsed ? `rotate-180` : `rotate-0`}`} />
                       </button>
                 </div>
 
@@ -42,7 +42,9 @@ const Sidebar: React.FC = () => {
                                                 }`}
                               >
                                       <span>{item.icon}</span>
-                                      {item.name}
+                                      <span className={`${isCollapsed ? `opacity-0 w-0` : `opacity-100 w-auto`}`}>
+                                          {item.name}
+                                      </span>
                             </NavLink>
                     ))}
                 </nav>
