@@ -1,4 +1,5 @@
 import styles from '../../../assets/styles/global.module.css';
+import NoEvents from '../../assets/images/noEvents.webp';
 
 
 
@@ -6,7 +7,7 @@ const NoEvent = () => {
 
     return (
             <div className={styles.centerizing}>
-                  No Event Page.
+                  <NoEvents />
             </div>
     )
 }

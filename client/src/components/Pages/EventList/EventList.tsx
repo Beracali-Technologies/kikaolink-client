@@ -1,7 +1,7 @@
 import React from 'react';
 import { SearchIcon } from '../../../assets/Icons/Icons';
 
-const EventList: React.FC = () => { 
+const EventList: React.FC = () => {
 
     return (
         <>
@@ -36,7 +36,7 @@ const EventList: React.FC = () => {
 
                 <div>
                         <h2 className="font-bold text-4xl">Launch your Event</h2>
-                        <p className="pt-4">With KikaoConnect, launching your event has never been easier.<br/> Manage every detail effortlessly, connect with your audience, and create unforgettable experiences—all in one platform. Start your journey today and bring your vision to life.</p>
+                        <p className="pt-4 w-100">With KikaoConnect, launching your event has never been easier. Manage every detail effortlessly, connect with your audience, and create unforgettable experiences—all in one platform. Start your journey today and bring your vision to life.</p>
                 </div>
         </>
     )

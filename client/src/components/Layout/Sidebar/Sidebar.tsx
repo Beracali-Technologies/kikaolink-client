@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
     return (
         <div className={`h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 ${isCollapsed ? `w-16` : `w-56`}`}>
                 <div className="p-4 flex justify-between gap-4">
-                      <span className={`py-3 font-bold text-xl transition-opacity duration-300 ${isCollapsed ? `opacity-0 w-0` : `opacity-100 w-auto`}`}>
+                      <span className={`font-bold text-xl transition-opacity duration-300 ${isCollapsed ? `hidden` : `block`}`}>
                             KikaoConnect
                       </span>
 
@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
                                                 }`}
                               >
                                       <span>{item.icon}</span>
-                                      <span className={`${isCollapsed ? `opacity-0 w-0` : `opacity-100 w-auto`}`}>
+                                      <span className={`${isCollapsed ? `hidden` : `block`}`}>
                                           {item.name}
                                       </span>
                             </NavLink>
