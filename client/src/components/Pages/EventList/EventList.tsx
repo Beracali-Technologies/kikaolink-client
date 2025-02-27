@@ -1,14 +1,15 @@
 import React from 'react';
 import { SearchIcon } from '../../../assets/Icons/Icons';
+import NoEvent from './NoEvent';
 
 const EventList: React.FC = () => {
 
     return (
         <>
-                <div className="flex items-center justify-between p-2 bg-gray-100">
+                <div className="flex items-center justify-between p-2">
 
                                 {/*Header Text*/}
-                                <div className="text-xl font-semibold">
+                                <div className="text-2xl font-bold">
                                       My Events
                                 </div>
 
@@ -34,10 +35,12 @@ const EventList: React.FC = () => {
 
                 </div>
 
-                <div>
+                {/*   A Page on Website
+                  <div>
                         <h2 className="font-bold text-4xl">Launch your Event</h2>
                         <p className="pt-4 w-100">With KikaoConnect, launching your event has never been easier. Manage every detail effortlessly, connect with your audience, and create unforgettable experiences—all in one platform. Start your journey today and bring your vision to life.</p>
-                </div>
+                </div>*/}
+                <NoEvent />
         </>
     )
 }
