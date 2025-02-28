@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 
 const Header: React.FC = () => {
-
+    const [navigationItems, setNavigationItems] = useState(false);
+    
     return (
           <header className="bg-white px-6 py-4 justify-between items-center">
                 {/*logo*/}
