@@ -1,10 +1,9 @@
-
+import React from "react";
+import Header from "./Header.tsx";
 function Hero() {
 
     return (
-        <div className='text-3xl font-bold underline'>
-            Hero Page
-        </div>
+              <Header />
     )
 }
 
