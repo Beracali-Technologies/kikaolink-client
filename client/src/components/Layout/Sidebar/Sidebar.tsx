@@ -20,7 +20,8 @@ const Sidebar: React.FC = () => {
         <div className={`h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 ${isCollapsed ? `w-16` : `w-56`}`}>
                 <div className="p-4 flex justify-between gap-4 mb">
                       <span className={`font-bold text-xl transition-opacity duration-300 text-orange-400 ${isCollapsed ? `hidden` : `block`}`}>
-                            Kikaoconnect
+                              <span className="text-orange-400">Kikao</span>
+                              <span className="text-white">connect</span>
                       </span>
 
                       <button onClick={() => setIsCollapsed(!isCollapsed)} className="font-bold text-white focus:outline-none">
