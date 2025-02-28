@@ -18,9 +18,9 @@ const Sidebar: React.FC = () => {
 
     return (
         <div className={`h-screen bg-gray-800 text-white flex flex-col transition-all duration-300 ${isCollapsed ? `w-16` : `w-56`}`}>
-                <div className="p-4 flex justify-between gap-4">
-                      <span className={`font-bold text-xl transition-opacity duration-300 ${isCollapsed ? `hidden` : `block`}`}>
-                            KikaoConnect
+                <div className="p-4 flex justify-between gap-4 mb">
+                      <span className={`font-bold text-xl transition-opacity duration-300 text-orange-400 ${isCollapsed ? `hidden` : `block`}`}>
+                            Kikaoconnect
                       </span>
 
                       <button onClick={() => setIsCollapsed(!isCollapsed)} className="font-bold text-white focus:outline-none">
@@ -35,7 +35,7 @@ const Sidebar: React.FC = () => {
                                   key={item.name}
                                   to={item.path}
                                   className={({ isActive }) =>
-                                                `block py-2 px-4 text-sm font-medium flex flex-row gap-4 ${
+                                                `block py-4 px-4 text-sm font-medium flex flex-row gap-4 ${
                                                     isActive ?
                                                       "bg-gray-700 text-orange-400" :
                                                       "hover:bg-gray-700 hover:text-orange-300"
