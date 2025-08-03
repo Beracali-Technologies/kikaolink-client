@@ -1,5 +1,3 @@
-import styles from '../../../assets/styles/global.module.css';
-
 
 function NotFound() {
       return (
