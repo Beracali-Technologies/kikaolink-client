@@ -4,7 +4,7 @@ import FormFieldItem from './Components/FormFieldItem/FormFieldItem';
 import AddCustomField from './Components/AddCustomField/AddCustomField';
 import StandardFieldsPanel from './Components/StandardFieldsPanel/StandardFieldsPanel';
 import PreviewFormModal from '../Components/PreviewFormModal/PreviewFormModal';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const ALL_STANDARD_FIELDS: Field[] = [
     { id: -1, systemName: 'salutation', label: 'Salutation', fieldType: 'text', required: false, editable: true, deletable: true },

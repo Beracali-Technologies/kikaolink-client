@@ -1,11 +1,14 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
+
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));
-const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
-const NoEvent = lazy(() => import('../Features/Dashboard/Components/NoEventState/NoEventState'));
 const Login = lazy(() => import('../Features/Auth/Login/Login'));
 const Signup = lazy(() => import('../Features/Auth/Signup/Signup'));
+const PublicRegistrationForm = lazy(() => import('../Features/Landing/PublicRegistrationForm/PublicRegistrationForm'));
+
+const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
+const NoEvent = lazy(() => import('../Features/Dashboard/Components/NoEventState/NoEventState'));
 const EventSettingsLayout = lazy(() => import('../Layouts/EventSettingsLayout/EventSettingsLayout'));
 const EditEventInfo = lazy(() => import('../Features/Dashboard/EditEventInfo/EditEventInfo'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
@@ -18,22 +21,25 @@ export const publicRoutes = [
     { path: "/", element: <HeroPage /> },
     { path: "/login", element: <Login /> },
     { path: "/signup", element: <Signup /> },
+    { path: "/events/:eventId/register", element: <PublicRegistrationForm fields={[]} /> }, //public form need the prop
     //{ path: "/pricing", element: <PricingPage /> },
 ];
 
 export const privateRoutes = [
     { path: "events", element: <EventList /> },
+    { path: "no-event", element: <NoEvent /> },
     { path: "events/create", element: <CreateEvent /> },
-    { path: "registration-form-editor", element: <RegistrationFormEditor /> },
+
+
     {
-        path: "events/:eventId",
+        path: "settings",
         element: <EventSettingsLayout />,
         // 3. Children routes that render inside the EventSettingsLayout's <Outlet />
         children: [
-          { path: "settings", element: <EventSettingsLayout /> },
+
           { path: "edit-event-info", element: <EditEventInfo /> },
           { path: "registration-form-editor", element: <RegistrationFormEditor /> },
-          { path: "no-event", element: <NoEvent /> },
+
           // Default child route to redirect to 'info'
           { index: true, element: <Navigate to="events" replace /> }
         ]

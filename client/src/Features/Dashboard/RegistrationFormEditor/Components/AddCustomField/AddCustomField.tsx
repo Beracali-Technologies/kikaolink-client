@@ -1,7 +1,7 @@
 // AddCustomField.tsx
 import React, { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { FieldType } from '../../types';
+import { FieldType } from '../../../types';
 
 // Icons for the dropdown menu for better UX
 const PlusIcon = () => <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;

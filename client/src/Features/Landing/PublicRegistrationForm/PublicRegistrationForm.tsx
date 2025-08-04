@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Field } from '../dashboard/types';
+import { Field } from '../../Dashboard/types';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Don't forget styles!
 
