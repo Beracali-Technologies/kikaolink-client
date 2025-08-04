@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NoEventState from '../Components/NoEventState/NoEventState'; // <-- IMPORT THE NEW COMPONENT
 
 // Placeholder Icons
 const SearchIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
 const PlusIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;
 
-
 const EventList: React.FC = () => {
-    // Mock data to simulate events. In a real app, this comes from an API.
-    const events = [
-        { id: 1, title: '[Demo] Leadership Conference', status: 'DISABLED' },
-        { id: 2, title: 'Sticker Label 62mm', status: 'LIVE' },
-        { id: 3, title: 'Annual Tech Summit 2024', status: 'DRAFT' },
-    ];
-    // const events = []; // Uncomment this line to see the "No Events" state
+    // To see the new component in action, uncomment the empty array below
+    const events: { id: number; title: string; status: string }[] = [];
+
+    // const events = [
+    //     { id: 123, title: '[Demo] Leadership Conference', status: 'DISABLED' },
+    //     { id: 456, title: 'Sticker Label 62mm', status: 'LIVE' },
+    //     { id: 789, title: 'Annual Tech Summit 2024', status: 'DRAFT' },
+    // ];
 
     const getStatusChip = (status: string) => {
         switch (status) {
@@ -48,7 +49,7 @@ const EventList: React.FC = () => {
 
             {/* Event List or No Event State */}
             {events.length > 0 ? (
-                <div className="bg-white rounded-lg shadow">
+                <div className="bg-white rounded-lg shadow-sm">
                     <ul className="divide-y divide-gray-200">
                         {events.map(event => (
                             <li key={event.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
@@ -56,19 +57,18 @@ const EventList: React.FC = () => {
                                     {getStatusChip(event.status)}
                                     <span className="font-semibold text-dark-text">{event.title}</span>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <Link to={`/dashboard/events/${event.id}/details`} className="text-sm font-medium text-primary-blue hover:underline">Dashboard</Link>
-                                    <Link to={`/checkin/${event.id}`} className="text-sm font-medium text-primary-blue hover:underline">Check-in</Link>
+                                <div className="flex items-center gap-4">
+                                    {/* FIXED: Link to '/info' to match our routing structure */}
+                                    <Link to={`/dashboard/events/${event.id}/info`} className="text-sm font-medium text-primary-blue hover:underline">Dashboard</Link>
+                                    <Link to={`/checkin/${event.id}`} className="text-sm font-medium text-light-text hover:underline">Check-in</Link>
                                 </div>
                             </li>
                         ))}
                     </ul>
                 </div>
             ) : (
-                <div className="text-center py-20 bg-white rounded-lg shadow">
-                     <h2 className="text-2xl font-semibold text-dark-text">You haven't created any events yet</h2>
-                     <p className="mt-2 text-light-text">Click "Create Event" to get started.</p>
-                </div>
+                // --- THIS IS THE UPGRADE ---
+                <NoEventState />
             )}
         </div>
     );
