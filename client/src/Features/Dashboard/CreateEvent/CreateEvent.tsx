@@ -44,10 +44,8 @@ const CreateEvent: React.FC = () => {
                             <input type="time" {...register("endTime", { required: true })} className="mt-1 w-full p-2 border rounded-md"/>
                          </div>
                      </div>
-                     <div>
-                        <label className="text-sm font-medium">Timezone*</label>
-                        <input {...register("timezone", { required: true })} className="mt-1 w-full p-2 border rounded-md"/>
-                    </div>
+
+                     
                     <div className="flex justify-end pt-4">
                         <button type="submit" className="bg-green-600 text-white font-semibold px-5 py-2 rounded-md hover:bg-green-700">
                             Create Event

@@ -1,6 +1,6 @@
-// StandardFieldsPanel.tsx
+
 import React from 'react';
-import { Field } from '../types';
+import { Field } from '../../types';
 
 interface StandardFieldsPanelProps {
     allStandardFields: Field[];
@@ -11,23 +11,24 @@ interface StandardFieldsPanelProps {
 const StandardFieldsPanel: React.FC<StandardFieldsPanelProps> = ({ allStandardFields, activeFields, onToggle }) => {
     return (
         <div>
-            <h4 className="font-semibold text-dark-text mb-2">Standard Fields</h4>
+            <h4 className="font-semibold text-dark-text mb-3">Standard Fields</h4>
             <div className="space-y-3">
                 {allStandardFields.map(standardField => {
-                    if (!standardField.systemName) return null; // Should not happen
+                    const { systemName, label } = standardField;
+                    if (!systemName) return null;
 
-                    const isChecked = activeFields.some(af => af.systemName === standardField.systemName);
+                    const isChecked = activeFields.some(af => af.systemName === systemName);
 
                     return (
-                        <div key={standardField.systemName} className="flex items-center">
+                        <div key={systemName} className="flex items-center">
                             <input
-                                id={`sf-${standardField.systemName}`}
+                                id={`sf-${systemName}`}
                                 type="checkbox"
                                 checked={isChecked}
-                                onChange={(e) => onToggle(standardField.systemName!, e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300 text-primary-blue focus:ring-primary-blue"
+                                onChange={(e) => onToggle(systemName, e.target.checked)}
+                                className="h-5 w-5 rounded border-gray-300 text-primary-blue focus:ring-primary-blue"
                             />
-                            <label htmlFor={`sf-${standardField.systemName}`} className="ms-2 block text-sm text-gray-900">{standardField.label}</label>
+                            <label htmlFor={`sf-${systemName}`} className="ms-3 block text-sm font-medium text-gray-800">{label}</label>
                         </div>
                     );
                 })}

@@ -20,7 +20,7 @@ const Sidebar: React.FC = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const menuItems = [
-        { name: 'My Events', path: '/dashboard/events', icon: <EventIcon /> },
+        { name: 'Events', path: '/dashboard/events', icon: <EventIcon /> },
         { name: 'Registration Form', path: '/dashboard/registration-form-editor', icon: <FormIcon /> },
     ];
 

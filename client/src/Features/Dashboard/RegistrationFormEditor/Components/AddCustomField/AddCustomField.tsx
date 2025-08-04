@@ -28,7 +28,7 @@ const AddCustomField: React.FC<AddCustomFieldProps> = ({ onAddField }) => {
             <div>
                 <Menu.Button className="inline-flex w-full justify-center items-center rounded-md bg-primary-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-blue-hover">
                     <PlusIcon />
-                    Add Field
+                    Add Custom Field
                     <ChevronDownIcon />
                 </Menu.Button>
             </div>

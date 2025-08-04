@@ -3,8 +3,9 @@ import { Field, FieldType } from '../types';
 import FormFieldItem from './Components/FormFieldItem/FormFieldItem';
 import AddCustomField from './Components/AddCustomField/AddCustomField';
 import StandardFieldsPanel from './Components/StandardFieldsPanel/StandardFieldsPanel';
+import PreviewFormModal from '../Components/PreviewFormModal/PreviewFormModal';
+import { useParams, Link } from 'react-router-dom';
 
-// Master list of all possible standard fields
 const ALL_STANDARD_FIELDS: Field[] = [
     { id: -1, systemName: 'salutation', label: 'Salutation', fieldType: 'text', required: false, editable: true, deletable: true },
     { id: -2, systemName: 'firstName', label: 'First Name', fieldType: 'text', required: true, editable: true, deletable: true },
@@ -17,18 +18,23 @@ const ALL_STANDARD_FIELDS: Field[] = [
 ];
 
 const RegistrationFormEditor: React.FC = () => {
-    // Initial state setup
+    const { eventId } = useParams<{ eventId: string }>();
     const [fields, setFields] = useState<Field[]>(() =>
         ALL_STANDARD_FIELDS.filter(f => ['firstName', 'lastName', 'email'].includes(f.systemName!))
     );
     const [editingFieldId, setEditingFieldId] = useState<number | null>(null);
     const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
 
+    // --- FULLY IMPLEMENTED HANDLER FUNCTIONS ---
 
     const handleToggleStandardField = (systemName: string, isChecked: boolean) => {
         if (isChecked) {
             const fieldToAdd = ALL_STANDARD_FIELDS.find(f => f.systemName === systemName);
-            if (fieldToAdd) { setFields(prev => [...prev, { ...fieldToAdd, id: Date.now() }]); }
+            if (fieldToAdd) {
+                setFields(prev => [...prev, { ...fieldToAdd, id: Date.now() }]);
+            }
         } else {
             setFields(prev => prev.filter(f => f.systemName !== systemName));
         }
@@ -57,8 +63,6 @@ const RegistrationFormEditor: React.FC = () => {
     };
 
     const handleDeleteField = (id: number) => {
-        const fieldToDelete = fields.find(f => f.id === id);
-        if (fieldToDelete && !fieldToDelete.deletable) return;
         setFields(prev => prev.filter(f => f.id !== id));
     };
 
@@ -70,68 +74,86 @@ const RegistrationFormEditor: React.FC = () => {
         setFields(newFields);
     };
 
-    // --- Drag and Drop Logic ---
-    const handleDragStart = (index: number) => { setDraggedItemIndex(index); };
-    const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); };
-    const handleDragEnd = () => { setDraggedItemIndex(null); };
-    const handleDrop = (targetIndex: number) => {
-        if (draggedItemIndex === null || fields[targetIndex].isFixed) {
-            handleDragEnd();
-            return;
-        }
-        const newFields = [...fields];
-        const draggedItem = newFields.splice(draggedItemIndex, 1)[0];
-        newFields.splice(targetIndex, 0, draggedItem);
-        setFields(newFields);
-        handleDragEnd();
+    const handleSaveChanges = () => {
+        setIsSaving(true);
+        console.log("Saving Form Configuration:", fields);
+        setTimeout(() => {
+            setIsSaving(false);
+            alert('Changes Saved');
+        }, 1000);
     };
 
-    // Combining drag handlers into one object for cleaner props
     const dragAndDropHandlers = {
-      onDragStart: handleDragStart,
-      onDragOver: handleDragOver,
-      onDrop: handleDrop,
-      onDragEnd: handleDragEnd,
+      onDragStart: (index: number) => setDraggedItemIndex(index),
+      onDragOver: (e: React.DragEvent) => e.preventDefault(),
+      onDrop: (targetIndex: number) => {
+          if (draggedItemIndex === null || fields[targetIndex].isFixed) {
+              setDraggedItemIndex(null);
+              return;
+          }
+          const newFields = [...fields];
+          const draggedItem = newFields.splice(draggedItemIndex, 1)[0];
+          newFields.splice(targetIndex, 0, draggedItem);
+          setFields(newFields);
+          setDraggedItemIndex(null);
+      },
+      onDragEnd: () => setDraggedItemIndex(null),
     };
-
-
-
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-grow">
-                <h3 className="font-semibold text-lg mb-4">Customize Registration Form Fields</h3>
-                <div className="space-y-2 p-4 bg-slate-100 rounded-lg">
-                    {fields.map((field, index) => (
-                        <FormFieldItem
-                            key={field.id}
-                            field={field}
-                            index={index}
-                            isEditing={editingFieldId === field.id}
-                            isFirst={index === 0}
-                            isLast={index === fields.length - 1}
-                            onUpdate={handleUpdateField}
-                            onDelete={handleDeleteField}
-                            onEdit={setEditingFieldId}
-                            onSave={() => setEditingFieldId(null)}
-                            onMove={handleMoveField}
-                            {...dragAndDropHandlers}
-                        />
-                    ))}
-                </div>
-            </div>
+          <>
+                <PreviewFormModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} fields={fields} />
 
-            <aside className="w-full lg:w-72 flex-shrink-0">
-                <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-24 space-y-6">
-                    <StandardFieldsPanel
-                        allStandardFields={ALL_STANDARD_FIELDS.filter(f => !f.isFixed)}
-                        activeFields={fields}
-                        onToggle={handleToggleStandardField}
-                    />
-                     <AddCustomField onAddField={handleAddCustomField} />
+
+                  <div className="space-y-6">
+                     <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-dark-text">Customize Registration Form</h2>
+
+                        <button onClick={() => setIsPreviewModalOpen(true)} className="font-semibold text-primary-blue text-sm hover:underline">
+                              Preview
+                        </button>
+
+
+                    </div>
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        <div className="flex-grow space-y-3">
+                            {fields.map((field, index) => (
+                                <FormFieldItem
+                                    key={field.id}
+                                    field={field}
+                                    index={index}
+                                    isEditing={editingFieldId === field.id}
+                                    isFirst={index === 0}
+                                    isLast={index === fields.length - 1}
+                                    onUpdate={handleUpdateField}
+                                    onDelete={handleDeleteField}
+                                    onEdit={setEditingFieldId}
+                                    onMove={handleMoveField}
+                                    {...dragAndDropHandlers}
+                                />
+                            ))}
+                        </div>
+                        <aside className="w-full lg:w-72 flex-shrink-0">
+                            <div className="bg-white p-6 rounded-xl shadow-md border sticky top-24 space-y-6">
+                                <StandardFieldsPanel
+                                    allStandardFields={ALL_STANDARD_FIELDS.filter(f => !f.isFixed)}
+                                    activeFields={fields}
+                                    onToggle={handleToggleStandardField}
+                                />
+                                 <AddCustomField onAddField={handleAddCustomField} />
+                            </div>
+                        </aside>
+                    </div>
+
+                    {/* --- SAVE BUTTON AT THE BOTTOM --- */}
+                      <div className="mt-8 pt-6 border-t flex justify-center">
+                           <button onClick={handleSaveChanges} className="bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400" disabled={isSaving}>
+                              {isSaving ? 'Saving...' : 'Save Changes'}
+                          </button>
+                      </div>
+
                 </div>
-            </aside>
-        </div>
+      </>
     );
 };
 

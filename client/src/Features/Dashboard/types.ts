@@ -24,5 +24,5 @@ export interface Field {
     isFixed?: boolean;   // Can the field be moved? (e.g., Email)
     // --- Data for specific field types ---
     options?: string[]; // Used for multichoice, checkbox fields
-    helptext?: string;
+    helpText?: string;
 }
