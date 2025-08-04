@@ -109,6 +109,14 @@ const RegistrationFormEditor: React.FC = () => {
                      <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold text-dark-text">Customize Registration Form</h2>
 
+                        {/* Display eventId to use the variable and provide context */}
+                              {eventId && (
+                                  <span className="text-sm text-gray-500">
+                                      (For Event ID: <span className="font-mono bg-gray-100 p-1 rounded">{eventId}</span>)
+                                  </span>
+                              )}
+
+                              
                         <button onClick={() => setIsPreviewModalOpen(true)} className="font-semibold text-primary-blue text-sm hover:underline">
                               Preview
                         </button>
