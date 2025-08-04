@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
 
     const menuItems = [
         { name: 'My Events', path: '/dashboard/events', icon: <EventIcon /> },
-        { name: 'Registration Form', path: '/dashboard/form-editor', icon: <FormIcon /> },
+        { name: 'Registration Form', path: '/dashboard/registration-form-editor', icon: <FormIcon /> },
     ];
 
     return (

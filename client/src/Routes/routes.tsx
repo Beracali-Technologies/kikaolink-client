@@ -1,14 +1,15 @@
 import { lazy } from 'react';
-
+import { Navigate } from 'react-router-dom';
 
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));
 const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
-//const NoEvent = lazy(() => import('../components/Pages/EventList/NoEvent'));
+const NoEvent = lazy(() => import('../Features/Dashboard/EventList/NoEvent'));
 const Login = lazy(() => import('../Features/Auth/Login/Login'));
 const Signup = lazy(() => import('../Features/Auth/Signup/Signup'));
-
-
-
+const EventSettingsLayout = lazy(() => import('../Layouts/EventSettingsLayout/EventSettingsLayout'));
+const EditEventInfo = lazy(() => import('../Features/Dashboard/EditEventInfo/EditEventInfo'));
+const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
+const CreateEvent = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
 
       /*Defining routes before nesting the routes */
 
@@ -21,9 +22,17 @@ export const publicRoutes = [
 ];
 
 export const privateRoutes = [
-    { path: "/dashboard/events", element: <EventList /> },
-  //  { path: "/dashboard/events/create", element: <CreateEventPage /> },
-  //  { path: "/dashboard/settings", element: <SettingsPage /> },
-  // { path: "events/create", element: lazy(() => import('../features/dashboard/CreateEvent')) },
-    // { path: "form-editor", element: lazy(() => import('../features/dashboard/FormEditor')) },
+    { path: "events", element: <EventList /> },
+    { path: "events/create", element: <CreateEvent /> },
+    {
+        path: "events/:eventId",
+        element: <EventSettingsLayout />,
+        // 3. Children routes that render inside the EventSettingsLayout's <Outlet />
+        children: [
+          { path: "edit-event-info", element: <EditEventInfo /> },
+          { path: "registration-form-editor", element: <RegistrationFormEditor /> },
+          // Default child route to redirect to 'info'
+          { index: true, element: <Navigate to="events" replace /> }
+        ]
+      },
 ];
