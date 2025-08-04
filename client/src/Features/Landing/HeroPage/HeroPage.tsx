@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-// Imagine this is a cool, abstract background or a product shot
+import FeaturesSection from '../Components/FeaturesSection/FeaturesSection';
 // import heroImage from '../../assets/images/kikaoconnect-mockup.png';
 
 const HeroHeader: React.FC = () => (
@@ -20,6 +20,7 @@ const HeroHeader: React.FC = () => (
         </div>
     </header>
 );
+
 
 const HeroPage: React.FC = () => {
     return (
@@ -49,6 +50,11 @@ const HeroPage: React.FC = () => {
                     </div>
                 </main>
             </div>
+
+            {/*  Features Section on Advantages of the Platform*/}
+              <FeaturesSection />
+
+            {/* Footer added at the layout Section*/}
         </>
     );
 };
