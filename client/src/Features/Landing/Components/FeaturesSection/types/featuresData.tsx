@@ -2,10 +2,10 @@ import { AlternatingFeatureItem, TabbedFeatureItem } from './features';
 import QrFeatureVisual from '../QrFeatureVisual/QrFeatureVisual'; // Use relative paths from this new location
 
 
-import qrPrinterScanning from '../../../../../assets/Images/qrPrinterScanning.webp';
-import onSiteBadge from '../../../../../assets/Images/onSiteBadge.png';
-import eventPrinterConfiguration from '../../../../../assets/Images/eventPrinterConfiguration.png';
-import badgeDesign from '../../../../../assets/Images/badgeDesign.webp';
+import qrPrinterScanning from '../../../../../assets/images/qrPrinterScanning.webp';
+import onSiteBadge from '../../../../../assets/images/onSiteBadge.png';
+import eventPrinterConfiguration from '../../../../../assets/images/eventPrinterConfiguration.png';
+import badgeDesign from '../../../../../assets/images/badgeDesign.webp';
 
 // Icons need to be defined here or imported
 const KioskIcon = () => <svg className="w-6 h-6 text-primary-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 11h14M5 17h14M5 5h14M12 5v12" /></svg>;
