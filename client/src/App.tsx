@@ -5,13 +5,14 @@ import PublicLayout from './Layouts/PublicLayout/PublicLayout';
 import { publicRoutes, privateRoutes } from './Routes/routes';
 import { Suspense } from 'react';
 import NotFound from './Features/NotFound/NotFound';
+import BrandedLoader from './Components/ui/BrandedLoader/BrandedLoader'; // Adjust path if needed
 
 
 function App() {
   return (
 
           //Suspense is needed for lazy loading components
-          <Suspense fallback={<div>Loading....</div>}>
+          <Suspense fallback={<BrandedLoader />}>
                 <Router>
                         <Routes>
                                   {/* Public Routes */}
