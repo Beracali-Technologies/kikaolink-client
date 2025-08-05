@@ -1,7 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import FeaturesSection from '../Components/FeaturesSection/FeaturesSection';
-// import heroImage from '../../assets/images/kikaoconnect-mockup.png';
+
+
+
+const AnimatedScrollArrow = () => (
+    <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <div className="w-8 h-12 border-2 border-slate-400 rounded-full flex justify-center pt-2 animate-bounce">
+             <div className="w-1 h-3 bg-slate-400 rounded-full"></div>
+        </div>
+    </div>
+);
+
 
 const HeroHeader: React.FC = () => (
     <header className="absolute top-0 left-0 w-full z-30">
@@ -40,15 +50,22 @@ const HeroPage: React.FC = () => {
                     <p className="mt-6 text-lg text-light-text max-w-2xl mx-auto">
                         Say goodbye to registration headaches and long queues. KikaoConnect provides smart QR codes and on-the-spot badge printing for an experience your attendees will love.
                     </p>
-                    <div className="mt-10">
-                        <NavLink
-                            to="/signup"
-                            className="bg-primary-blue hover:bg-primary-blue-hover text-white font-bold text-lg py-4 px-10 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
-                        >
-                            Start Your Free Trial
-                        </NavLink>
-                    </div>
+
+
+                    <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+                          <NavLink to="/contact" className="bg-primary-blue text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-primary-blue-hover transition-all duration-300">
+                              Book a Demo
+                          </NavLink>
+
+                          <a href="#features" className="bg-white/50 backdrop-blur-sm border border-slate-300 text-dark-text font-semibold py-3 px-8 rounded-full shadow-md hover:bg-white/80 transition-all duration-300">
+                              Discover More
+                          </a>
+                  </div>
+
                 </main>
+
+                  {/* --- Animated Scroll Indicator --- */}
+                      <AnimatedScrollArrow />
             </div>
 
             {/*  Features Section on Advantages of the Platform*/}

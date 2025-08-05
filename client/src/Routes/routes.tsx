@@ -13,7 +13,7 @@ const EventSettingsLayout = lazy(() => import('../Layouts/EventSettingsLayout/Ev
 const EditEventInfo = lazy(() => import('../Features/Dashboard/EditEventInfo/EditEventInfo'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 const CreateEvent = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
-
+const ContactPage = lazy(() => import('../Features/Landing/ContactPage/ContactPage'));
       /*Defining routes before nesting the routes */
 
 
@@ -21,6 +21,7 @@ export const publicRoutes = [
     { path: "/", element: <HeroPage /> },
     { path: "/login", element: <Login /> },
     { path: "/signup", element: <Signup /> },
+    { path: "/contact", element: <ContactPage /> },
     { path: "/events/:eventId/register", element: <PublicRegistrationForm fields={[]} /> }, //public form need the prop
     //{ path: "/pricing", element: <PricingPage /> },
 ];

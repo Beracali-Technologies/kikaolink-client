@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Tab } from '@headlessui/react';
 
 interface TabFeature {
@@ -15,18 +15,16 @@ interface TabbedFeaturesProps {
     features: TabFeature[];
 }
 
-
-const TabbedFeatures: React.FC<TabbedFeaturesProps> = ({ features }) => {
+const TabbedFeatures: React.FC<any> = ({ features }) => {
     return (
-        <Tab.Group as="div" className="bg-gradient-to-br from-blue-50 via-white to-sky-50 rounded-3xl p-8 md:p-12">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* --- Left Side Panel (Tab List) --- */}
-                <Tab.List className="lg:col-span-4 space-y-4">
+        <Tab.Group as="div" className="bg-gradient-to-br from-slate-50 to-sky-100 rounded-3xl p-4 md:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <Tab.List className="lg:col-span-4 flex lg:flex-col overflow-x-auto lg:overflow-x-visible -mx-4 px-4 gap-4">
                     {features.map(feature => (
                         <Tab as={Fragment} key={feature.id}>
                             {({ selected }) => (
                                 <button
-                                    className={`w-full flex items-center text-left p-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-blue/50 ${
+                                    className={`w-full flex-shrink-0 lg:w-full flex items-center text-left p-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-blue/50 ${
                                         selected ? 'bg-primary-blue text-white shadow-lg' : 'bg-white hover:bg-slate-100'
                                     }`}
                                 >
@@ -43,13 +41,12 @@ const TabbedFeatures: React.FC<TabbedFeaturesProps> = ({ features }) => {
                     ))}
                 </Tab.List>
 
-                {/* --- Right Side Content (Tab Panels) --- */}
                 <Tab.Panels className="lg:col-span-8">
                     {features.map(feature => (
-                        <Tab.Panel as="div" className="p-4" key={feature.id}>
-                            <h3 className="text-3xl font-bold text-dark-text">{feature.title}</h3>
-                            <p className="mt-4 text-lg text-light-text">{feature.description}</p>
-                            <div className="mt-8 rounded-xl overflow-hidden shadow-2xl">
+                        <Tab.Panel as="div" className="p-4 transition-all duration-500" key={feature.id}>
+                            <h3 className="text-3xl font-bold text-dark-text tracking-tight">{feature.title}</h3>
+                            <p className="mt-4 text-xl text-light-text">{feature.description}</p>
+                            <div className="mt-8 rounded-xl overflow-hidden shadow-2xl transform transition-transform duration-500 hover:scale-105">
                                  <img src={feature.imageUrl} alt={feature.imageAlt} className="w-full h-full object-cover"/>
                             </div>
                         </Tab.Panel>
