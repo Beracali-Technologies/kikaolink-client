@@ -41,7 +41,7 @@ export const privateRoutes = [
           { path: "registration-form-editor", element: <RegistrationFormEditor /> },
 
           // Default child route to redirect to 'info'
-          { index: true, element: <Navigate to="events" replace /> }
+          { index: true, element: <Navigate to="edit-event-info" replace /> }
         ]
       },
 ];

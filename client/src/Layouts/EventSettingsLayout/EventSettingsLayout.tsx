@@ -18,7 +18,7 @@ const EventSettingsLayout: React.FC = () => {
                             <NavLink to="info" className={({isActive}) => `block rounded-md px-3 py-2 text-sm transition-colors ${isActive ? 'font-bold text-primary-blue bg-blue-100' : 'font-medium text-slate-700 hover:bg-slate-200'}`}>
                                 Event Information
                             </NavLink>
-                            <NavLink to="registration-form" className={({isActive}) => `block rounded-md px-3 py-2 text-sm transition-colors ${isActive ? 'font-bold text-primary-blue bg-blue-100' : 'font-medium text-slate-700 hover:bg-slate-200'}`}>
+                            <NavLink to="registration-form-editor" className={({isActive}) => `block rounded-md px-3 py-2 text-sm transition-colors ${isActive ? 'font-bold text-primary-blue bg-blue-100' : 'font-medium text-slate-700 hover:bg-slate-200'}`}>
                                 Registration Form
                             </NavLink>
                             <NavLink to="#" className="block rounded-md px-3 py-2 text-sm font-medium text-slate-400 cursor-not-allowed">
