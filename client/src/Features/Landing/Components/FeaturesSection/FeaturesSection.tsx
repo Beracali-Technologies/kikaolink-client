@@ -3,7 +3,7 @@ import AlternatingFeature from './AlternatingFeature/AlternatingFeature';
 import TabbedFeatures from './TabbedFeatures/TabbedFeatures';
 import QrFeatureVisual from './QrFeatureVisual/QrFeatureVisual';
 
-import qrPrinterScanning from '../../../../assets/Images/qrPrinterScanning.webp';
+import qrPrinterScanning from '../../../../assets/images/qrPrinterScanning.webp';
 import onSiteBadge from '../../../../assets/Images/onSiteBadge.png';
 import eventPrinterConfiguration from '../../../../assets/Images/eventPrinterConfiguration.png';
 import badgeDesign from '../../../../assets/Images/badgeDesign.webp';
