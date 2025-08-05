@@ -15,12 +15,12 @@ interface TabbedFeaturesProps {
     features: TabFeature[];
 }
 
-const TabbedFeatures: React.FC<any> = ({ features }) => {
+const TabbedFeatures: React.FC<TabbedFeaturesProps> = ({ features }) => {
     return (
         <Tab.Group as="div" className="bg-gradient-to-br from-slate-50 to-sky-100 rounded-3xl p-4 md:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <Tab.List className="lg:col-span-4 flex lg:flex-col overflow-x-auto lg:overflow-x-visible -mx-4 px-4 gap-4">
-                    {features.map(feature => (
+                    {features.map((feature: TabFeature) => (
                         <Tab as={Fragment} key={feature.id}>
                             {({ selected }) => (
                                 <button
@@ -42,7 +42,7 @@ const TabbedFeatures: React.FC<any> = ({ features }) => {
                 </Tab.List>
 
                 <Tab.Panels className="lg:col-span-8">
-                    {features.map(feature => (
+                    {features.map((feature: TabFeature) => (
                         <Tab.Panel as="div" className="p-4 transition-all duration-500" key={feature.id}>
                             <h3 className="text-3xl font-bold text-dark-text tracking-tight">{feature.title}</h3>
                             <p className="mt-4 text-xl text-light-text">{feature.description}</p>
