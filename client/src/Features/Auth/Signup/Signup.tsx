@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Don't forget the styles!
+import api from '../../../Api/api';
 
 // --- Placeholder Icons ---
 const EyeOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -25,9 +26,34 @@ const Signup: React.FC = () => {
     const { register, handleSubmit, control, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
 
-    const onSubmit = (data: any) => {
-        console.log("Signup data:", data);
-        alert('Signup successful! Check console for data.');
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
+
+
+    const onSubmit = async (data: any) => {
+
+        setIsLoading(true);
+        setApiError(null);
+
+        try {
+            const payload = { ...data, name: data.fullName };
+            delete payload.fullName;
+
+            await api.post('/api/register', payload);
+
+            console.log('Signup Data: ', data);
+            navigate('/dashboard/events');
+
+        } catch (error: any) {
+            if (error.response?.data?.message) {
+                setApiError(error.response.data.message);
+            } else {
+                setApiError('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -42,6 +68,9 @@ const Signup: React.FC = () => {
 
                 {/* --- Form Container --- */}
                 <div className="bg-white p-8 rounded-xl shadow-lg w-full">
+
+                        {apiError && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert"><p>{apiError}</p></div>}
+
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {/* Full Name */}
                         <div>
@@ -90,9 +119,11 @@ const Signup: React.FC = () => {
                         </div>
 
                         {/* --- Submit Button --- */}
-                        <button type="submit" className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md">
-                            Create Account
+
+                          <button type="submit" disabled={isLoading} className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>
+
                     </form>
                 </div>
 
