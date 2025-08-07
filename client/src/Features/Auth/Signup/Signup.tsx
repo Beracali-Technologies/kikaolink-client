@@ -23,7 +23,10 @@ const phoneInputStyles = `
 `;
 
 const Signup: React.FC = () => {
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
+
+      //setError for showing backend errors
+
+    const { register, handleSubmit, control, setError, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
@@ -37,8 +40,16 @@ const Signup: React.FC = () => {
         setApiError(null);
 
         try {
-            const payload = { ...data, name: data.fullName };
-            delete payload.fullName;
+
+          const payload = {
+              name: data.fullName, // Change FullName to name
+              email: data.email,
+              phone: data.phone,
+              password: data.password,
+          };
+
+
+            await api.get('/sanctum/csrf-cookie');
 
             await api.post('/api/register', payload);
 
@@ -46,11 +57,22 @@ const Signup: React.FC = () => {
             navigate('/dashboard/events');
 
         } catch (error: any) {
-            if (error.response?.data?.message) {
-                setApiError(error.response.data.message);
-            } else {
-                setApiError('An unexpected error occurred. Please try again.');
-            }
+          if (error.response && error.response.status === 422) {
+              // This is a Laravel validation error.
+              // display specific errors next to each field.
+              const validationErrors = error.response.data.errors;
+              Object.keys(validationErrors).forEach((fieldName) => {
+                  const field = fieldName === 'name' ? 'fullName' : fieldName; // Map 'name' back to 'fullName' for the form
+                  setError(field as any, {
+                      type: 'server',
+                      message: validationErrors[fieldName][0]
+                  });
+              });
+          } else {
+              // This is a generic network or server error (500, 404).
+              setApiError('An unexpected error occurred. Please check your network and try again.');
+          }
+
         } finally {
             setIsLoading(false);
         }

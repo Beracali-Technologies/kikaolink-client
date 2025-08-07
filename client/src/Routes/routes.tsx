@@ -20,9 +20,9 @@ const ContactPage = lazy(() => import('../Features/Landing/ContactPage/ContactPa
 export const publicRoutes = [
     { path: "/", element: <HeroPage /> },
     { path: "/login", element: <Login /> },
-    { path: "/signup", element: <Signup /> },
+    { path: "/signup", element: <Signup /> },  //organizers joining the platform
     { path: "/contact", element: <ContactPage /> },
-    { path: "/events/:eventId/register", element: <PublicRegistrationForm fields={[]} /> }, //public form need the prop
+    { path: "/events/:eventId/register", element: <PublicRegistrationForm fields={[]} /> }, //public form attendes joining specific event
     //{ path: "/pricing", element: <PricingPage /> },
 ];
 
