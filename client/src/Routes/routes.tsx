@@ -26,6 +26,7 @@ export const publicRoutes = [
     //{ path: "/pricing", element: <PricingPage /> },
 ];
 
+
 export const privateRoutes = [
     { path: "events", element: <EventList /> },
     { path: "no-event", element: <NoEvent /> },

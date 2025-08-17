@@ -18,7 +18,7 @@ const HeroHeader: React.FC = () => (
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <div className="text-2xl font-bold">
                 <NavLink to="/">
-                    <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Connect</span>
+                    <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Link</span>
                 </NavLink>
             </div>
             <div className="flex items-center space-x-4">
@@ -48,7 +48,7 @@ const HeroPage: React.FC = () => {
                         <span className="text-primary-blue">Instant Check-ins.</span>
                     </h1>
                     <p className="mt-6 text-lg text-light-text max-w-2xl mx-auto">
-                        Say goodbye to registration headaches and long queues. KikaoConnect provides smart QR codes and on-the-spot badge printing for an experience your attendees will love.
+                        Say goodbye to registration headaches and long queues. KikaoLink provides smart QR codes and on-the-spot badge printing for an experience your attendees will love.
                     </p>
 
 

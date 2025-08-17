@@ -37,9 +37,9 @@ export const contactMethods: ContactMethod[] = [
   {
     name: 'Email Us',
     description: 'Send detailed requirements',
-    detail: 'hello@kikaoconnect.com',
+    detail: 'hello@KikaoLink.com',
     buttonText: 'Send an Email',
-    buttonHref: 'mailto:hello@kikaoconnect.com',
+    buttonHref: 'mailto:hello@KikaoLink.com',
     iconName: 'EmailIcon',
     iconColorClass: 'text-slate-500',
     primary: false,

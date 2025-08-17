@@ -16,7 +16,7 @@ const FeaturesSection: React.FC = () => {
                               Flawless Events Start Here.
                           </h2>
                           <p className="mt-6 text-xl text-light-text">
-                              From the first click to the final handshake, KikaoConnect provides the professional tools you need to create truly memorable events.
+                              From the first click to the final handshake, KikaoLink provides the professional tools you need to create truly memorable events.
                           </p>
                     </div>
 

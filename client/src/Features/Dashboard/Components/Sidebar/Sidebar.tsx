@@ -37,7 +37,7 @@ const Sidebar: React.FC = () => {
             <div className="p-4 flex items-center justify-between border-b border-gray-700 h-16">
                 <span className={`font-bold text-xl whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
                     <span className="text-blue-400">Kikao</span>
-                    <span className="text-white">Connect</span>
+                    <span className="text-white">Link</span>
                 </span>
                 <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-full hover:bg-gray-700 focus:outline-none">
                     <ChevronLeftIcon className={`w-6 h-6 transform transition-transform duration-300 ${isCollapsed ? 'rotate-180' : 'rotate-0'}`} />
