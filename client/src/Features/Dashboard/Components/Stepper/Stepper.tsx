@@ -25,7 +25,8 @@ const InactiveStep: React.FC<{ stepNumber: number; title: string; isCompleted: b
     // Completed steps will be blue, upcoming steps will be gray
     const activeColor = isCompleted ? 'text-blue-600' : 'text-gray-500';
     const titleColor = isCompleted ? 'text-gray-900' : 'text-gray-500';
-    const borderColor = isCompleted ? 'border-blue-600' : 'border-gray-200';
+
+    //const borderColor = isCompleted ? 'border-blue-600' : 'border-gray-200';
 
     return (
         <div className="flex flex-col py-1 pl-4 border-l-4 transition-colors">
