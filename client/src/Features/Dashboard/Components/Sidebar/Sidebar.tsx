@@ -1,68 +1,118 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { FiGrid, FiSettings, FiChevronLeft, FiX } from 'react-icons/fi';
 
-type IconProps = { className?: string };
+// Define the shape of our props for clarity
+interface SidebarProps {
+    isMobile: boolean;
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+}
 
-// --- HIGH-QUALITY, RELIABLE SVG ICONS ---
-const EventIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-);
-
-// Correctly defined SettingsIcon
-const SettingsIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.242 1.451l-1.043.862c-.29.24-.435.608-.435.986v.642c0 .378.145.747.435.986l1.043.862a1.125 1.125 0 01.242 1.451l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.075.124a6.37 6.37 0 01-.22.127c-.331.183-.581.495-.644.87l-.213 1.281c-.09.543-.56.94-1.11.94h-2.593c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.37 6.37 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.242-1.451l1.043-.862c.29-.24.435-.608.435-.986v-.642c0-.378-.145-.747-.435-.986l-1.043-.862a1.125 1.125 0 01-.242-1.451l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.075-.124a6.37 6.37 0 01.22-.127c.331-.183.581-.495-.644-.87l.213-1.281z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-);
-
-const ChevronLeftIcon: React.FC<IconProps> = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>;
-
-const Sidebar: React.FC = () => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
     const location = useLocation();
 
-   // Check if the current path is ANY settings page
-   const isSettingsActive = location.pathname.startsWith('/dashboard/settings');
+    // Determine if any settings page is active to highlight the "Settings" icon
+    const isSettingsActive = location.pathname.includes('/settings');
 
     const menuItems = [
-        { name: 'Events', path: '/dashboard/events', icon: EventIcon },
-        { name: 'Settings', path: '/dashboard/settings', icon: SettingsIcon, isActive: isSettingsActive },
+        { name: 'Events', path: '/dashboard/events', icon: FiGrid },
+        { name: 'Settings', path: '/dashboard/settings', icon: FiSettings, isActiveOverride: isSettingsActive },
     ];
 
-    return (
-        <div className={`relative bg-dark-text text-white flex flex-col transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
-            <div className="p-4 flex items-center justify-between border-b border-gray-700 h-16">
-                <span className={`font-bold text-xl whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
+    // This is the shared UI content for both mobile and desktop sidebars
+    const SidebarContent = (
+        <div className="flex flex-col h-full bg-[#1e293b] text-gray-200">
+            {/* --- Header & Action Button --- */}
+            <div className={`flex items-center justify-between h-16 px-4 border-b border-gray-700/50 flex-shrink-0
+                ${isMobile ? 'justify-between' : isOpen ? 'justify-between' : 'justify-center'}`
+            }>
+                <span
+                    className={`font-bold text-xl whitespace-nowrap transition-all duration-300 ease-in-out
+                               ${!isOpen ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}
+                    aria-hidden={!isOpen}
+                >
                     <span className="text-blue-400">Kikao</span>
                     <span className="text-white">Link</span>
                 </span>
-                <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-full hover:bg-gray-700 focus:outline-none">
-                    <ChevronLeftIcon className={`w-6 h-6 transform transition-transform duration-300 ${isCollapsed ? 'rotate-180' : 'rotate-0'}`} />
-                </button>
+
+                {/* --- THIS IS THE CRITICAL CHANGE --- */}
+                {/* Render the appropriate button based on the context (mobile vs. desktop) */}
+                {isMobile ? (
+                    // On Mobile, this is a simple "Close" button inside the panel
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        <FiX className="w-6 h-6" />
+                    </button>
+                ) : (
+                    // On Desktop, this is the "Collapse/Expand" button
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="p-2 rounded-lg hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                        <FiChevronLeft className={`w-6 h-6 transform transition-transform duration-500 ${!isOpen ? 'rotate-180' : 'rotate-0'}`} />
+                    </button>
+                )}
             </div>
 
-            <nav className="flex-grow mt-4">
-                {menuItems.map(({ name, path, icon: Icon }) => (
-                    <NavLink
-                        key={name}
-                        to={path}
-                        // Use end={true} for the "Events" link to avoid it matching child routes like /events/create
-                        end={path === '/dashboard/events'}
-                        className={({ isActive }) =>
-                            `flex items-center gap-4 py-3 px-6 text-sm font-medium transition-colors ${isCollapsed ? 'justify-center' : ''}
-                            ${isActive ? "bg-primary-blue text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`
-                        }
-                    >
-                        <Icon className="w-6 h-6 flex-shrink-0" />
-                        <span className={`${isCollapsed ? 'hidden' : 'block'}`}>{name}</span>
-                    </NavLink>
-                ))}
+            {/* --- Navigation Links --- */}
+            <nav className="flex-grow mt-4 px-2 space-y-2">
+                {menuItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                        <NavLink
+                            key={item.name}
+                            to={item.path}
+                            end={!item.isActiveOverride}
+                            className={({ isActive }) =>
+                                `flex items-center p-3 text-sm font-semibold rounded-lg transition-colors group
+                                ${isOpen ? '' : 'justify-center'}
+                                ${item.isActiveOverride || isActive
+                                    ? "bg-blue-600 text-white shadow-lg"
+                                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                                }`
+                            }
+                            title={isOpen ? '' : item.name} // Show tooltip when collapsed
+                        >
+                            <Icon className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
+                            <span
+                                className={`whitespace-nowrap transition-all duration-300 ease-in-out
+                                           ${!isOpen ? 'w-0 opacity-0 ml-0' : 'w-auto opacity-100 ml-4'}`}
+                                aria-hidden={!isOpen}
+                            >
+                                {item.name}
+                            </span>
+                        </NavLink>
+                    );
+                })}
             </nav>
         </div>
     );
-}
+
+    // --- RENDER LOGIC: Decide how to display the sidebar ---
+    if (isMobile) {
+        return (
+            <>
+                <div
+                    className={`fixed inset-0 bg-black bg-opacity-60 z-30 transition-opacity lg:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    onClick={() => setIsOpen(false)}
+                    aria-hidden="true"
+                />
+                <aside className={`fixed inset-y-0 left-0 w-64 z-40 transform transition-transform duration-300 ease-in-out lg:hidden ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                   {SidebarContent}
+                </aside>
+            </>
+        );
+    }
+
+    // For Desktop, render a panel that changes width
+    return (
+         <aside className={`relative flex-shrink-0 transition-all duration-300 ease-in-out ${isOpen ? 'w-64' : 'w-20'}`}>
+            {SidebarContent}
+         </aside>
+    );
+};
 
 export default Sidebar;

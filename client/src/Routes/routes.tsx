@@ -34,7 +34,7 @@ export const privateRoutes = [
 
 
     {
-        path: "settings",
+        path: "events/:eventId",
         element: <EventSettingsLayout />,
         // 3. Children routes that render inside the EventSettingsLayout's <Outlet />
         children: [
