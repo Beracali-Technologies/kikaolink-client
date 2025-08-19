@@ -1,77 +1,50 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import NoEventState from '../Components/NoEventState/NoEventState'; // <-- IMPORT THE NEW COMPONENT
-
-// Placeholder Icons
-const SearchIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
-const PlusIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;
+import { useEventStore } from '../../../lib/stores/eventStore'; // <-- New path
+import NoEventState from '../Components/NoEventState/NoEventState';
+import { FiSearch, FiPlus, FiLoader } from 'react-icons/fi';
 
 const EventList: React.FC = () => {
-    // To see the new component in action, uncomment the empty array below
-    const events: { id: number; title: string; status: string }[] = [];
+    const { events, isLoading, fetchEvents, error } = useEventStore();
 
-    // const events = [
-    //     { id: 123, title: '[Demo] Leadership Conference', status: 'DISABLED' },
-    //     { id: 456, title: 'Sticker Label 62mm', status: 'LIVE' },
-    //     { id: 789, title: 'Annual Tech Summit 2024', status: 'DRAFT' },
-    // ];
-
-    const getStatusChip = (status: string) => {
-        switch (status) {
-            case 'LIVE':
-                return <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">LIVE</span>;
-            case 'DISABLED':
-                return <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">DISABLED</span>;
-            default:
-                return <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">DRAFT</span>;
-        }
-    }
+    useEffect(() => {
+        fetchEvents();
+    }, []); // Removed fetchEvents from dependency array
 
     return (
-        <div className="max-w-7xl mx-auto">
-            {/* Header section */}
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold text-dark-text">My Events</h1>
-                <div className="flex items-center gap-4">
-                    <div className="relative">
-                        <input type="text" placeholder="Search event..."
-                            className="border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-primary-blue focus:border-primary-blue" />
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-light-text">
-                            <SearchIcon />
-                        </span>
+        <div className="p-4 sm:p-6 md:p-8"> {/* ADDED PADDING FOR COMFORT */}
+            <div className="max-w-7xl mx-auto">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800">My Events</h1>
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <input type="text" placeholder="Search event..." className="border rounded-md pl-10 pr-4 py-2" />
+                            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        </div>
+                        <Link to="/dashboard/events/create" className="flex items-center gap-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700">
+                            <FiPlus /> <span>Create Event</span>
+                        </Link>
                     </div>
-                    <Link to="/dashboard/events/create" className="flex items-center gap-2 bg-primary-blue text-white font-semibold px-4 py-2 rounded-md hover:bg-primary-blue-hover transition-colors">
-                        <PlusIcon />
-                        <span>Create Event</span>
-                    </Link>
                 </div>
-            </div>
 
-            {/* Event List or No Event State */}
-            {events.length > 0 ? (
-                <div className="bg-white rounded-lg shadow-sm">
-                    <ul className="divide-y divide-gray-200">
-                        {events.map(event => (
-                            <li key={event.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
-                                <div className="flex items-center gap-4">
-                                    {getStatusChip(event.status)}
-                                    <span className="font-semibold text-dark-text">{event.title}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    {/* FIXED: Link to '/info' to match our routing structure */}
-                                    <Link to={`/dashboard/events/${event.id}/info`} className="text-sm font-medium text-primary-blue hover:underline">Dashboard</Link>
-                                    <Link to={`/checkin/${event.id}`} className="text-sm font-medium text-light-text hover:underline">Check-in</Link>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            ) : (
-                // --- THIS IS THE UPGRADE ---
-                <NoEventState />
-            )}
+                {/* Render based on state */}
+                {isLoading && <div className="text-center p-10"><FiLoader className="animate-spin text-4xl mx-auto" /></div>}
+                {error && <div className="text-center p-10 bg-red-100 text-red-700 rounded-lg">{error}</div>}
+                {!isLoading && !error && events.length === 0 && <NoEventState />}
+                {!isLoading && !error && events.length > 0 && (
+                     <div className="bg-white rounded-lg shadow-sm border">
+                        <ul className="divide-y divide-gray-200">
+                            {events.map((event: any) => ( // Use any for now, define TEvent later
+                                <li key={event.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
+                                    <span className="font-semibold text-gray-800">{event.title}</span>
+                                    <Link to={`/dashboard/events/${event.id}/info`} className="text-sm font-medium text-blue-600 hover:underline">Manage</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
         </div>
     );
-}
-
+};
 export default EventList;

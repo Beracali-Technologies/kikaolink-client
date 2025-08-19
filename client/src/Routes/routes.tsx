@@ -1,5 +1,7 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
+import { FiLoader } from 'react-icons/fi';
 
 
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));

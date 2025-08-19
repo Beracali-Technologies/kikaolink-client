@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-
-
 import Stepper from '../Components/Stepper/Stepper';
 import CreateEventForm from './CreateEventForm';
+import { useNavigate } from 'react-router-dom';
+import { useEventStore } from '../../../lib/stores/eventStore';
+
 
 // steps for event creation process
 const eventCreationSteps = [
@@ -14,8 +15,9 @@ const eventCreationSteps = [
 
 const CreateEvent: React.FC = () => {
 
-
     const [currentStep, setCurrentStep] = useState(0);
+    const { createEvent, isLoading, error } = useEventStore();
+
 
     const handleNextStep = () => {
         // In a real app, you would save data and then move to the next step
@@ -25,6 +27,17 @@ const CreateEvent: React.FC = () => {
     };
 
 
+
+    const handleFormSubmit = async (data: any) => {
+        try {
+            const newEvent = await createEvent(data);
+            alert('Event created successfully!');
+            // Redirect to the new event's settings page
+            navigate(`/dashboard/events/${newEvent.id}/info`);
+        } catch (err) {
+            alert(error || 'An unexpected error occurred.');
+        }
+    };
 
     return (
       <div className="bg-gray-100 min-h-screen p-4 sm:p-6 md:p-8">
@@ -39,13 +52,10 @@ const CreateEvent: React.FC = () => {
 
              {/* The main content area */}
              <div className="mt-8">
-                 {/* Conditionally render the form for the current step */}
                  {currentStep === 0 && (
-                     <CreateEventForm onFormSubmit={handleNextStep} />
+                     <CreateEventForm onFormSubmit={handleFormSubmit} isSubmitting={isLoading} />
                  )}
-                 {/* Add other forms here as you build them */}
-                 {/* {currentStep === 1 && <TicketForm />} */}
-                 {/* {currentStep === 2 && <DesignForm />} */}
+
              </div>
          </div>
      </div>

@@ -23,6 +23,7 @@ const api = axios.create({
 });
 
 
+
 // The interceptor logs every request being sent from your frontend.
 api.interceptors.request.use(request => {
   console.log('Starting Request', {
@@ -34,5 +35,9 @@ api.interceptors.request.use(request => {
   return request;
 });
 
+export const initializeApi = () => {
+    // Callin this to get the cookie, don't need the response
+    return api.get('/sanctum/csrf-cookie');
+};
 
 export default api;

@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../Api/api';
+import { useAuthStore } from '../../../lib/stores/authStore';
+
 
 
 const EyeOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -11,6 +13,8 @@ const EyeClosedIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" h
 const Login: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
+
+    const login = useAuthStore((state) => state.login);
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +25,9 @@ const Login: React.FC = () => {
         setIsLoading(true);
         setApiError(null);
         try {
-            // Laravel Sanctum's handshake
-            await api.get('/sanctum/csrf-cookie');
-            await api.post('/api/login', data);
+          await login(data);
+          navigate('/dashboard/events');
+              // the sanctum cookies ready handled at event service
 
             navigate('/dashboard/events');
 
@@ -80,7 +84,7 @@ const Login: React.FC = () => {
                         {/* --- Submit Button --- */}
 
 
-                            <button type="submit" disabled={isLoading} className="w-full py-2.5 bg-primary-blue ... disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            <button type="submit" disabled={isLoading} className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed">
                               {isLoading ? 'Logging In...' : 'Log In'}
                            </button>
 
