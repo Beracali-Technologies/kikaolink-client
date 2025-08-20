@@ -1,81 +1,90 @@
 import { useEffect, Suspense, FC } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { initializeCsrfCookie } from './services/eventService'; // Ensure this path is correct
 import { useAuthStore } from './lib/stores/authStore';
-
+import { initializeApi } from './lib/axios';
 
 // --- LAYOUTS ---
 import PublicLayout from './Layouts/PublicLayout/PublicLayout';
 import DashboardLayout from './Layouts/DashboardLayout/DashboardLayout';
-import ProtectedRoute from './Routes/ProtectedRoute'; // Your security guard
+import ProtectedRoute from './Routes/ProtectedRoute';
 
 // --- ROUTE DEFINITIONS ---
-import { publicRoutes, privateRoutes } from './Routes/routes';
+import { publicRoutes, privateRoutes } from './Routes/routes'; // Assumes this is renamed to routeDefinitions.ts later
 
 // --- FALLBACK COMPONENTS ---
 import NotFound from './Features/NotFound/NotFound';
 import BrandedLoader from './Components/ui/BrandedLoader/BrandedLoader';
 
-// A helper type for our route objects to make TypeScript happy
-interface AppRoute {
-  path: string;
-  element: JSX.Element;
-  children?: AppRoute[];
-}
+type AppRoute = {
+    path?: string;
+    element: JSX.Element;
+    index?: boolean;
+    children?: AppRoute[];
+};
 
 const App: FC = () => {
-
     const { checkAuth, isAuthLoading } = useAuthStore();
 
     useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+        const initializeApp = async () => {
+            try {
+                await initializeApi();
+                console.log('Sanctum CSRF cookie initialized');
+                await checkAuth();
+                console.log('Authentication status checked');
+            } catch (error) {
+                console.error('App initialization failed:', error);
+            }
+        };
+        initializeApp();
+        // An empty dependency array ensures this runs exactly ONCE on app startup.
+    }, []);
 
-  useEffect(() => {
-    // This runs once when the app loads to get the Sanctum security cookie
-    initializeCsrfCookie()
-      .then(() => console.log('Sanctum CSRF cookie initialized'))
-      .catch(error => console.error('Failed to initialize CSRF cookie:', error));
-  }, []);
+    // Helper function to render nested routes
+    const renderRoutes = (routes: AppRoute[]) => {
+        return routes.map((route) => {
+            const { path, element, children, index } = route;
+            const key = path || (index ? 'index-route' : 'default-key');
 
-  // Helper function to render nested routes recursively
-  const renderRoutes = (routes: AppRoute[]) => {
-    return routes.map(({ path, element, children }) => (
-      <Route key={path} path={path} element={element}>
-        {children && renderRoutes(children)}
-      </Route>
-    ));
-  };
+            // --- THIS IS THE KEY FIX ---
+            // The Route component is created dynamically based on whether it's an index route.
+            if (index) {
+                return <Route key={key} index element={element} />;
+            }
 
-  return (
-    // Suspense is the key to making lazy loading work with a fallback UI
-    <Suspense fallback={<BrandedLoader />}>
-      <Router>
-        <Routes>
-          {/* --- PUBLIC ROUTES --- */}
-          {/* All public routes are rendered inside the PublicLayout */}
-          <Route element={<PublicLayout />}>
-            {renderRoutes(publicRoutes)}
-          </Route>
+            return (
+                <Route key={key} path={path} element={element}>
+                    {children && renderRoutes(children)}
+                </Route>
+            );
+        });
+    };
 
-          {/* --- PRIVATE DASHBOARD ROUTES (The key change is here) --- */}
-          <Route path="/dashboard" element={<ProtectedRoute />}>
-            {/* If the user is authenticated, they get access to the DashboardLayout */}
-            <Route element={<DashboardLayout />}>
-                {/* Now we render all the private routes inside the dashboard layout */}
-                {renderRoutes(privateRoutes)}
+    // Show a loader during the initial app load and auth check
+    if (isAuthLoading) {
+        return <BrandedLoader />;
+    }
 
-                {/* Redirect from /dashboard to /dashboard/events */}
-                <Route index element={<Navigate to="/dashboard/events" replace />} />
-            </Route>
-          </Route>
+    return (
+        <Suspense fallback={<BrandedLoader />}>
+            <Router>
+                <Routes>
+                    <Route element={<PublicLayout />}>
+                        {renderRoutes(publicRoutes as AppRoute[])}
+                    </Route>
 
-          {/* --- 404 NOT FOUND PAGE --- */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </Suspense>
-  );
+                    <Route path="/dashboard" element={<ProtectedRoute />}>
+                        <Route element={<DashboardLayout />}>
+                            {renderRoutes(privateRoutes as AppRoute[])}
+                            <Route index element={<Navigate to="/dashboard/events" replace />} />
+                        </Route>
+                    </Route>
+
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </Router>
+        </Suspense>
+    );
 };
 
 export default App;

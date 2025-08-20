@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import api from '../axios'; // Import our new shared axios instance
-import { TEvent, TEventCreate } from '../../types'; // Define these types for your events
+import { TEvent, TEventCreate } from '../../types';
+
+
 
 interface EventState {
     events: TEvent[];

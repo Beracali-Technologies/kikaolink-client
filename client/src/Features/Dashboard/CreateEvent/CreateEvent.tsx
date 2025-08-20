@@ -15,16 +15,16 @@ const eventCreationSteps = [
 
 const CreateEvent: React.FC = () => {
 
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep ] = useState(0);
     const { createEvent, isLoading, error } = useEventStore();
+    const navigate = useNavigate();
 
-
-    const handleNextStep = () => {
+  /*  const handleNextStep = () => {
         // In a real app, you would save data and then move to the next step
         if (currentStep < eventCreationSteps.length - 1) {
             setCurrentStep(currentStep + 1);
         }
-    };
+    }; */
 
 
 

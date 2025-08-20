@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { FiLoader } from 'react-icons/fi';
 
 // type for our form data for better type safety
 type FormValues = {
@@ -17,7 +18,7 @@ interface CreateEventFormProps {
 }
 
 
-const CreateEventForm: React.FC<CreateEventFormProps> = ({ onFormSubmit }) => {
+const CreateEventForm: React.FC<CreateEventFormProps> = ({ onFormSubmit, isSubmitting }) => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
     // This makes sure we pass the strongly-typed data to the parent
@@ -87,8 +88,15 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onFormSubmit }) => {
                 <div className="flex justify-end pt-4">
                     <button type="submit" className="bg-green-600 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             disabled={isSubmitting}>
-                            
-                            {isSubmitting ? 'Creating...' : 'Create Event'}
+
+                                {isSubmitting ? (
+                                <>
+                                    <FiLoader className="animate-spin -ml-1 mr-3 h-5 w-5" />
+                                    Creating...
+                                </>
+                            ) : (
+                                'Create Event'
+                            )}
 
                     </button>
                 </div>

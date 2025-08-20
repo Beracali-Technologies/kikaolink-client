@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { FiLogOut, FiMoon } from 'react-icons/fi'; // A fun "waving bye" or "moon for night" icon
+//to import the bye bye icons
+
 
 // Waving Hand Icon
 const WavingHandIcon: React.FC<{className?: string}> = ({ className }) => (
@@ -86,5 +87,3 @@ const ConfirmLogoutModal: React.FC<ConfirmLogoutModalProps> = ({ isOpen, onClose
 };
 
 export default ConfirmLogoutModal;
-
-npm install @headlessui/react
