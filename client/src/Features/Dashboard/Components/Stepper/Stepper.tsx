@@ -1,84 +1,47 @@
 import React from 'react';
 
-
-const ActiveArrowStep: React.FC<{ stepNumber: number; title: string }> = ({ stepNumber, title }) => (
-    <div className="flex items-center z-10">
-        {/* Main colored body of the arrow */}
-        <div className="h-10 pl-5 pr-4 flex items-center bg-blue-600 text-white font-bold text-sm rounded-l-md">
+// A small, self-contained component for the active blue arrow step
+const ActiveArrowStep: React.FC<{ title: string; stepNumber: number }> = ({ title, stepNumber }) => (
+    <li className="flex items-center text-sm font-semibold z-10">
+        <div className="h-10 pl-8 pr-6 flex items-center bg-blue-600 text-white">
             {stepNumber}. {title}
         </div>
-
-        {/* Arrow tip created with the robust border trick */}
-        <div
-            className="w-0 h-0"
-            style={{
-                borderTop: '20px solid transparent',
-                borderBottom: '20px solid transparent',
-                borderLeft: '15px solid #2563eb' // Tailwind's blue-600
-            }}
-        />
-    </div>
+        <div className="w-0 h-0" style={{
+            borderTop: '20px solid transparent',
+            borderBottom: '20px solid transparent',
+            borderLeft: `20px solid #2563EB` // Tailwind's blue-600
+        }}/>
+    </li>
 );
 
-// --- Helper component for INACTIVE and COMPLETED steps ---
-const InactiveStep: React.FC<{ stepNumber: number; title: string; isCompleted: boolean }> = ({ stepNumber, title, isCompleted }) => {
-    // Completed steps will be blue, upcoming steps will be gray
-    const activeColor = isCompleted ? 'text-blue-600' : 'text-gray-500';
-    const titleColor = isCompleted ? 'text-gray-900' : 'text-gray-500';
-
-    //const borderColor = isCompleted ? 'border-blue-600' : 'border-gray-200';
-
-    return (
-        <div className="flex flex-col py-1 pl-4 border-l-4 transition-colors">
-            <span className={`text-xs font-semibold uppercase tracking-wider ${activeColor}`}>
-                Step {stepNumber}
-            </span>
-            <span className={`text-sm font-medium ${titleColor}`}>
-                {title}
-            </span>
+// A small, self-contained component for the inactive gray steps
+const InactiveArrowStep: React.FC<{ title: string; stepNumber: number }> = ({ title, stepNumber }) => (
+    <li className="flex items-center text-sm font-semibold -ml-5">
+        <div className="h-10 pl-8 pr-6 flex items-center bg-gray-200 text-gray-600">
+            {stepNumber}. {title}
         </div>
-    );
-};
+        <div className="w-0 h-0" style={{
+            borderTop: '20px solid transparent',
+            borderBottom: '20px solid transparent',
+            borderLeft: `20px solid #E5E7EB` // Tailwind's gray-200
+        }}/>
+    </li>
+);
 
-
-// decides whether to render an Active or Inactive step.
-export const Stepper: React.FC<{ steps: string[], currentStep: number }> = ({ steps, currentStep }) => {
+// The main Stepper component that decides which style to use
+export const ArrowStepper: React.FC<{ steps: string[]; currentStep: number }> = ({ steps, currentStep }) => {
     return (
         <nav aria-label="Progress">
             <ol role="list" className="flex items-center">
-                {steps.map((step, index) => {
-                    const isActive = index === currentStep;
-                    const isCompleted = index < currentStep;
-
-                    return (
-                        <React.Fragment key={step}>
-                            {/* Render the separator line between each item */}
-                            {index > 0 && (
-                                <div className="w-px h-10 bg-gray-200 mx-4 lg:mx-8" />
-                            )}
-
-                            <li className="flex items-center">
-                                {isActive ? (
-                                    // If the step is active, render the blue arrow
-                                    <ActiveArrowStep
-                                        stepNumber={index + 1}
-                                        title={step}
-                                    />
-                                ) : (
-                                    // Otherwise, render the simple vertical line style
-                                    <InactiveStep
-                                        stepNumber={index + 1}
-                                        title={step}
-                                        isCompleted={isCompleted}
-                                    />
-                                )}
-                            </li>
-                        </React.Fragment>
-                    );
-                })}
+                {steps.map((step, index) => (
+                    // Conditionally render the correct component based on the step
+                    index <= currentStep ? (
+                        <ActiveArrowStep key={step} title={step} stepNumber={index + 1} />
+                    ) : (
+                        <InactiveArrowStep key={step} title={step} stepNumber={index + 1} />
+                    )
+                ))}
             </ol>
         </nav>
     );
 };
-
-export default Stepper;

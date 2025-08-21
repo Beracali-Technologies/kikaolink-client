@@ -1,65 +1,55 @@
 import React, { useState } from 'react';
-import Stepper from '../Components/Stepper/Stepper';
-import CreateEventForm from './CreateEventForm';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import Confetti from 'react-confetti';
 import { useEventStore } from '../../../lib/stores/eventStore';
-
-
-// steps for event creation process
-const eventCreationSteps = [
-    'Event Information',
-    'Tickets & Pricing',
-    'Event Page Design',
-    'Publish'
-];
+import EventForm from '../EventForm/EventForm'; // Our smart, reusable form
 
 const CreateEvent: React.FC = () => {
-
-    const [currentStep ] = useState(0);
-    const { createEvent, isLoading, error } = useEventStore();
     const navigate = useNavigate();
 
-  /*  const handleNextStep = () => {
-        // In a real app, you would save data and then move to the next step
-        if (currentStep < eventCreationSteps.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
-    }; */
+    const createEvent = useEventStore((state) => state.createEvent);
+    const isLoading = useEventStore((state) => state.isLoading);
+    const error = useEventStore((state) => state.error);
 
-
+    const [showConfetti, setShowConfetti] = useState(false);
 
     const handleFormSubmit = async (data: any) => {
         try {
             const newEvent = await createEvent(data);
-            alert('Event created successfully!');
-            // Redirect to the new event's settings page
-            navigate(`/dashboard/events/${newEvent.id}/info`);
+            setShowConfetti(true);
+            toast.success('Event Created!', { icon: '🎉', duration: 4000 });
+
+            // After a delay for the celebration, redirect to the new event's settings page.
+            setTimeout(() => {
+                navigate(`/dashboard/events/${newEvent.id}/info`);
+            }, 2000);
+
         } catch (err) {
-            alert(error || 'An unexpected error occurred.');
+            toast.error(error || 'Failed to create event.');
         }
     };
 
     return (
-      <div className="bg-gray-100 min-h-screen p-4 sm:p-6 md:p-8">
-         <div className="max-w-7xl mx-auto">
-             <header className="mb-8">
-                 {/* Your existing header might have navigation here */}
-                 <h1 className="text-3xl font-bold text-gray-800">Create a New Event</h1>
-             </header>
+        // Wrapper for the entire page
+        <div className="space-y-8">
+            {showConfetti && <Confetti recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
+            <Toaster position="top-right" />
 
-             {/* The new reusable Stepper component */}
-             <Stepper steps={eventCreationSteps} currentStep={currentStep} />
+            <header>
+                <h1 className="text-3xl font-bold text-gray-800">Create a New Event</h1>
+                <p className="text-gray-500 mt-1">Start by filling out the basic information.</p>
+            </header>
 
-             {/* The main content area */}
-             <div className="mt-8">
-                 {currentStep === 0 && (
-                     <CreateEventForm onFormSubmit={handleFormSubmit} isSubmitting={isLoading} />
-                 )}
-
-             </div>
-         </div>
-     </div>
+            {/* The form is wrapped in a card for better UI */}
+            <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <EventForm
+                    onFormSubmit={handleFormSubmit}
+                    isSubmitting={isLoading}
+                    mode="create" // We explicitly tell the form it's for CREATING an event
+                />
+            </div>
+        </div>
     );
 };
-
 export default CreateEvent;

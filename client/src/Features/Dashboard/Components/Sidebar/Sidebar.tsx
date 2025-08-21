@@ -1,6 +1,6 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-
+import { useLocation, useParams } from 'react-router-dom';
+import { useEventStore } from '../../../../lib/stores/eventStore';
 // Import Icons
 import { FiGrid, FiSettings } from 'react-icons/fi';
 
@@ -18,12 +18,22 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
     const location = useLocation();
 
-    // --- Data Definition Layer ---
+      const lastActiveEventId = useEventStore((state) => state.lastActiveEventId);
+
+// Determine the correct path for the settings link.
+// If we have a last active event, link to it. Otherwise, link to the "create new event" page.
+      const settingsPath = lastActiveEventId
+          ? `/dashboard/events/${lastActiveEventId}/info`
+          : '/dashboard/events/create';
+
+      // Use the eventId from the URL to determine if ANY event management page is active
+      const { eventId } = useParams<{ eventId: string }>();
+
     // Keep the data required by child components here.
     const isSettingsActive = location.pathname.includes('/settings');
     const menuItems = [
-        { name: 'Events', path: '/dashboard/events', icon: FiGrid },
-        { name: 'Settings', path: '/dashboard/settings', icon: FiSettings, isActiveOverride: isSettingsActive },
+      { name: 'Events', path: '/dashboard/events', icon: FiGrid, isActiveOverride: !eventId },
+      { name: 'Settings', path: '/dashboard/settings', icon: FiSettings, isActiveOverride: !!eventId },
     ];
 
     // --- Presentation Layer (The UI that will be rendered) ---

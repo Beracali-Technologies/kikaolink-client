@@ -1,116 +1,96 @@
-import React, { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import { FiMenu, FiChevronLeft } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
-
-// Define the navigation structure here for easy management
-const settingsNavigation = [
-    {
-        title: 'Event Setup',
-        links: [
-            { name: 'Event Information', to: 'edit-event-info' }, // Use relative paths
-            { name: 'Registration Form', to: 'registration-form-editor' },
-            { name: 'Confirmation Email', to: '#', disabled: true },
-        ],
-    },
-    {
-        title: 'Badge Printing',
-        links: [{ name: 'Badge Designer', to: '#', disabled: true }],
-    },
-    {
-        title: 'Check-in',
-        links: [
-            { name: 'Multi-Session', to: '#', disabled: true },
-            { name: 'App Login QR', to: '#', disabled: true }
-        ],
-    },
-];
+import React, { useState, useEffect, useMemo } from 'react';
+import { NavLink, Outlet, useParams, useLocation } from 'react-router-dom';
+import { useEventStore } from '../../lib/stores/eventStore'; // Ensure path is correct
+import BrandedLoader from '../../Components/ui/BrandedLoader/BrandedLoader'; // Your loader
+import { ArrowStepper } from '../../Features/Dashboard/Components/Stepper/Stepper'; // The Stepper we just created
+import { FiMenu } from 'react-icons/fi';
 
 const EventSettingsLayout: React.FC = () => {
-    // State to manage the secondary sidebar's visibility
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
-
     const { eventId } = useParams<{ eventId: string }>();
+    const { pathname } = useLocation();
+    const { currentEvent, fetchEventById, isLoading } = useEventStore();
+    const [isNavOpen, setIsNavOpen] = useState(true); // State for the settings sidebar
 
-    // If for some reason there's no eventId, you can show a loading state or an error
-    if (!eventId) {
-        return <div>Loading event details or event not found...</div>;
+    // Fetch the specific event's data when the component loads
+    useEffect(() => {
+        if (eventId) {
+            fetchEventById(eventId);
+        }
+    }, [eventId, fetchEventById]);
+
+    // Logic to control the active step in the ArrowStepper
+    const currentStep = useMemo(() => {
+        if (pathname.includes('/registration-form')) return 1;
+        if (pathname.includes('/tickets')) return 2;
+        return 0; // Default step is Event Information
+    }, [pathname]);
+
+    const eventSteps = ['Event Information', 'Registration Form', 'Tickets & Pricing'];
+
+    // Data for the nested sidebar links
+    const settingsNavigation = [
+        { title: 'Event Setup', links: [
+            { name: 'Event Information', to: `/dashboard/events/${eventId}/info` },
+            { name: 'Registration Form', to: `/dashboard/events/${eventId}/registration-form` },
+            { name: 'Confirmation Email', to: '#', disabled: true },
+        ]},
+        { title: 'Badge Printing', links: [{ name: 'Badge Designer', to: '#', disabled: true }] },
+        { title: 'Check-in', links: [
+            { name: 'Multi-Session', to: '#', disabled: true },
+            { name: 'App Login QR', to: '#', disabled: true },
+        ]},
+    ];
+
+    // While fetching the event, show a full-page loader
+    if (isLoading && !currentEvent) {
+        return <div className="w-full h-full flex items-center justify-center"><BrandedLoader /></div>;
     }
 
-
     return (
-        <div className="p-4 md:p-8 h-full flex items-stretch">
-            <div className="relative w-full h-full flex">
-
-                {/* --- Collapsible Secondary Sidebar --- */}
-                <aside
-                    className={`
-                        flex flex-col flex-shrink-0 bg-white border border-gray-200 rounded-l-xl
-                        transition-all duration-300 ease-in-out
-                        ${isSidebarOpen ? 'w-64' : 'w-0'}
-                    `}
-                >
-                    <div className={`
-                        overflow-hidden h-full flex flex-col p-6
-                        ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}
-                        transition-opacity duration-200
-                    `}>
-                        <h2 className="text-xl font-bold text-gray-800">Setting</h2>
-                        <nav className="mt-6 space-y-6 flex-grow">
-                            {settingsNavigation.map(group => (
-                                <div key={group.title}>
-                                    <h3 className="px-3 text-xs font-bold uppercase text-slate-500 tracking-wider">
-                                        {group.title}
-                                    </h3>
-                                    <div className="mt-2 space-y-1">
-                                        {group.links.map(link => (
-                                            <NavLink
-                                                key={link.name}
-                                                to={link.to} // Relative paths now work because of the router setup
-                                                end // Important for index routes to be styled correctly
-                                                className={({ isActive }) =>
-                                                    `block rounded-md px-3 py-2 text-sm transition-colors
-                                                     ${isActive ? 'font-bold bg-blue-100 text-blue-700' : ''}
-                                                     ${!isActive && !link.disabled ? 'text-gray-700 hover:bg-gray-100' : ''}
-                                                     ${link.disabled ? 'text-gray-400 cursor-not-allowed' : ''}`
-                                                }
-                                            >
-                                                {link.name}
-                                            </NavLink>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </nav>
+        <div className="relative w-full h-full flex">
+            {/* --- COLUMN 2: The Collapsible, Light Gray Settings Sidebar --- */}
+            <aside className={`transition-all duration-300 flex-shrink-0 bg-slate-100 border-r border-slate-200 ${isNavOpen ? 'w-72' : 'w-0'}`}>
+                <div className={`overflow-hidden h-full flex flex-col pt-5 transition-opacity ${isNavOpen ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="px-6 flex items-center justify-between">
+                         <h2 className="text-sm font-bold uppercase text-slate-500">Setting</h2>
+                         <button onClick={() => setIsNavOpen(false)} className="p-1 rounded-md hover:bg-slate-200 lg:hidden">
+                            {/* Mobile close button if needed */}
+                         </button>
                     </div>
-                </aside>
-
-                 {/* --- The Collapse Button --- */}
-                <div className="relative">
-                    <button
-                        onClick={() => setSidebarOpen(!isSidebarOpen)}
-                        className={`
-                            absolute top-6 -left-3.5 z-20
-                            flex items-center justify-center h-7 w-7
-                            bg-white border-2 border-gray-300 rounded-full
-                            hover:bg-gray-100 text-gray-600
-                        `}
-                    >
-                         {isSidebarOpen ? <FiChevronLeft /> : <FiMenu />}
-                    </button>
+                    <nav className="flex-grow mt-6 px-6 space-y-6">
+                        {settingsNavigation.map(group => (
+                            <div key={group.title}>
+                                <h3 className="px-3 text-xs font-semibold uppercase text-slate-500 tracking-tight">{group.title}</h3>
+                                <div className="mt-2 space-y-1">
+                                    {group.links.map(link => (
+                                        <NavLink key={link.name} to={link.to} end
+                                            className={({ isActive }) =>
+                                                `block rounded-md px-3 py-2 text-sm font-medium
+                                                 ${isActive ? 'bg-green-100 text-green-700' : 'text-slate-600 hover:bg-slate-200'}
+                                                 ${link.disabled ? 'text-slate-400 cursor-not-allowed hover:bg-transparent' : ''}`
+                                            }>
+                                            {link.name}
+                                        </NavLink>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </nav>
                 </div>
+            </aside>
 
-
-                {/* --- Main Content Area --- */}
-                <main className={`
-                    flex-1 overflow-y-auto bg-white p-6 md:p-8
-                    border-t border-b border-r border-gray-200
-                    rounded-r-xl transition-all duration-300
-                    ${isSidebarOpen ? '' : '-ml-px rounded-l-xl' /* Fix border radius on collapse */}
-                `}>
-                    <Outlet />
-                </main>
-            </div>
+            {/* --- COLUMN 3: The Main White Content Area --- */}
+            <main className="flex-1 flex flex-col overflow-y-auto">
+                <div className="flex-shrink-0 h-[60px] bg-white border-b px-6 flex items-center gap-4">
+                    <button onClick={() => setIsNavOpen(!isNavOpen)} className="p-2 rounded-md hover:bg-gray-100 -ml-2">
+                        <FiMenu className="h-5 w-5 text-gray-600"/>
+                    </button>
+                    <ArrowStepper steps={eventSteps} currentStep={currentStep} />
+                </div>
+                <div className="flex-grow p-6 md:p-8 bg-slate-50">
+                    <Outlet /> {/* This renders your EventForm, RegistrationFormEditor, etc. */}
+                </div>
+            </main>
         </div>
     );
 };

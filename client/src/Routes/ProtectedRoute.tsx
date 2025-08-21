@@ -1,29 +1,23 @@
-import React, { Suspense } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+// only job is to protect its childern
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../lib/stores/authStore';
-import BrandedLoader from '../Components/ui/BrandedLoader/BrandedLoader';
-// import FiLoader from 'react-icons/fi'; // The FiLoader import is not used and can be removed.
 
+interface ProtectedRouteProps {
+    children: React.ReactNode;
+}
 
-const ProtectedRoute: React.FC = () => {
-    const { isAuthenticated, isAuthLoading } = useAuthStore();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const location = useLocation();
 
+    if (!isAuthenticated) {
+        // Redirect them to the /login page, but save the current location they were
+        // trying to go to. This allows us to send them back after login.
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 
-    if (isAuthLoading) {
-        return <BrandedLoader />;
-    }
-
-    // Once the check is done, if not authenticated, redirect to login
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
-
-
-    return (
-        <Suspense fallback={<BrandedLoader />}>
-            <Outlet />
-        </Suspense>
-    );
+    return <>{children}</>;
 };
 
 export default ProtectedRoute;
