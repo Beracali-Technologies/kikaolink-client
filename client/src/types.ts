@@ -58,3 +58,13 @@ export interface Field {
     options?: string[];
     helpText?: string;
 }
+
+export interface Attendee {
+    id: string;
+    name: string;
+    email: string;
+    table: string;
+    seat: number;
+    ticketType: string;
+    isCheckedIn: boolean;
+}
