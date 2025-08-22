@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+
 import { TUser, TLoginCredentials } from '../../types';
 import { loginUser, logoutUser, checkAuthStatus } from '../../services/authService';
 

@@ -1,72 +1,64 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, RouteObject } from 'react-router-dom';
 
-// --- LAZY-LOADED COMPONENTS ---
+// --- LAYOUTS (for route definitions) ---
+import PublicLayout from '../Layouts/PublicLayout/PublicLayout';
+import DashboardLayout from '../Layouts/DashboardLayout/DashboardLayout';
+import EventSettingsLayout from '../Layouts/EventSettingsLayout/EventSettingsLayout';
+import ProtectedRoute from './ProtectedRoute';
 
-// Public Pages (e.g., Login, Signup...)
-const Login = lazy(() => import('../Features/Auth/Login/Login'));
+// --- LAZY-LOADED PAGE COMPONENTS ---
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));
-
-// Top-Level Dashboard Pages
+const Login = lazy(() => import('../Features/Auth/Login/Login'));
+const Signup = lazy(() => import('../Features/Auth/Signup/Signup'));
+const EventDashboard = lazy(() => import('../Features/Dashboard/EventDashboard/EventDashboard'));
 const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
-const CreateEventPage = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
+const CreateEvent = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
+const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage'));
 
-// --- The Main Layout for the Settings Section ---
-const EventSettingsLayout = lazy(() => import('../Layouts/EventSettingsLayout/EventSettingsLayout'));
-
-// --- Components that render INSIDE EventSettingsLayout ---
 const EventForm = lazy(() => import('../Features/Dashboard/EventForm/EventForm'));
-const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
+const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 
-
-// --- ROUTE DEFINITIONS ---
-
-export const publicRoutes = [
-    { path: "/", element: <HeroPage /> },
-    { path: "/login", element: <Login /> },
-    // ... add your other public routes
-];
-
-export const privateRoutes = [
-    // Default redirect for "/dashboard" goes to the event list
+// --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
+export const routes: RouteObject[] = [
+    // --- Public Routes ---
     {
-        index: true,
-        element: <Navigate to="/dashboard/events" replace />
-    },
-    {
-        path: "events",
-        element: <EventList />
-    },
-    {
-        // A clean page just for starting the event creation process
-        path: "events/create",
-        element: <CreateEventPage />
-    },
-    {
-        // THIS IS THE CORE OF YOUR SETTINGS UI
-        // It defines the parent route for managing any single event.
-        // URLs like /dashboard/events/123/... will match this.
-        path: "events/:eventId",
-        element: <EventSettingsLayout />, // This component has the nested sidebar
+        element: <PublicLayout />, // All children get the PublicLayout
         children: [
-            // The default page is the event info/edit form
-            { index: true, element: <Navigate to="info" replace /> },
-
-            // These routes render inside the <Outlet/> of EventSettingsLayout
-            {
-                path: "info",
-                element: <EventForm mode="edit" />
-            },
-            {
-                // This is the route you wanted. It now works.
-                path: "registration-form",
-                element: <RegistrationFormEditor />
-            },
-            {
-                path: "tickets",
-                element: <TicketsAndPricing />
-            },
+            { path: '/', element: <HeroPage /> },
+            { path: '/login', element: <Login /> },
+            { path: '/signup', element: <Signup /> },
+            // ... add other public routes here (signup, contact, etc.)
         ]
     },
+    // --- Private Dashboard Routes ---
+    {
+        path: '/dashboard',
+        element: (
+            <ProtectedRoute>
+                <DashboardLayout />
+            </ProtectedRoute>
+        ),
+        children: [
+            { index: true, element: <Navigate to="home" replace /> },
+            { path: 'home', element: <EventDashboard /> },
+            { path: 'events', element: <EventList /> },
+            { path: 'events/create', element: <CreateEvent /> },
+            { path: 'checkin', element: <CheckinPage /> },
+
+            // Nested route for managing a single event's settings
+            {
+                path: 'events/:eventId',
+                element: <EventSettingsLayout />,
+                children: [
+                    { index: true, element: <Navigate to="info" replace /> },
+                    { path: 'info', element: <EventForm mode="edit" /> },
+                    { path: 'registration-form', element: <RegistrationFormEditor /> },
+                    { path: 'tickets', element: <TicketsAndPricing /> },
+                ]
+            },
+        ],
+    },
+    // Add a catch-all 404 at the top level if desired
 ];

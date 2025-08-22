@@ -89,7 +89,7 @@ export const useEventStore = create(
         }),
         {
             name: 'kikaolink-event-storage',
-            partialize: (state) => ({ lastActiveEventId: state.lastActiveEventId }),
+            //partialize: (state) => ({ lastActiveEventId: state.lastActiveEventId }),
         }
     )
 );

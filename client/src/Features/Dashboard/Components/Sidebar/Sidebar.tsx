@@ -1,8 +1,8 @@
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { useEventStore } from '../../../../lib/stores/eventStore';
-// Import Icons
-import { FiGrid, FiSettings } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
+
+// Importing Icons
+import { FiGrid, FiSettings, FiCheckSquare, FiLayout } from 'react-icons/fi';
 
 // Import the new Subcomponents
 import SidebarHeader from './components/SidebarHeader';
@@ -18,22 +18,48 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
     const location = useLocation();
 
-      const lastActiveEventId = useEventStore((state) => state.lastActiveEventId);
+    //  const lastActiveEventId = useEventStore((state) => state.lastActiveEventId);
 
-// Determine the correct path for the settings link.
-// If we have a last active event, link to it. Otherwise, link to the "create new event" page.
+
+/* If we have a last active event, link to it. Otherwise, link to the "create new event" page.
       const settingsPath = lastActiveEventId
           ? `/dashboard/events/${lastActiveEventId}/info`
-          : '/dashboard/events/create';
+          : '/dashboard/events/create';  */
 
-      // Use the eventId from the URL to determine if ANY event management page is active
-      const { eventId } = useParams<{ eventId: string }>();
+      // Using the eventId from the URL to determine if ANY event management page is active
+    // const { eventId } = useParams<{ eventId: string }>();
 
     // Keep the data required by child components here.
-    const isSettingsActive = location.pathname.includes('/settings');
+  //  const isSettingsActive = location.pathname.includes('/settings');
+
+
     const menuItems = [
-      { name: 'Events', path: '/dashboard/events', icon: FiGrid, isActiveOverride: !eventId },
-      { name: 'Settings', path: '/dashboard/settings', icon: FiSettings, isActiveOverride: !!eventId },
+        {
+            name: 'Dashboard',
+            path: '/dashboard', // The new Dashboard link
+            icon: FiLayout,
+            // isActive is true only if the path is an EXACT match
+            isActive: location.pathname === '/dashboard'
+        },
+        {
+            name: 'Events',
+            path: '/dashboard/events',
+            icon: FiGrid,
+            // isActive is true if the path STARTS with /dashboard/events
+            isActive: location.pathname.startsWith('/dashboard/events')
+        },
+        {
+            name: 'Check-in',
+            path: '/dashboard/checkin', // The new Check-in link
+            icon: FiCheckSquare,
+            isActive: location.pathname.startsWith('/dashboard/checkin')
+        },
+        {
+            name: 'Settings',
+            path: '/dashboard/settings', // Links to a future global settings page
+            icon: FiSettings,
+            isActive: location.pathname.startsWith('/dashboard/settings')
+        },
     ];
 
     // --- Presentation Layer (The UI that will be rendered) ---
