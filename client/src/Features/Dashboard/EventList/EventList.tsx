@@ -1,73 +1,72 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useEventStore } from '../../../lib/stores/eventStore';
-import { TEvent } from '../../../types';
 
+// --- IMPORT THE NEW SUBCOMPONENTS ---
+import EventListHeader from './components/EventListHeader';
+import EventTable from './components/EventTable';
 import NoEventState from '../Components/NoEventState/NoEventState';
-import { FiSearch, FiPlus, FiLoader } from 'react-icons/fi';
+import { FiLoader } from 'react-icons/fi';
 
 const EventList: React.FC = () => {
-  // Selecting each value individually to avoid circular dependancy
-  const events = useEventStore((state) => state.events);
-  const isLoading = useEventStore((state) => state.isLoading);
-  const error = useEventStore((state) => state.error);
-  const fetchEvents = useEventStore((state) => state.fetchEvents);
+    // --- 1. STATE MANAGEMENT ---
+    // Get the master list of events and loading state from the global store
+    const { events, isLoading, error, fetchEvents } = useEventStore();
+    // Create local state to hold the user's search input
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // This hook is correct. It fetches data once when the component mounts.
+    // Fetch the full event list only once when the page loads
     useEffect(() => {
         fetchEvents();
     }, [fetchEvents]);
 
-    // A helper function to guarantee something always renders
+    // --- 2. REAL-TIME FILTERING LOGIC ---
+    // This `useMemo` hook will re-filter the events ONLY when the master list or the search term changes.
+    // This is highly performant.
+    const filteredEvents = useMemo(() => {
+        // If there's no search term, return the full list.
+        if (!searchTerm.trim()) {
+            return events;
+        }
+        // Otherwise, filter the list based on the event title (case-insensitive)
+        return events.filter(event =>
+            event.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [events, searchTerm]); // Dependencies array
+
+
+    // --- 3. RENDER LOGIC ---
     const renderContent = () => {
         if (isLoading) {
-            return (
-                <div className="flex justify-center items-center h-64">
-                    <FiLoader className="animate-spin text-4xl text-blue-600" />
-                </div>
-            );
+            return <div className="text-center p-12"><FiLoader className="animate-spin text-4xl mx-auto text-blue-500" /></div>;
         }
         if (error) {
-            return (
-                <div className="p-8 text-center bg-red-100 text-red-700 rounded-lg">{error}</div>
-            );
+            return <div className="text-center p-12 bg-red-100 text-red-700 rounded-lg">{error}</div>;
         }
         if (events.length === 0) {
             return <NoEventState />;
         }
-        return (
-            <div className="bg-white rounded-lg shadow-sm border">
-                <ul className="divide-y divide-gray-200">
-                    {events.map((event: TEvent) => (
-                        <li key={event.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <span className="font-semibold text-gray-800">{event.title}</span>
-                            <Link to={`/dashboard/events/${event.id}/info`} className="text-sm font-medium text-blue-600 hover:underline">
-                                Manage
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
+        if (filteredEvents.length === 0) {
+             return <div className="text-center p-12 bg-gray-50 rounded-lg">
+                        <h3 className="font-bold">No events found for "{searchTerm}"</h3>
+                        <p className="text-gray-500">Try a different search term.</p>
+                    </div>;
+        }
+        // Pass the *filtered* list to the table component
+        return <EventTable events={filteredEvents} />;
     };
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold text-gray-800">My Events</h1>
-                <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <div className="relative flex-grow sm:flex-grow-0">
-                        <input type="text" placeholder="Search events..." className="w-full border rounded-md pl-10 pr-4 py-2 text-sm" />
-                        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    </div>
-                    <Link to="/dashboard/events/create" className="flex-shrink-0 flex items-center gap-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 shadow-sm">
-                        <FiPlus />
-                        <span>Create Event</span>
-                    </Link>
-                </div>
-            </div>
+            {/* The Header component receives the state and the function to update it */}
+            <EventListHeader
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+            />
 
-            <div>{renderContent()}</div>
+            {/* The main content area renders based on our logic */}
+            <div>
+                {renderContent()}
+            </div>
         </div>
     );
 };
