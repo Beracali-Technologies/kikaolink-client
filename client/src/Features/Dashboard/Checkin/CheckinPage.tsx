@@ -1,74 +1,80 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FiCamera } from 'react-icons/fi';
+import { useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-
-// Import our new subcomponents
-import Scanner from './components/Scanner';
-import AttendeeCard from './components/AttendeeCard';
 import { Attendee } from '../../../types';
 
-// Mock data for a found attendee. In a real app, this would come from an API call.
+// --- SUBCOMPONENTS ---
+import Scanner from './components/Scanner';
+import AttendeeCard from './components/AttendeeCard';
+import { FiCamera } from 'react-icons/fi';
+
+// Mock Data for a successful scan
 const MOCK_ATTENDEE: Attendee = {
-    id: '2564341f1f9',
-    name: 'Alan Chan',
-    email: 'george.linn@eventnook.com',
-    table: 'Table 1',
-    seat: 9,
-    ticketType: 'Table Booking',
-    isCheckedIn: true,
+    id: 'DEMO-123', name: 'Jane Doe', email: 'jane.doe@example.com', table: 'Table 5',
+    seat: 4, ticketType: 'VIP Pass', isCheckedIn: true,
 };
 
 const CheckinPage: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
+    const [scannedAttendee, setScannedAttendee] = useState<Attendee | null>(null);
+    const [isScannerActive, setIsScannerActive] = useState(true);
 
-    // --- STATE MANAGEMENT ---
-    const [scannedResult, setScannedResult] = useState<Attendee | null>(null);
-    const [isAutoCheckin, setIsAutoCheckin] = useState(true);
+    // This is called by the Scanner on a successful scan
+    const handleScanSuccess = (decodedText: string) => {
+        if (!isScannerActive) return; // Prevent multiple scans if we're already handling one
 
-    const handleScan = (decodedText: string, decodedResult: any) => {
-        console.log(`Scan successful, result: ${decodedText}`, decodedResult);
+        console.log("Scan success:", decodedText);
+        setIsScannerActive(false); // Pause the scanner
 
-        // --- In a real app, you would make an API call here ---
-        // const attendeeData = await api.post(`/api/events/${eventId}/checkin`, { qrCode: result });
-        // setScannedResult(attendeeData);
+        // Simulate API call and show result
+        setScannedAttendee(MOCK_ATTENDEE);
+        toast.success(`Checked In: ${MOCK_ATTENDEE.name}`);
 
-        // For now, we'll use mock data
-        toast.success(`Checked in ${MOCK_ATTENDEE.name}!`);
-        setScannedResult(MOCK_ATTENDEE);
+        // Automatically reset after a few seconds to scan the next person
+        setTimeout(() => {
+            setScannedAttendee(null); // Hide the card
+            setIsScannerActive(true);  // Re-enable scanning
+        }, 3500);
     };
 
-    const handleError = (error: any) => {
-        if (error.name !== "NotFoundException") { // Ignore "QR not found" errors
-            console.error("QR Scanner Error:", error);
-            toast.error("Could not start camera. Please check permissions.");
+    const handleScanError = (errorMessage: string) => {
+        // We can ignore 'No QR code found' errors for a cleaner console
+        if (!errorMessage.includes("No QR code found")) {
+            console.error(`QR Scanner Error: ${errorMessage}`);
         }
     };
 
     return (
-        <div className="w-full h-full bg-black text-white relative flex flex-col">
-            <Toaster position="bottom-center" />
+        <div className="h-full flex flex-col space-y-8">
+            <Toaster position="top-right" />
 
-            {/* --- HEADER --- */}
-            <header className="flex-shrink-0 p-4 bg-gray-900/50 backdrop-blur-sm flex items-center justify-between">
+            {/* --- HEADER SECTION --- */}
+            <header className="flex-shrink-0 flex items-center justify-between">
                 <div>
-                     <h1 className="font-bold">Charity and Fundraising Event 2023</h1>
-                     {/* Your "Back to all events" link can go here */}
+                    <h1 className="text-3xl font-bold text-gray-800">Check-in Terminal</h1>
+                    <p className="text-gray-500 mt-1">Point the camera at an attendee's QR code.</p>
                 </div>
-                 <Link to={`/dashboard/events/${eventId}/checkin-list`} // Link to the list view
-                    className="p-2 bg-white/10 rounded-lg hover:bg-white/20">
-                     <FiCamera />
-                 </Link>
+                {/* Add a link to the attendee list page later */}
+                 <button className="p-3 bg-white border shadow-sm rounded-lg hover:bg-gray-100 text-gray-600">
+                    <FiCamera className="w-5 h-5" />
+                 </button>
             </header>
 
-            {/* --- SCANNER & OVERLAYS --- */}
-            <main className="flex-grow flex items-center justify-center p-4">
-                 <Scanner onScanResult={handleScan} onError={handleError} />
-            </main>
+            {/* --- MAIN CONTENT CARD --- */}
+            {/* The main card contains the scanner AND the result overlay */}
+            <div className="relative flex-1 bg-white p-6 rounded-xl shadow-sm border flex flex-col items-center justify-center min-h-[500px]">
+                {/* 1. The Scanner Component */}
+                <Scanner
+                    onScanSuccess={handleScanSuccess}
+                    onScanError={handleScanError}
+                    isScanningActive={isScannerActive}
+                />
 
-            {/* --- The slide-up result card --- */}
-            <AttendeeCard attendee={scannedResult} onClose={() => setScannedResult(null)} />
+                {/* 2. The Attendee Card (conditionally rendered overlay) */}
+                <AttendeeCard attendee={scannedAttendee} />
+            </div>
         </div>
     );
 };
+
 export default CheckinPage;
