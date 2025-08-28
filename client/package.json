@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
+    "@yudiel/react-qr-scanner": "^2.3.1",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
     "axios": "^1.11.0",
     "framer-motion": "^12.4.7",
-    "html5-qrcode": "^2.3.8",
     "react": "^18.3.1",
     "react-confetti": "^6.4.0",
     "react-dom": "^18.3.1",
@@ -22,6 +24,7 @@
     "react-icons": "^5.5.0",
     "react-phone-number-input": "^3.4.12",
     "react-router-dom": "^7.1.1",
+    "react-zxing": "^2.1.0",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
