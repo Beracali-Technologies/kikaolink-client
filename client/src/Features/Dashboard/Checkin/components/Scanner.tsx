@@ -1,20 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useZxing } from 'react-zxing';
-
+import { useCamera } from '../contexts/CameraContext';
 // Define the shape of the component's props for type safety
 interface ScannerProps {
     onScanSuccess: (decodedText: string) => void;
 }
 
 const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
-    // --- THIS IS THE ENTIRE LOGIC ---
-    // The useZxing hook handles everything: camera start, stop, cleanup, and result decoding.
-    // It is designed for React and will NOT cause the double scanner bug.
+        const { cameraId, setAvailableCameras } = useCamera();
+
     const { ref } = useZxing({
         onDecodeResult: (result) => {
             onScanSuccess(result.getText());
         },
+        constraints: {
+            video: {
+                facingMode: undefined, // using deviceId instead
+                deviceId: cameraId ? { exact: cameraId } : undefined,
+            },
+            audio: false,
+    },
     });
+
+      useEffect(() => {
+            const getCameras = async () => {
+                  try {
+                        const devices = await navigator.mediaDevices.enumerateDevices();
+                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                        setAvailableCameras(videoDevices);
+                  } catch (error) {
+                        console.error('Error getting cameras:', error);
+                  }
+            };
+
+                getCameras();
+        }, [setAvailableCameras]);
 
     return (
         // The container holds the video feed and our custom UI overlay.

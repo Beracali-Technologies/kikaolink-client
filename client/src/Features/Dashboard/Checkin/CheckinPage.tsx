@@ -6,6 +6,7 @@ import { Attendee } from '../../../types';
 import Scanner from './components/Scanner';
 import AttendeeCard from './components/AttendeeCard';
 import { FiCamera } from 'react-icons/fi';
+import { CameraProvider } from './contexts/CameraContext';
 
 
 // Mock data for a successful scan
@@ -19,7 +20,7 @@ const MOCK_ATTENDEE: Attendee = {
     isCheckedIn: true,
 };
 
-const CheckinPage: React.FC = () => {
+const CheckinPageContent: React.FC = () => {
     const [scannedAttendee, setScannedAttendee] = useState<Attendee | null>(null);
 
     const handleScanSuccess = (decodedText: string) => {
@@ -49,4 +50,16 @@ const CheckinPage: React.FC = () => {
         </div>
     );
 };
+
+
+const CheckinPage: React.FC = () => {
+
+    return (
+        <CameraProvider>
+              <CheckinPageContent />
+        </CameraProvider>
+    );
+};
+
+
 export default CheckinPage;
