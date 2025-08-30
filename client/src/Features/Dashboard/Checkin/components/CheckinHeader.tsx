@@ -1,8 +1,8 @@
 import React from 'react';
 import { FiCamera } from 'react-icons/fi';
 
-const CheckinHeader: React.FC<{ isAutoCheckin: boolean; onToggleAutoCheckin: () => void }> =
-({ isAutoCheckin, onToggleAutoCheckin }) => (
+const CheckinHeader: React.FC<{}> =
+() => (
     <header className="flex-shrink-0 flex items-center justify-between">
         <div>
             <h1 className="text-3xl font-bold text-gray-800">Check-in Terminal</h1>

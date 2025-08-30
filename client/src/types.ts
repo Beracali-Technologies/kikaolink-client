@@ -1,11 +1,13 @@
 // --- EVENT TYPES ---
 
+export type EventStatus = 'DRAFT' | 'LIVE' | 'COMPLETED';
+
 export interface TEvent {
   id: number | string;
   title: string;
   start_date: string;
   end_date: string;
-  status: 'DRAFT' | 'LIVE' | 'COMPLETED';
+  status: EventStatus;
   // Add any other properties your event model has
 }
 

@@ -4,13 +4,13 @@ import { FiLoader } from 'react-icons/fi';
 import { TEvent, TEventCreate } from '../../../types';
 
 interface EventFormProps {
-    event?: TEvent | null; // Pass existing event to switch to "edit" mode
-    onFormSubmit: (data: TEventCreate) => void;
-    isSubmitting: boolean;
+    event?: TEvent | null; // Passing existing event to switch to "edit" mode
+    onFormSubmit?: (data: any) => void; //making it optional
+    isSubmitting?: boolean;  //making it optional
     mode: 'create' | 'edit'; // Explicitly set the mode
 }
 
-const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit, isSubmitting, mode }) => {
+const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, isSubmitting = false, mode }) => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TEventCreate>();
 
     useEffect(() => {

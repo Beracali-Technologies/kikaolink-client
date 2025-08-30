@@ -1,5 +1,5 @@
 import React from 'react';
-import { useZxing } from 'react-zxing'; // Import the new, reliable hook
+import { useZxing } from 'react-zxing';
 
 // Define the shape of the component's props for type safety
 interface ScannerProps {
@@ -11,7 +11,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
     // The useZxing hook handles everything: camera start, stop, cleanup, and result decoding.
     // It is designed for React and will NOT cause the double scanner bug.
     const { ref } = useZxing({
-        onResult(result) {
+        onDecodeResult: (result) => {
             onScanSuccess(result.getText());
         },
     });
@@ -22,7 +22,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
 
             {/* The library uses this video element to render the camera feed. */}
             {/* It is automatically managed by the 'ref' from the hook. */}
-            <video ref={ref} className="w-full h-full object-cover" />
+            <video ref={ref as React.RefObject<HTMLVideoElement>} className="w-full h-full object-cover" />
 
             {/* The professional targeting reticle from your screenshot */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TEvent } from '../../../../types'; // Ensure you have this type defined
+import { TEvent, EventStatus } from '../../../../types'; // Ensure you have this type defined
 import { FiCalendar } from 'react-icons/fi';
 
 // This helper function creates the colored "status chip"
-const getStatusChip = (status: string) => {
-    const statusMap = {
+const getStatusChip = (status: EventStatus) => {
+    const statusMap: Record<EventStatus, string> = {
         LIVE: "bg-green-100 text-green-800",
         DRAFT: "bg-yellow-100 text-yellow-800",
         COMPLETED: "bg-gray-200 text-gray-700",
     };
-    const color = statusMap[status.toUpperCase()] || statusMap.DRAFT;
+    const color = statusMap[status] || statusMap.DRAFT;
     return <span className={`flex-shrink-0 text-xs font-medium px-2.5 py-1 rounded-full ${color}`}>{status}</span>;
 };
 
