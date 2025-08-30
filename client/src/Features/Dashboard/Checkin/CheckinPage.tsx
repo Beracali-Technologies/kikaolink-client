@@ -5,9 +5,9 @@ import { Attendee } from '../../../types';
 // --- SUBCOMPONENTS ---
 import Scanner from './components/Scanner';
 import AttendeeCard from './components/AttendeeCard';
-import { FiCamera } from 'react-icons/fi';
-import { CameraProvider } from './contexts/CameraContext';
 
+import { CameraProvider } from './contexts/CameraContext';
+import CheckinHeader from './components/CheckinHeader';
 
 // Mock data for a successful scan
 const MOCK_ATTENDEE: Attendee = {
@@ -36,12 +36,9 @@ const CheckinPageContent: React.FC = () => {
     return (
         <div className="h-full flex flex-col space-y-8">
             <Toaster position="top-right" />
-            <header className="flex-shrink-0 flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-gray-800">Check-in Terminal</h1>
-                <button className="p-3 bg-white border shadow-sm rounded-lg text-gray-600">
-                    <FiCamera className="w-5 h-5" />
-                </button>
-            </header>
+
+                  <CheckinHeader />
+
             <div className="relative flex-1 bg-white p-6 rounded-xl shadow-sm border flex items-center justify-center min-h-[500px]">
                 {/* --- The call is now simpler and more robust --- */}
                 <Scanner onScanSuccess={handleScanSuccess} />
