@@ -24,8 +24,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
   });
 
   return (
-    <div className="relative w-full h-full max-w-md mx-auto flex items-center justify-center">
-      <div className="relative w-full h-full max-h-[70vh] aspect-[3/4] bg-black rounded-xl overflow-hidden">
+    <div className="relative w-full h-full bg-black flex items-center justify-center">
         <video
           ref={ref as React.RefObject<HTMLVideoElement>}
           className="w-full h-full object-cover"
@@ -48,7 +47,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
           Point camera at QR code
         </p>
       </div>
-    </div>
+
   );
 };
 

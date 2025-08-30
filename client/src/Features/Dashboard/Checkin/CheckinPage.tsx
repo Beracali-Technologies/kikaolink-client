@@ -37,12 +37,12 @@ const CheckinPageContent: React.FC = () => {
         <div className="h-full flex flex-col">
             <Toaster position="top-right" />
 
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 px-6 py-6">
                       <CheckinHeader />
                   </div>
 
 
-                  <div className="flex-1 flex flex-col min-h-0"> {/* min-h-0 allows flex child to shrink */}
+                  <div className="flex-1 flex flex-col min-h-0 px-6 pb-6"> {/* min-h-0 allows flex child to shrink */}
               <div className="relative flex-1 bg-white p-4 rounded-xl shadow-sm border flex flex-col">
                   {/* Scanner container that occupies available space */}
                   <div className="flex-1 flex items-center justify-center min-h-0">
