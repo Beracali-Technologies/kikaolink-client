@@ -34,16 +34,25 @@ const CheckinPageContent: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col space-y-8">
+        <div className="h-full flex flex-col">
             <Toaster position="top-right" />
 
-                  <CheckinHeader />
+                  <div className="flex-shrink-0">
+                      <CheckinHeader />
+                  </div>
 
-            <div className="relative flex-1 bg-white p-6 rounded-xl shadow-sm border flex items-center justify-center min-h-[500px]">
-                {/* --- The call is now simpler and more robust --- */}
-                <Scanner onScanSuccess={handleScanSuccess} />
-                <AttendeeCard attendee={scannedAttendee} />
-            </div>
+
+                  <div className="flex-1 flex flex-col min-h-0"> {/* min-h-0 allows flex child to shrink */}
+              <div className="relative flex-1 bg-white p-4 rounded-xl shadow-sm border flex flex-col">
+                  {/* Scanner container that occupies available space */}
+                  <div className="flex-1 flex items-center justify-center min-h-0">
+                      <Scanner onScanSuccess={handleScanSuccess} />
+                  </div>
+
+                  <AttendeeCard attendee={scannedAttendee} />
+              </div>
+          </div>
+
         </div>
     );
 };
