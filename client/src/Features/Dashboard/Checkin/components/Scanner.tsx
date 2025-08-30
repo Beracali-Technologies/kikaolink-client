@@ -9,12 +9,13 @@ interface ScannerProps {
 
 const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
   const { cameraId, setAvailableCameras } = useCamera();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setScanning] = useState(true);
 
-  // Force re-render when camera changes
+    //re-refressing the scanner when switch the camera's
   useEffect(() => {
-    console.log('🎬 Camera ID changed to:', cameraId);
-    setRefreshKey(prev => prev + 1);
+    setScanning(false);
+    const timer = setTimeout(() => setScanning(true), 100);
+    return () => clearTimeout(timer);
   }, [cameraId]);
 
   // Get available cameras on component mount
@@ -61,8 +62,12 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
     },
   });
 
+
+
+
+
   return (
-    <div key={refreshKey} className="relative w-full h-full max-w-lg mx-auto rounded-xl overflow-hidden bg-black flex items-center justify-center">
+    <div className="relative w-full h-full max-w-lg mx-auto rounded-xl overflow-hidden bg-black flex items-center justify-center">
       <video
         ref={ref as React.RefObject<HTMLVideoElement>}
         className="w-full h-full object-cover"
