@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface CameraContextType {
   cameraId: string | null;
@@ -32,6 +32,37 @@ export const CameraProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     console.log('✅ Camera switched successfully');
   };
+
+
+  useEffect(() => {
+  const initializeCameras = async () => {
+    try {
+      // Request camera permission first
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop());
+
+      // Then enumerate devices
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+      setCameras(videoDevices);
+      if (videoDevices.length > 0 && !cameraId) {
+        // Prefer back camera (environment facing) if available
+        const backCamera = videoDevices.find(device =>
+          device.label.toLowerCase().includes('back') ||
+          device.label.toLowerCase().includes('rear')
+        );
+        setCameraId(backCamera ? backCamera.deviceId : videoDevices[0].deviceId);
+      }
+    } catch (error) {
+      console.error('Error initializing cameras:', error);
+    }
+  };
+
+  initializeCameras();
+}, []);
+
+
 
   const setAvailableCameras = (newCameras: MediaDeviceInfo[]) => {
     console.log('📸 Available cameras detected:', newCameras.length);
