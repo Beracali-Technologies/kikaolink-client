@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useZxing } from 'react-zxing';
 import { useCamera } from '../contexts/CameraContext';
-
 
 interface ScannerProps {
   onScanSuccess: (decodedText: string) => void;
@@ -9,14 +8,45 @@ interface ScannerProps {
 
 const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
   const { cameraId, setAvailableCameras } = useCamera();
-  const [ scanning, setScanning] = useState(true);
+  const [scanning, setScanning] = useState(true);
+  const [cameraConstraints, setCameraConstraints] = useState<MediaStreamConstraints>({
+    video: { facingMode: 'environment' },
+    audio: false,
+  });
+  const hasCameraChanged = useRef(false);
 
-    //Restart the scanner when switch the camera's
+  // Update constraints when camera changes
   useEffect(() => {
-    setScanning(false);
-    const timer = setTimeout(() => setScanning(true), 100);
-    return () => clearTimeout(timer);
+    if (hasCameraChanged.current) {
+      console.log('🔄 Camera changed, restarting scanner...');
+      setScanning(false);
+      const timer = setTimeout(() => {
+        setScanning(true);
+        hasCameraChanged.current = false;
+      }, 100);
+      return () => clearTimeout(timer);
+    }
   }, [cameraId]);
+
+  // Set flag when cameraId changes (but not on initial mount)
+  useEffect(() => {
+    if (cameraId) {
+      hasCameraChanged.current = true;
+    }
+  }, [cameraId]);
+
+  // Simple type assertion for the ref
+  const { ref } = useZxing({
+    onDecodeResult: (result) => {
+      console.log('✅ QR Code scanned successfully:', result.getText());
+      onScanSuccess(result.getText());
+    },
+    constraints: cameraConstraints,
+    onError: (error) => {
+      console.error('❌ ZXing error:', error);
+    },
+    paused: !scanning,
+  });
 
   // Get available cameras on component mount
   useEffect(() => {
@@ -27,6 +57,15 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
         console.log('🔐 Requesting camera permission...');
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         console.log('✅ Camera permission granted');
+
+        // Set initial camera constraints based on the active stream
+        const settings = stream.getVideoTracks()[0]?.getSettings();
+        if (settings?.deviceId) {
+          setCameraConstraints({
+            video: { deviceId: { exact: settings.deviceId } },
+            audio: false,
+          });
+        }
 
         // Close the stream immediately since we just needed permission
         stream.getTracks().forEach(track => track.stop());
@@ -47,58 +86,36 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
     getCameras();
   }, [setAvailableCameras]);
 
-
-      if (!scanning) {
-        return (
-          <div className="relative w-full h-full max-w-lg mx-auto rounded-xl overflow-hidden bg-black flex items-center justify-center">
-            <div className="text-white">Restarting camera...</div>
-          </div>
-        );
-      }
-
-  // Simple type assertion for the ref
-  const { ref } = useZxing({
-    onDecodeResult: (result) => {
-      console.log('✅ QR Code scanned successfully:', result.getText());
-      onScanSuccess(result.getText());
-    },
-    constraints: {
-      video: cameraId ? { deviceId: { exact: cameraId } } : { facingMode: 'environment' },
-      audio: false,
-    },
-    onError: (error) => {
-      console.error('❌ ZXing error:', error);
-    },
-  });
-
-
-
-
-
   return (
     <div className="relative w-full h-full max-w-lg mx-auto rounded-xl overflow-hidden bg-black flex items-center justify-center">
-      <video
-        ref={ref as React.RefObject<HTMLVideoElement>}
-        className="w-full h-full object-cover"
-        autoPlay
-        playsInline
-        onLoadedMetadata={() => console.log('🎬 Video metadata loaded')}
-        onCanPlay={() => console.log('▶️ Video can play')}
-        onError={(e) => console.error('❌ Video error:', e)}
-      />
+      {!scanning ? (
+        <div className="text-white">Restarting camera...</div>
+      ) : (
+        <>
+          <video
+            ref={ref as React.RefObject<HTMLVideoElement>}
+            className="w-full h-full object-cover"
+            autoPlay
+            playsInline
+            onLoadedMetadata={() => console.log('🎬 Video metadata loaded')}
+            onCanPlay={() => console.log('▶️ Video can play')}
+            onError={(e) => console.error('❌ Video error:', e)}
+          />
 
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="relative w-64 h-64">
-          <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white rounded-tl-xl"/>
-          <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white rounded-tr-xl"/>
-          <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white rounded-bl-xl"/>
-          <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white rounded-br-xl"/>
-        </div>
-      </div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative w-64 h-64">
+              <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white rounded-tl-xl"/>
+              <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white rounded-tr-xl"/>
+              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white rounded-bl-xl"/>
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white rounded-br-xl"/>
+            </div>
+          </div>
 
-      <p className="absolute bottom-4 text-white/70 text-sm pointer-events-none">
-        Point camera at QR code
-      </p>
+          <p className="absolute bottom-4 text-white/70 text-sm pointer-events-none">
+            Point camera at QR code
+          </p>
+        </>
+      )}
     </div>
   );
 };
