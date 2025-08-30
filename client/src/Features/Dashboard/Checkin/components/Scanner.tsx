@@ -9,9 +9,9 @@ interface ScannerProps {
 
 const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
   const { cameraId, setAvailableCameras } = useCamera();
-  const [, setScanning] = useState(true);
+  const [ scanning, setScanning] = useState(true);
 
-    //re-refressing the scanner when switch the camera's
+    //Restart the scanner when switch the camera's
   useEffect(() => {
     setScanning(false);
     const timer = setTimeout(() => setScanning(true), 100);
@@ -46,6 +46,15 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
 
     getCameras();
   }, [setAvailableCameras]);
+
+
+      if (!scanning) {
+        return (
+          <div className="relative w-full h-full max-w-lg mx-auto rounded-xl overflow-hidden bg-black flex items-center justify-center">
+            <div className="text-white">Restarting camera...</div>
+          </div>
+        );
+      }
 
   // Simple type assertion for the ref
   const { ref } = useZxing({
