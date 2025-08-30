@@ -9,15 +9,11 @@ interface ScannerProps {
 const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
   const { cameraId, setAvailableCameras } = useCamera();
   const [scanning, setScanning] = useState(true);
-  const [cameraConstraints, setCameraConstraints] = useState<MediaStreamConstraints>({
-    video: { facingMode: 'environment' },
-    audio: false,
-  });
   const hasCameraChanged = useRef(false);
 
-  // Update constraints when camera changes
+  // Update constraints and restart scanner when camera changes
   useEffect(() => {
-    if (hasCameraChanged.current) {
+    if (hasCameraChanged.current && cameraId) {
       console.log('🔄 Camera changed, restarting scanner...');
       setScanning(false);
       const timer = setTimeout(() => {
@@ -41,7 +37,10 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
       console.log('✅ QR Code scanned successfully:', result.getText());
       onScanSuccess(result.getText());
     },
-    constraints: cameraConstraints,
+    constraints: {
+      video: cameraId ? { deviceId: { exact: cameraId } } : { facingMode: 'environment' },
+      audio: false,
+    },
     onError: (error) => {
       console.error('❌ ZXing error:', error);
     },
@@ -57,15 +56,6 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess }) => {
         console.log('🔐 Requesting camera permission...');
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         console.log('✅ Camera permission granted');
-
-        // Set initial camera constraints based on the active stream
-        const settings = stream.getVideoTracks()[0]?.getSettings();
-        if (settings?.deviceId) {
-          setCameraConstraints({
-            video: { deviceId: { exact: settings.deviceId } },
-            audio: false,
-          });
-        }
 
         // Close the stream immediately since we just needed permission
         stream.getTracks().forEach(track => track.stop());
