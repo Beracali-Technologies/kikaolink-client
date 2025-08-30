@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiCamera } from 'react-icons/fi';
+import { FiCamera, FiRefreshCw } from 'react-icons/fi';
 import { useCamera } from '../contexts/CameraContext';
 
 
