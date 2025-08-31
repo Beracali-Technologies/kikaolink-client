@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
         },
         {
             name: 'Settings',
-            path: '/dashboard/settings', // Links to a future global settings page
+            path: '/dashboard/events/${event.id}/info', // Links to a future global settings page
             icon: FiSettings,
             isActive: location.pathname.startsWith('/dashboard/settings')
         },
