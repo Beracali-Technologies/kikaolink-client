@@ -19,6 +19,7 @@ interface EventActions {
     createEvent: (data: TEventCreate) => Promise<TEvent>;
     updateEvent: (id: string, data: TEventCreate) => Promise<TEvent>;
     setCurrentEventId: (id: string | number) => void;
+    clearError: () => void;
 }
 
 // Combine them into a single type for the store
@@ -85,11 +86,14 @@ export const useEventStore = create(
                     throw error;
                 }
             },
+
+            clearError: () => set({ error: null }),
+
             setCurrentEventId: (id: string | number) => set({ lastActiveEventId: id }),
         }),
         {
             name: 'kikaolink-event-storage',
             //partialize: (state) => ({ lastActiveEventId: state.lastActiveEventId }),
-        }
+        },
     )
 );

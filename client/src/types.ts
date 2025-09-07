@@ -8,7 +8,9 @@ export interface TEvent {
   start_date: string;
   end_date: string;
   status: EventStatus;
-  // Add any other properties your event model has
+  created_at?: string;
+  updated_at?: string;
+  location?: string;
 }
 
 // Type for creating a new event (id and status are handled by backend)
@@ -18,6 +20,7 @@ export type TEventCreate = {
     startTime: string;
     endDate: string;
     endTime: string;
+    location?: string;
 };
 
 

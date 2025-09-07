@@ -15,8 +15,9 @@ const EventDashboard = lazy(() => import('../Features/Dashboard/EventDashboard/E
 const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
 const CreateEvent = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
 const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage'));
+const EditEvent = lazy(() => import('../Features/Dashboard/EditEvent/EditEvent'));
 
-const EventForm = lazy(() => import('../Features/Dashboard/EventForm/EventForm'));
+
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 
@@ -53,7 +54,7 @@ export const routes: RouteObject[] = [
                 element: <EventSettingsLayout />,
                 children: [
                     { index: true, element: <Navigate to="info" replace /> },
-                    { path: 'info', element: <EventForm mode="edit" /> },
+                    { path: 'info', element: <EditEvent /> },
                     { path: 'registration-form', element: <RegistrationFormEditor /> },
                     { path: 'tickets', element: <TicketsAndPricing /> },
                 ]

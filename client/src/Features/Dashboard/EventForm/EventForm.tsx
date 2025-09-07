@@ -7,26 +7,56 @@ interface EventFormProps {
     event?: TEvent | null; // Passing existing event to switch to "edit" mode
     onFormSubmit?: (data: any) => void; //making it optional
     isSubmitting?: boolean;  //making it optional
-    mode: 'create' | 'edit'; // Explicitly set the mode
+    mode: 'create' | 'edit'; // Explicitly setting the mode
 }
 
 const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, isSubmitting = false, mode }) => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<TEventCreate>();
+    const { register, handleSubmit, reset, watch, setError, clearErrors, formState: { errors } } = useForm<TEventCreate>({
+        // Set mode to 'onChange' to enable real-time validation across all fields
+        mode: 'onChange'
+    });
+
+    const startDate = watch('startDate'); // Watch startDate for changes
+    const endDate = watch('endDate');     // Watch endDate for changes
 
     useEffect(() => {
-        if (event) { // Populate form if in edit mode
+        if (event && mode == 'edit') {
+            const startDate = new Date(event.start_date);
+            const endDate = new Date(event.end_date);
+
             reset({
                 title: event.title,
-                startDate: new Date(event.start_date).toISOString().split('T')[0],
-                startTime: new Date(event.start_date).toTimeString().substring(0, 5),
-                endDate: new Date(event.end_date).toISOString().split('T')[0],
-                endTime: new Date(event.end_date).toTimeString().substring(0, 5),
+                startDate: startDate.toISOString().split('T')[0],
+                startTime: startDate.toTimeString().substring(0, 5),
+                endDate: endDate.toISOString().split('T')[0],
+                endTime: endDate.toTimeString().substring(0, 5),
+                location: event.location || '',
             });
         }
-    }, [event, reset]);
+    }, [event, reset, mode]);
 
-    const onSubmit: SubmitHandler<TEventCreate> = (data) => {
-        onFormSubmit(data);
+    // This useEffect will re-run whenever startDate or endDate changes
+    useEffect(() => {
+        // Only run if both dates have been selected
+        if (startDate && endDate) {
+            if (startDate > endDate) {
+                setError('startDate', { type: 'manual', message: 'Start date cannot be after end date.' });
+                setError('endDate', { type: 'manual', message: 'End date cannot be before start date.' });
+            } else {
+                // If dates become valid, clear any previous errors
+                clearErrors('startDate');
+                clearErrors('endDate');
+            }
+        } else {
+             // If one of the dates is cleared, also clear the cross-date errors
+             clearErrors('startDate');
+             clearErrors('endDate');
+        }
+    }, [startDate, endDate, setError, clearErrors]); // Depend on startDate, endDate, setError, clearErrors
+
+
+    const onSubmit: SubmitHandler<TEventCreate> = async (data) => {
+        await onFormSubmit(data);
     };
 
     return (
@@ -39,24 +69,41 @@ const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, i
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>}
             </div>
 
+            {/* Location Field */}
+            <div>
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+                <input id="location" {...register("location")}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+            </div>
+
             <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                     <label htmlFor="startDate">Start Date*</label>
-                    <input type="date" id="startDate" {...register("startDate", { required: true })} className="mt-1 block w-full p-2 border rounded-md" />
+                    <input type="date" id="startDate" {...register("startDate", {
+                        required: "Start date is required.",
+                    })}
+                        className="mt-1 block w-full p-2 border rounded-md" />
+                    {errors.startDate && <p className="mt-1 text-sm text-red-500">{errors.startDate.message}</p>}
                 </div>
                 <div>
                     <label htmlFor="startTime">Start Time*</label>
-                    <input type="time" id="startTime" {...register("startTime", { required: true })} className="mt-1 block w-full p-2 border rounded-md" />
+                    <input type="time" id="startTime" {...register("startTime", { required: "Start time is required." })} className="mt-1 block w-full p-2 border rounded-md" />
+                    {errors.startTime && <p className="mt-1 text-sm text-red-500">{errors.startTime.message}</p>}
                 </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                     <label htmlFor="endDate">End Date*</label>
-                    <input type="date" id="endDate" {...register("endDate", { required: true })} className="mt-1 block w-full p-2 border rounded-md" />
+                    <input type="date" id="endDate" {...register("endDate", {
+                        required: "End date is required.",
+                    })}
+                        className="mt-1 block w-full p-2 border rounded-md" />
+                    {errors.endDate && <p className="mt-1 text-sm text-red-500">{errors.endDate.message}</p>}
                 </div>
                 <div>
                     <label htmlFor="endTime">End Time*</label>
-                    <input type="time" id="endTime" {...register("endTime", { required: true })} className="mt-1 block w-full p-2 border rounded-md" />
+                    <input type="time" id="endTime" {...register("endTime", { required: "End time is required." })} className="mt-1 block w-full p-2 border rounded-md" />
+                    {errors.endTime && <p className="mt-1 text-sm text-red-500">{errors.endTime.message}</p>}
                 </div>
             </div>
 
