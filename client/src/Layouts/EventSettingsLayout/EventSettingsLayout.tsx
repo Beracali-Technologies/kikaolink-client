@@ -60,10 +60,7 @@ const EventSettingsLayout: React.FC = () => {
     return (
         <div className="relative w-full h-full flex">
 
-                {/* --- Mobile Overlay --- */}
-                   {isNavOpen && (
-                       <div onClick={() => setIsNavOpen(false)} className="fixed inset-0 z-40 bg-black bg-opacity-30 lg:hidden"></div>
-               )}
+                
 
             {/* --- COLUMN 2: The Collapsible, Light Gray Settings Sidebar --- */}
             <aside className={`transition-all duration-300 flex-shrink-0 bg-slate-100 border-r border-slate-200 ${isNavOpen ? 'w-72' : 'w-0'}`}>
