@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
-import SearchBar from '../../Components/SearchBar/SearchBar'; // Import our new reusable component
+import SearchBar from '../../../Components/SearchBar/SearchBar'; // Import our new reusable component
 
 interface EventListHeaderProps {
     searchTerm: string;

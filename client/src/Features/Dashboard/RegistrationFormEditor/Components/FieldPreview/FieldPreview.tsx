@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Field } from '../../../types';
+import { Field } from '@/types/form';
 
 interface FieldPreviewProps {
     field: Field;
@@ -21,11 +21,17 @@ const FieldPreview: React.FC<FieldPreviewProps> = ({ field }) => {
         case 'multichoice':
         case 'checkbox':
             const InputType = field.fieldType === 'multichoice' ? 'radio' : 'checkbox';
-            return <div className="space-y-2 mt-1">{(field.options && field.options.length > 0 ? field.options : ['Sample Option']).map(opt => (
-                <label key={opt} className="flex items-center text-gray-500 cursor-not-allowed">
-                    <input type={InputType} disabled className="h-4 w-4 mr-3" />{opt}
-                </label>
-            ))}</div>;
+
+
+            return (
+                <div className="space-y-2 mt-1">
+                    {(field.options && field.options.length > 0 ? field.options : ['Sample Option']).map((opt: string) => (
+                        <label key={opt} className="flex items-center text-gray-500 cursor-not-allowed">
+                            <input type={InputType} disabled className="h-4 w-4 mr-3" />{opt}
+                        </label>
+                    ))}
+                </div>
+            );
 
         case 'date':
             return <input type="date" {...commonProps} />;

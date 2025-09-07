@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TEvent, EventStatus } from '../../../../types'; // Ensure you have this type defined
+import { TEvent, EventStatus } from '@/types/event'; // Ensure you have this type defined
 import { FiCalendar } from 'react-icons/fi';
 
 // This helper function creates the colored "status chip"
@@ -30,7 +30,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({ event }) => {
 
             {/* --- Left Side: Event Details --- */}
             <div className="flex items-center gap-4">
-                {getStatusChip(event.status)}
+                {getStatusChip(event.status as EventStatus)}
                 <div>
                     <h3 className="font-bold text-lg text-gray-800">{event.title}</h3>
                     <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">

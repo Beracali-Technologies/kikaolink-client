@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import { useEventStore } from '../../../lib/stores/eventStore';
-import EventForm from '../EventForm/EventForm';
+import { useEventStore } from '../../../../lib/stores/eventStore';
+import EventForm from '../components/EventForm';
 
 const EditEvent: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();

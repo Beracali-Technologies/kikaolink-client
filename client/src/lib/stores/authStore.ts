@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { TUser, TLoginCredentials } from '../../types';
+import { TUser, TLoginCredentials } from '@/types/user';
 import { loginUser, logoutUser, checkAuthStatus } from '../../services/authService';
 
 interface AuthState {

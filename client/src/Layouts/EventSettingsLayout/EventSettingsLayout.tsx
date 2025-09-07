@@ -5,6 +5,17 @@ import BrandedLoader from '../../Components/ui/BrandedLoader/BrandedLoader'; // 
 import { ArrowStepper } from '../../Features/Dashboard/Components/Stepper/Stepper'; // The Stepper we just created
 import { FiMenu } from 'react-icons/fi';
 
+interface NavLinkItem {
+    name: string;
+    to: string;
+    disabled?: boolean; // making disabled optional
+}
+
+interface NavLinkGroup {
+    title: string;
+    links: NavLinkItem[];
+}
+
 const EventSettingsLayout: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
     const { pathname } = useLocation();
@@ -25,14 +36,14 @@ const EventSettingsLayout: React.FC = () => {
         return 0; // Default step is Event Information
     }, [pathname]);
 
-    const eventSteps = ['Event Information', 'Registration Form', 'Tickets & Pricing'];
+    const eventSteps = ['Event Information', 'Registration Form', 'Tickets & Pricing', 'Email Confirmation'];
 
     // Data for the nested sidebar links
-    const settingsNavigation = [
+    const settingsNavigation: NavLinkGroup[] = [
         { title: 'Event Setup', links: [
             { name: 'Event Information', to: `/dashboard/events/${eventId}/info` },
             { name: 'Registration Form', to: `/dashboard/events/${eventId}/registration-form` },
-            { name: 'Confirmation Email', to: '#', disabled: true },
+            { name: 'Email Confirmation', to: `/dashboard/events/${eventId}/email` },
         ]},
         { title: 'Badge Printing', links: [{ name: 'Badge Designer', to: '#', disabled: true }] },
         { title: 'Check-in', links: [
@@ -48,13 +59,19 @@ const EventSettingsLayout: React.FC = () => {
 
     return (
         <div className="relative w-full h-full flex">
+
+                {/* --- Mobile Overlay --- */}
+                   {isNavOpen && (
+                       <div onClick={() => setIsNavOpen(false)} className="fixed inset-0 z-40 bg-black bg-opacity-30 lg:hidden"></div>
+               )}
+
             {/* --- COLUMN 2: The Collapsible, Light Gray Settings Sidebar --- */}
             <aside className={`transition-all duration-300 flex-shrink-0 bg-slate-100 border-r border-slate-200 ${isNavOpen ? 'w-72' : 'w-0'}`}>
                 <div className={`overflow-hidden h-full flex flex-col pt-5 transition-opacity ${isNavOpen ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="px-6 flex items-center justify-between">
                          <h2 className="text-sm font-bold uppercase text-slate-500">Setting</h2>
                          <button onClick={() => setIsNavOpen(false)} className="p-1 rounded-md hover:bg-slate-200 lg:hidden">
-                            {/* Mobile close button if needed */}
+                            X
                          </button>
                     </div>
                     <nav className="flex-grow mt-6 px-6 space-y-6">
@@ -68,7 +85,9 @@ const EventSettingsLayout: React.FC = () => {
                                                 `block rounded-md px-3 py-2 text-sm font-medium
                                                  ${isActive ? 'bg-green-100 text-green-700' : 'text-slate-600 hover:bg-slate-200'}
                                                  ${link.disabled ? 'text-slate-400 cursor-not-allowed hover:bg-transparent' : ''}`
-                                            }>
+                                            }
+                                                  onClick={() => { if (link.disabled) setIsNavOpen(true); else setIsNavOpen(false) }}
+                                            >
                                             {link.name}
                                         </NavLink>
                                     ))}

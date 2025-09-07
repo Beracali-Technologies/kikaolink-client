@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { FiLoader } from 'react-icons/fi';
-import { TEvent, TEventCreate } from '../../../types';
+import { TEvent, TEventCreate } from '@/types/event';
 
 interface EventFormProps {
     event?: TEvent | null; // Passing existing event to switch to "edit" mode
@@ -72,8 +72,10 @@ const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, i
             {/* Location Field */}
             <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-                <input id="location" {...register("location")}
+                <input id="location" {...register("location", { required: "Location is required." })}
                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+
+                    {errors.location && <p className="mt-1 text-sm text-red-500">{errors.location.message}</p>}
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6">

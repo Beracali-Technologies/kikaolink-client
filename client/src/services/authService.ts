@@ -1,6 +1,6 @@
 import api from '../lib/axios';
 import { useAuthStore } from '../lib/stores/authStore';
-import { TLoginCredentials } from '../types';
+import { TLoginCredentials } from '@/types/user';
 
 // Called on successful login
 export const loginUser = async (credentials: TLoginCredentials) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Field, FieldType } from '../types';
+import { Field, FieldType } from '@/types/form';
 import FormFieldItem from './Components/FormFieldItem/FormFieldItem';
 import AddCustomField from './Components/AddCustomField/AddCustomField';
 import StandardFieldsPanel from './Components/StandardFieldsPanel/StandardFieldsPanel';
@@ -116,7 +116,7 @@ const RegistrationFormEditor: React.FC = () => {
                                   </span>
                               )}
 
-                              
+
                         <button onClick={() => setIsPreviewModalOpen(true)} className="font-semibold text-primary-blue text-sm hover:underline">
                               Preview
                         </button>

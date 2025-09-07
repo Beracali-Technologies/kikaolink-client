@@ -11,13 +11,13 @@ import ProtectedRoute from './ProtectedRoute';
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));
 const Login = lazy(() => import('../Features/Auth/Login/Login'));
 const Signup = lazy(() => import('../Features/Auth/Signup/Signup'));
-const EventDashboard = lazy(() => import('../Features/Dashboard/EventDashboard/EventDashboard'));
-const EventList = lazy(() => import('../Features/Dashboard/EventList/EventList'));
-const CreateEvent = lazy(() => import('../Features/Dashboard/CreateEvent/CreateEvent'));
+const EventDashboard = lazy(() => import('../Features/Dashboard/Events/EventDashboard/EventDashboard'));
+const EventList = lazy(() => import('../Features/Dashboard/Events/EventList/EventList'));
+const CreateEvent = lazy(() => import('../Features/Dashboard/Events/CreateEvent/CreateEvent'));
 const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage'));
-const EditEvent = lazy(() => import('../Features/Dashboard/EditEvent/EditEvent'));
+const EditEvent = lazy(() => import('../Features/Dashboard/Events/EditEvent/EditEvent'));
 
-
+const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/Tabs/EmailConfirmation'))
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 
@@ -57,6 +57,7 @@ export const routes: RouteObject[] = [
                     { path: 'info', element: <EditEvent /> },
                     { path: 'registration-form', element: <RegistrationFormEditor /> },
                     { path: 'tickets', element: <TicketsAndPricing /> },
+                    { path: 'email', element: <EmailConfirmation /> }
                 ]
             },
         ],

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Confetti from 'react-confetti';
-import { useEventStore } from '../../../lib/stores/eventStore';
-import EventForm from '../EventForm/EventForm'; // Our smart, reusable form
+import { useEventStore } from '../../../../lib/stores/eventStore';
+import EventForm from '../components/EventForm'; // Our smart, reusable form
 
 const CreateEvent: React.FC = () => {
     const navigate = useNavigate();

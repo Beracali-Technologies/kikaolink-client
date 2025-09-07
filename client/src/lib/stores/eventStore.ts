@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '../axios';
-import { TEvent, TEventCreate } from '../../types';
+import { TEvent, TEventCreate } from '@/types/event';
 
 // Define the shape of the STATE
 interface EventState {

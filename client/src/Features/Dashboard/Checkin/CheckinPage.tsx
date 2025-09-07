@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { Attendee } from '../../../types';
+import { Attendee } from '@/types/form';
 
 // --- SUBCOMPONENTS ---
 import Scanner from './components/Scanner';

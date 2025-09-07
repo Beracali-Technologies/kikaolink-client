@@ -1,5 +1,5 @@
 import api from '../lib/axios'; // Import the shared instance
-import { TEvent } from '../types'; // Adjust path if needed
+import { TEvent } from '@/types/event'; // Adjust path if needed
 
 // Function to initialize Sanctum's CSRF cookie
 export const initializeCsrfCookie = () => {

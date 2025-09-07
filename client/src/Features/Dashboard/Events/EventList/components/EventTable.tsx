@@ -1,5 +1,5 @@
 import React from 'react';
-import { TEvent } from '../../../../types';
+import { TEvent } from '@/types/event';
 import EventTableRow from './EventTableRow'; // Import the new row component
 
 interface EventTableProps {

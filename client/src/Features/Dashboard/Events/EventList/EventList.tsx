@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useEventStore } from '../../../lib/stores/eventStore';
+import { useEventStore } from '../../../../lib/stores/eventStore';
 
 // --- IMPORT THE NEW SUBCOMPONENTS ---
 import EventListHeader from './components/EventListHeader';
 import EventTable from './components/EventTable';
-import NoEventState from '../Components/NoEventState/NoEventState';
+import NoEventState from './NoEventState';
 import { FiLoader } from 'react-icons/fi';
 
 const EventList: React.FC = () => {

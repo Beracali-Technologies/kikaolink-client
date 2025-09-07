@@ -1,6 +1,6 @@
 // FieldSettings.tsx
 import React from 'react';
-import { Field } from '../../../types';
+import { Field } from '@/types/form';
 
 interface FieldSettingsProps {
     field: Field;
