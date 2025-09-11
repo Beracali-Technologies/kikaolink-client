@@ -116,7 +116,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, i
                             (
                                 <>
                                     <FiLoader className="animate-spin" />
-                                    Saving...
+                                        {mode === 'create' ? 'Creating' : 'Updating'}
                                 </>
                              )
                              : (

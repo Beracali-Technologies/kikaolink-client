@@ -3,14 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useEventStore } from '../../../../lib/stores/eventStore';
 import EventForm from '../components/EventForm';
-import { FiLoader } from 'react-icons/fi';
+
 
 
 const EditEvent: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
 
-    const { currentEvent, fetchEventById, updateEvent, isLoading, error } = useEventStore();
+    const { currentEvent, fetchEventById, updateEvent, error } = useEventStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -36,15 +36,9 @@ const EditEvent: React.FC = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="text-center p-12"><FiLoader className="animate-spin text-4xl mx-auto text-blue-500" /></div>
-            </div>
-        );
-    }
 
-    if (!currentEvent && !isLoading) {
+
+    if (!currentEvent) {
         return (
             <div className="text-center py-12">
                 <h2 className="text-xl font-semibold text-gray-700">Event not found</h2>
