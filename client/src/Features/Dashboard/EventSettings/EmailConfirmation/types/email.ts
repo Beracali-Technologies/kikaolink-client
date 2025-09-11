@@ -3,6 +3,7 @@ export interface EmailSettings {
     replyTo: string;
     subject: string;
     showBanner: boolean;
+    bannerImage?: string;
     bannerText: string;
     greeting: string;
     message: string;
@@ -16,11 +17,4 @@ export interface EmailSections {
     registrationSummary: boolean;
     attendeeDetails: boolean;
     viewRegistration: boolean;
-}
-
-export interface MergeField {
-    id: string;
-    label: string;
-    value: string;
-    category: string;
 }
