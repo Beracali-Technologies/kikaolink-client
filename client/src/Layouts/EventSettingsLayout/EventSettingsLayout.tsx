@@ -3,9 +3,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useEventStore } from '../../lib/stores/eventStore';
 import BrandedLoader from '../../Components/ui/BrandedLoader/BrandedLoader';
-import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo, FiCalendar } from 'react-icons/fi';
-import { SidebarGroup } from './components/SidebarGroup';
-import { SidebarLink } from './components/SidebarLink';
+import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo } from 'react-icons/fi';
+import { SideBarGroup } from './components/SideBarGroup';
+import { SideBarLink } from './components/SideBarLink';
 import { StepIndicator } from './components/StepIndicator';
 
 interface NavLinkItem {
@@ -129,9 +129,9 @@ const EventSettingsLayout: React.FC = () => {
                     {/* Navigation */}
                     <nav className="flex-grow px-4 py-6 space-y-8 overflow-y-auto">
                         {settingsNavigation.map(group => (
-                            <SidebarGroup key={group.title} title={group.title} icon={group.icon}>
+                            <SideBarGroup key={group.title} title={group.title} icon={group.icon}>
                                 {group.links.map(link => (
-                                    <SidebarLink
+                                    <SideBarLink
                                         key={link.name}
                                         to={link.to}
                                         icon={link.icon}
@@ -139,9 +139,9 @@ const EventSettingsLayout: React.FC = () => {
                                         end={link.to.endsWith('/info')}
                                     >
                                         {link.name}
-                                    </SidebarLink>
+                                    </SideBarLink>
                                 ))}
-                            </SidebarGroup>
+                            </SideBarGroup>
                         ))}
                     </nav>
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-interface SidebarLinkProps {
+interface SideBarLinkProps {
   to: string;
   icon: React.ComponentType<{ className?: string }>;
   disabled?: boolean;
@@ -10,7 +10,7 @@ interface SidebarLinkProps {
   end?: boolean;
 }
 
-export const SidebarLink: React.FC<SidebarLinkProps> = ({
+export const SideBarLink: React.FC<SideBarLinkProps> = ({
   to,
   icon: Icon,
   disabled = false,

@@ -3,7 +3,7 @@ import { FiUpload, FiTrash2, FiImage } from 'react-icons/fi';
 
 interface EmailBannerEditorProps {
     bannerText: string;
-    bannerImage?: string;
+    bannerImage?: File | string;
     showBanner: boolean;
     onBannerTextChange: (text: string) => void;
     onBannerImageChange: (image: File) => void;
@@ -41,6 +41,16 @@ export const EmailBannerEditor: React.FC<EmailBannerEditorProps> = ({
         event.preventDefault();
     };
 
+    // Get the image URL whether it's a File object or string URL
+    const getImageUrl = () => {
+        if (!bannerImage) return null;
+        if (typeof bannerImage === 'string') return bannerImage;
+        return URL.createObjectURL(bannerImage);
+    };
+
+    const imageUrl = getImageUrl();
+
+
     if (!showBanner) {
         return (
             <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
@@ -75,10 +85,10 @@ export const EmailBannerEditor: React.FC<EmailBannerEditorProps> = ({
                 onDragOver={handleDragOver}
                 onClick={() => fileInputRef.current?.click()}
             >
-                {bannerImage ? (
+                {imageUrl ? (
                     <div className="relative">
                         <img
-                            src={URL.createObjectURL(bannerImage)}
+                            src={imageUrl} 
                             alt="Banner preview"
                             className="mx-auto max-h-32 object-contain rounded"
                         />

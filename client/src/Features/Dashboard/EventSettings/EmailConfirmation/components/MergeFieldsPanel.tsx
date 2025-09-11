@@ -45,7 +45,6 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
         { value: '((attendees.[0].formDetails.115993_customfield2))', label: 'Dietary Preference', category: 'Custom Fields', icon: FiInfo },
     ];
 
-    const categories = Array.from(new Set(mergeFields.map(field => field.category)));
 
     const filteredFields = mergeFields.filter(field =>
         field.label.toLowerCase().includes(searchTerm.toLowerCase()) ||

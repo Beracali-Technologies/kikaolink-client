@@ -1,12 +1,12 @@
 import React from 'react';
 
-interface SidebarGroupProps {
+interface SideBarGroupProps {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
 }
 
-export const SidebarGroup: React.FC<SidebarGroupProps> = ({ title, icon: Icon, children }) => {
+export const SideBarGroup: React.FC<SideBarGroupProps> = ({ title, icon: Icon, children }) => {
   return (
     <div className="space-y-3">
       {/* Group Header - Made bold as requested */}

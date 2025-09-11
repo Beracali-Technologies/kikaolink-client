@@ -1,5 +1,7 @@
 import React from 'react';
-import { FiSettings, FiCheckSquare, FiUser, FiCreditCard } from 'react-icons/fi';
+import { FiSettings, FiCheckSquare } from 'react-icons/fi';
+import { EmailSections } from '../types/email';
+
 
 interface SettingsPanelProps {
     fromName: string;
@@ -13,7 +15,7 @@ interface SettingsPanelProps {
         viewRegistration: boolean;
     };
     onSettingsChange: (field: string, value: string) => void;
-    onSectionToggle: (section: string) => void;
+    onSectionToggle: (section: keyof EmailSections) => void;
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({

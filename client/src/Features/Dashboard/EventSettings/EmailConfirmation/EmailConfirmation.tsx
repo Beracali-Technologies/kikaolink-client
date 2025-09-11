@@ -10,7 +10,6 @@ const EmailConfirmation: React.FC = () => {
         emailSettings,
         sections,
         showMergeFields,
-        editingField,
         updateSettings,
         toggleSection,
         setShowMergeFields,
