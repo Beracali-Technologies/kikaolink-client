@@ -73,19 +73,19 @@ const EventSettingsLayout: React.FC = () => {
             title: 'BADGE PRINTING',
             icon: FiPrinter,
             links: [
-                {
-                    name: 'Badge Designer',
-                    to: '#',
-                    icon: FiPrinter,
-                    disabled: true
-                }
+                    {
+                        name: 'Badge Designer',
+                        to: '#',
+                        icon: FiPrinter,
+                        disabled: true
+                    }
             ]
         },
         {
             title: 'CHECK-IN',
             icon: FiCheckSquare,
             links: [
-                {
+                      {
                     name: 'Multi-Session',
                     to: '#',
                     icon: FiCheckSquare,

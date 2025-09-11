@@ -17,7 +17,7 @@ const CreateEvent = lazy(() => import('../Features/Dashboard/Events/CreateEvent/
 const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage'));
 const EditEvent = lazy(() => import('../Features/Dashboard/Events/EditEvent/EditEvent'));
 
-const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/Tabs/EmailConfirmation'))
+const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/EmailConfirmation/EmailConfirmation'))
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 

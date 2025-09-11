@@ -9,10 +9,10 @@ interface SidebarGroupProps {
 export const SidebarGroup: React.FC<SidebarGroupProps> = ({ title, icon: Icon, children }) => {
   return (
     <div className="space-y-3">
-      {/* Group Header */}
+      {/* Group Header - Made bold as requested */}
       <div className="flex items-center px-3 py-2">
-        <Icon className="h-4 w-4 text-gray-500 mr-2" />
-        <h3 className="text-xs font-semibold uppercase text-gray-500 tracking-wider">
+        <Icon className="h-4 w-4 text-gray-700 mr-2 font-bold" />
+        <h3 className="text-xs font-bold uppercase text-gray-700 tracking-wider">
           {title}
         </h3>
       </div>

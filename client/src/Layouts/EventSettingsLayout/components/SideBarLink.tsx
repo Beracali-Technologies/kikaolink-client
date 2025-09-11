@@ -1,3 +1,4 @@
+// src/Layouts/EventSettingsLayout/components/SidebarLink.tsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -16,31 +17,38 @@ export const SidebarLink: React.FC<SidebarLinkProps> = ({
   children,
   end = false
 }) => {
+  if (disabled) {
+    return (
+      <div className="flex items-center px-3 py-3 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed">
+        <Icon className="h-5 w-5 mr-3 text-gray-400" />
+        <span className="flex-1">{children}</span>
+        <span className="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-md">
+          Soon
+        </span>
+      </div>
+    );
+  }
+
   return (
     <NavLink
-      to={disabled ? '#' : to}
+      to={to}
       end={end}
       className={({ isActive }) =>
         `flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
         ${isActive
-          ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-600 shadow-sm'
-          : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
-        }
-        ${disabled
-          ? 'text-gray-400 cursor-not-allowed hover:bg-transparent'
-          : 'hover:text-blue-600'
+          ? 'bg-blue-50 text-blue-700 shadow-sm'
+          : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
         }`
       }
     >
-      <Icon className={`h-5 w-5 mr-3 ${disabled ? 'text-gray-400' : 'text-gray-500'}`} />
-      {children}
-      {disabled && (
-        <span className="ml-auto px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded-md">
-          Soon
-        </span>
-      )}
-      {!disabled && (
-        <div className="ml-auto w-2 h-2 rounded-full bg-blue-600"></div>
+      {({ isActive }) => (
+        <>
+          <Icon className="h-5 w-5 mr-3 text-gray-500" />
+          <span className="flex-1">{children}</span>
+          {isActive && (
+            <div className="ml-2 w-2 h-2 rounded-full bg-blue-600"></div>
+          )}
+        </>
       )}
     </NavLink>
   );
