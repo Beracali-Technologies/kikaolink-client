@@ -112,7 +112,14 @@ const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, i
             {/* Submit Button */}
             <div className="flex justify-end pt-4 border-t">
                 <button type="submit" disabled={isSubmitting} className="flex items-center justify-center min-w-[150px] bg-blue-600 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-blue-700 disabled:bg-gray-400">
-                    {isSubmitting ? ( <FiLoader className="animate-spin" /> ) : (
+                    {isSubmitting ?
+                            (
+                                <>
+                                    <FiLoader className="animate-spin" />
+                                    Saving...
+                                </>
+                             )
+                             : (
                         <span>{mode === 'create' ? 'Create & Continue' : 'Save Changes'}</span>
                     )}
                 </button>

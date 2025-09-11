@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useEventStore } from '../../../../lib/stores/eventStore';
 import EventForm from '../components/EventForm';
+import { FiLoader } from 'react-icons/fi';
+
 
 const EditEvent: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -25,10 +27,7 @@ const EditEvent: React.FC = () => {
             await updateEvent(parseInt(eventId).toString(), data);
             toast.success('Event Updated Successfully!', { icon: '✅' });
 
-            // Optional: Redirect after success or stay on the page
-            setTimeout(() => {
-                navigate('/dashboard/events');
-            }, 1500);
+
 
         } catch (err) {
             toast.error(error || 'Failed to update event.');
@@ -40,7 +39,7 @@ const EditEvent: React.FC = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="text-center p-12"><FiLoader className="animate-spin text-4xl mx-auto text-blue-500" /></div>
             </div>
         );
     }

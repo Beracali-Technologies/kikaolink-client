@@ -1,0 +1,26 @@
+import React from 'react';
+
+interface SidebarGroupProps {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}
+
+export const SidebarGroup: React.FC<SidebarGroupProps> = ({ title, icon: Icon, children }) => {
+  return (
+    <div className="space-y-3">
+      {/* Group Header */}
+      <div className="flex items-center px-3 py-2">
+        <Icon className="h-4 w-4 text-gray-500 mr-2" />
+        <h3 className="text-xs font-semibold uppercase text-gray-500 tracking-wider">
+          {title}
+        </h3>
+      </div>
+
+      {/* Group Links */}
+      <div className="space-y-1">
+        {children}
+      </div>
+    </div>
+  );
+};
