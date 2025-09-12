@@ -12,6 +12,17 @@ interface EventState {
     error: string | null;
 }
 
+interface Event {
+  id: number;
+  title: string;
+  // ... other properties
+  is_live?: boolean;
+  live_url?: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+}
+
 // Define the shape of the ACTIONS
 interface EventActions {
     fetchEvents: () => Promise<void>;
@@ -48,7 +59,12 @@ export const useEventStore = create(
             fetchEventById: async (id: string) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await api.get(`/api/events/${id}`);
+                  const response = await fetch(`/api/events/${id}`, {
+                            headers: {
+                            'Authorization': `Bearer ${token}`
+                            }
+                            });
+
                     set({ currentEvent: response.data.data, lastActiveEventId: id, isLoading: false });
                 } catch (error) {
                     set({ error: "Could not load event.", isLoading: false });
