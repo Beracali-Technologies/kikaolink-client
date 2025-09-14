@@ -1,5 +1,7 @@
-
 import axios from 'axios';
+import { getAuthToken, clearAuthToken } from './utils/tokenUtils';
+import { useAuthStore } from './stores/authStore';
+
 
 
 // Fallback to your default local server URL if the variable is not set.
@@ -24,16 +26,22 @@ const api = axios.create({
 
 
 
-// The interceptor logs every request being sent from your frontend.
-api.interceptors.request.use(request => {
-  console.log('Starting Request', {
-    url: request.url,
-    method: request.method,
-    headers: request.headers,
-    data: request.data
-  });
-  return request;
-});
+// Response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Unauthorized - clear token and redirect to login
+      clearAuthToken();
+      // Safely call logout without circular dependencies
+      if (typeof useAuthStore !== 'undefined' && useAuthStore.getState) {
+        useAuthStore.getState().logout();
+      }
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const initializeApi = () => {
     // Callin this to get the cookie, don't need the response

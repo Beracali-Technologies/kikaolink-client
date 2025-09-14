@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '../axios';
 import { TEvent, TEventCreate } from '@/types/event';
+import { eventsApi } from '../api/events';
+
 
 // Define the shape of the STATE
 interface EventState {
@@ -38,7 +40,7 @@ type EventStore = EventState & EventActions;
 
 export const useEventStore = create(
     persist<EventStore>(
-        (set) => ({
+        (set, get) => ({
             // --- STATE PROPERTIES ---
             events: [],
             currentEvent: null,
@@ -48,49 +50,49 @@ export const useEventStore = create(
 
             // --- ACTION IMPLEMENTATIONS ---
             fetchEvents: async () => {
-                set({ isLoading: true, error: null });
-                try {
-                    const response = await api.get('/api/events');
-                    set({ events: response.data.data, isLoading: false });
-                } catch (err) {
-                    set({ error: "Failed to fetch events.", isLoading: false });
-                }
-            },
-            fetchEventById: async (id: string) => {
-                set({ isLoading: true, error: null });
-                try {
-                  const response = await fetch(`/api/events/${id}`, {
-                            headers: {
-                            'Authorization': `Bearer ${token}`
-                            }
-                            });
+        set({ isLoading: true, error: null });
+        try {
+          const events = await eventsApi.getEvents(); // Use eventsApi
+          set({ events, isLoading: false });
+        } catch (err) {
+          set({ error: "Failed to fetch events.", isLoading: false });
+        }
+      },
 
-                    set({ currentEvent: response.data.data, lastActiveEventId: id, isLoading: false });
-                } catch (error) {
-                    set({ error: "Could not load event.", isLoading: false });
-                    throw error;
-                }
-            },
-            createEvent: async (newEventData: TEventCreate) => {
-                set({ isLoading: true });
-                try {
-                    const response = await api.post('/api/events', newEventData);
-                    const newEvent = response.data.data;
-                    set((state) => ({
-                        events: [...state.events, newEvent],
-                        isLoading: false
-                    }));
-                    return newEvent;
-                } catch (error) {
-                    set({ isLoading: false, error: 'Failed to create event.' });
-                    throw error;
-                }
-            },
+      fetchEventById: async (id: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const event = await eventsApi.getEvent(id); // Use eventsApi
+          set({ currentEvent: event, lastActiveEventId: id, isLoading: false });
+        } catch (error) {
+          set({ error: "Could not load event.", isLoading: false });
+          throw error;
+        }
+      },
+
+
+            createEvent: async (newEventData: EventFormData) => {
+               set({ isLoading: true });
+                   try {
+                         const newEvent = await eventsApi.createEvent(newEventData); // Use eventsApi
+                         set((state) => ({
+                           events: [...state.events, newEvent],
+                           isLoading: false
+                         }));
+                          return newEvent;
+                   } catch (error) {
+                        set({ isLoading: false, error: 'Failed to create event.' });
+                            throw error;
+               }
+      },
+
+
             updateEvent: async (id: string, data: TEventCreate) => {
                  set({ isLoading: true });
                 try {
-                    const response = await api.put(`/api/events/${id}`, data);
-                    const updatedEvent = response.data.data;
+                  //  const response = await api.put(`/api/events/${id}`, data);  replace direct api calls with eventsApi
+                    const updatedEvent = await eventsApi.updateEvent(id, data);
+
                     set((state) => ({
                         currentEvent: updatedEvent,
                         events: state.events.map(e => e.id.toString() === id ? updatedEvent : e),
@@ -102,6 +104,29 @@ export const useEventStore = create(
                     throw error;
                 }
             },
+
+
+            toggleLiveStatus: async (id: string) => {
+                set({ isLoading: true, error: null });
+                  try {
+                        const liveDetail = await eventsApi.toggleLiveStatus(id);
+                        const { currentEvent } = get();
+                    if (currentEvent) {
+                        set({
+                            currentEvent: {
+                              ...currentEvent,
+                                live_detail: liveDetail,
+                                status: liveDetail.is_live ? 'LIVE' : 'DRAFT'
+                          },
+                            isLoading: false
+                        });
+                      }
+                  } catch (error) {
+                        set({ error: (error as Error).message, isLoading: false });
+                          throw error;
+                  }
+              },
+
 
             clearError: () => set({ error: null }),
 

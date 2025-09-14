@@ -16,7 +16,7 @@ const EventStatusBadge: React.FC<EventStatusBadgeProps> = ({ status, isLive }) =
   const config = getStatusConfig();
 
   return (
-    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${config.color}`}>
+    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${config.color} whitespace-nowrap`}>
       {config.text}
     </span>
   );

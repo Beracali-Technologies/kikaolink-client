@@ -20,6 +20,7 @@ const EditEvent = lazy(() => import('../Features/Dashboard/Events/EditEvent/Edit
 const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/EmailConfirmation/EmailConfirmation'))
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
+const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsite/EventWebsite'));
 
 // --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
 export const routes: RouteObject[] = [
@@ -30,7 +31,8 @@ export const routes: RouteObject[] = [
             { path: '/', element: <HeroPage /> },
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
-            // ... add other public routes here (signup, contact, etc.)
+            { path: '/events/:eventSlug', element: <EventWebsite /> },
+
         ]
     },
     // --- Private Dashboard Routes ---
