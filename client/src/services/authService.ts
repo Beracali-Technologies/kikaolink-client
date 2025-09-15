@@ -1,11 +1,19 @@
 import api from '../lib/axios';
 import { useAuthStore } from '../lib/stores/authStore';
 import { TLoginCredentials } from '@/types/user';
-import { storeAuthToken } from '../lib/utils/tokenUtils';
+import { storeAuthToken, clearAuthToken } from '../lib/utils/tokenUtils';
+import { initializeCsrfCookie } from './eventService';
+import api from '../lib/axios';
 
 
-// Called on successful login
+// Function to initialize Sanctum's CSRF cookie
+export const initializeCsrfCookie = () => {
+    return api.get('/sanctum/csrf-cookie');
+};
+
 export const loginUser = async (credentials: TLoginCredentials) => {
+          await initializeCsrfCookie();
+
   const response = await api.post('/api/login', credentials);
 
   // ADD THESE LINES to store the token
@@ -26,7 +34,14 @@ export const checkAuthStatus = async () => {
     try {
         const { data } = await api.get('/api/user');
         useAuthStore.setState({ user: data, isAuthenticated: true });
+
+        return data;
+
     } catch (error) {
+
+            //clear token on token failure
+            clearAuthToken();
+
         // If this fails, it means the user is not logged in.
         // We must ensure the state is clean.
         useAuthStore.setState({ user: null, isAuthenticated: false });

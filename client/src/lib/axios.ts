@@ -25,6 +25,15 @@ const api = axios.create({
 });
 
 
+// In lib/axios.ts
+api.interceptors.request.use((config) => {
+  const token = getAuthToken(); // Make sure this function exists
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
