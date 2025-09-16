@@ -1,52 +1,43 @@
 import api from '../lib/axios';
 import { useAuthStore } from '../lib/stores/authStore';
 import { TLoginCredentials } from '@/types/user';
-import { storeAuthToken, clearAuthToken } from '../lib/utils/tokenUtils';
-import { initializeCsrfCookie } from './eventService';
-import api from '../lib/axios';
+import { storeAuthToken, clearAuthToken, getAuthToken } from '../lib/utils/tokenUtils';
 
 
-// Function to initialize Sanctum's CSRF cookie
-export const initializeCsrfCookie = () => {
-    return api.get('/sanctum/csrf-cookie');
+
+
+// Initialize CSRF once at app start
+export const initializeCsrf = async () => {
+  try {
+    await api.get('/sanctum/csrf-cookie');
+    console.log('CSRF token initialized');
+  } catch (error) {
+    console.error('Failed to initialize CSRF token:', error);
+  }
 };
 
 export const loginUser = async (credentials: TLoginCredentials) => {
-          await initializeCsrfCookie();
-
+  // CSRF should already be initialized from app startup
   const response = await api.post('/api/login', credentials);
 
-  // ADD THESE LINES to store the token
   if (response.data.token) {
     storeAuthToken(response.data.token);
   } else if (response.data.access_token) {
     storeAuthToken(response.data.access_token);
-  } else {
-    console.warn('No token found in login response. Please check your API response format.');
   }
 
-  useAuthStore.setState({ user: response.data, isAuthenticated: true });
+  return response.data;
 };
 
-
-// Called when checking auth on app startup
 export const checkAuthStatus = async () => {
-    try {
-        const { data } = await api.get('/api/user');
-        useAuthStore.setState({ user: data, isAuthenticated: true });
+  // Check if we have a token before making the request
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
 
-        return data;
-
-    } catch (error) {
-
-            //clear token on token failure
-            clearAuthToken();
-
-        // If this fails, it means the user is not logged in.
-        // We must ensure the state is clean.
-        useAuthStore.setState({ user: null, isAuthenticated: false });
-        throw error; // Re-throw the error so AppInitializer can see it failed
-    }
+  const { data } = await api.get('/api/user');
+  return data;
 };
 
 // Called on logout

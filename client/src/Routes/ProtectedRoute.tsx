@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../lib/stores/authStore';
-import { initializeApi } from '../lib/axios';
 import BrandedLoader from '../Components/ui/BrandedLoader/BrandedLoader';
 
 interface ProtectedRouteProps {
@@ -12,15 +11,13 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     const { isAuthenticated, isAuthLoading, checkAuth } = useAuthStore();
     const location = useLocation();
 
-    // --- THIS IS THE NEW LOGIC ---
-    // The auth check is now triggered here, ONLY when a protected route is accessed.
+
     useEffect(() => {
-        const initializeAndCheck = async () => {
-            await initializeApi();
-            await checkAuth();
-        };
-        initializeAndCheck();
-    }, []); // Runs once when this component first tries to load
+    // Only check auth if not already authenticated and not already loading
+    if (!isAuthenticated && isAuthLoading) {
+      checkAuth();
+    }
+  }, [isAuthenticated, isAuthLoading, checkAuth]);
 
     // 1. While the check is in progress, show a full-screen loader.
     if (isAuthLoading) {

@@ -1,10 +1,6 @@
 import api from '../lib/axios'; // Import the shared instance
 import { TEvent } from '@/types/event'; // Adjust path if needed
 
-// Function to initialize Sanctum's CSRF cookie
-export const initializeCsrfCookie = () => {
-    return api.get('/sanctum/csrf-cookie');
-};
 
 // Function to get all events
 export const getEvents = () => {
