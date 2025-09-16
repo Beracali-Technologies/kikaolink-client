@@ -27,7 +27,7 @@ const EmailIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 // A map to dynamically select the correct icon component based on its name
-const iconComponents: { [key: string]: React.FC<IconProps> } = {
+const iconcomponents: { [key: string]: React.FC<IconProps> } = {
   PhoneIcon,
   WhatsAppIcon,
   EmailIcon,
@@ -39,7 +39,7 @@ interface ContactMethodCardProps {
 
 const ContactMethodCard: React.FC<ContactMethodCardProps> = ({ method }) => {
   // Dynamically get the icon component using its name from the method object
-  const IconComponent = iconComponents[method.iconName];
+  const IconComponent = iconcomponents[method.iconName];
 
   return (
 

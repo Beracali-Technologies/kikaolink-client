@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import FeaturesSection from '../Components/FeaturesSection/FeaturesSection';
+import FeaturesSection from '../components/FeaturesSection/FeaturesSection';
 
 
 

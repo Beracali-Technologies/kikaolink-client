@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import Footer from '../../Features/Landing/Components/Footer/Footer';
+import Footer from '../../Features/Landing/components/Footer/Footer';
 
 const PublicLayout: React.FC = () => {
         const location = useLocation();

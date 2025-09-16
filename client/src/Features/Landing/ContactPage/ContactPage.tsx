@@ -1,5 +1,5 @@
 import React from 'react';
-import HeroHeader from '../Components/HeroHeader/HeroHeader';
+import HeroHeader from '../components/HeroHeader/HeroHeader';
 import ContactMethodCard from './ContactMethodCard';
 import { contactMethods } from './ContactData';
 

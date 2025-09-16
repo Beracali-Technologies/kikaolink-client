@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useEventStore } from '../../lib/stores/eventStore';
-import BrandedLoader from '../../Components/ui/BrandedLoader/BrandedLoader';
+import BrandedLoader from '../../components/ui/BrandedLoader/BrandedLoader';
 import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo } from 'react-icons/fi';
 import { SideBarGroup } from './components/SideBarGroup';
 import { SideBarLink } from './components/SideBarLink';

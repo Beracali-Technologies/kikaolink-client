@@ -2,7 +2,7 @@ import React, { useState } from 'react'; // <-- Import useState
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../../../lib/stores/authStore';
 import { FiLogOut } from 'react-icons/fi';
-import ConfirmLogoutModal from '../../../../../Components/ui/ConfirmLogoutModal/ConfirmLogoutModal'; // <-- IMPORT THE MODAL
+import ConfirmLogoutModal from '../../../../../components/ui/ConfirmLogoutModal/ConfirmLogoutModal'; // <-- IMPORT THE MODAL
 
 interface SidebarUserMenuProps {
     isOpen: boolean;

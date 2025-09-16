@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from '../../Features/Dashboard/Components/Sidebar/Sidebar';
-import Header from '../../Features/Dashboard/Components/Header/Header';
+import Sidebar from '../../Features/Dashboard/components/Sidebar/Sidebar';
+import Header from '../../Features/Dashboard/components/Header/Header';
 
 const DashboardLayout: React.FC = () => {
     // State for the mobile menu (slide-out overlay)

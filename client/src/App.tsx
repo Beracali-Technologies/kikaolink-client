@@ -4,7 +4,7 @@ import { useAuthStore } from './lib/stores/authStore';
 import { initializeApi } from './lib/axios';
 
 import { routes } from './Routes/routeDefinitions';
-import BrandedLoader from './Components/ui/BrandedLoader/BrandedLoader';
+import BrandedLoader from './components/ui/BrandedLoader/BrandedLoader';
 
 // --- Creating the router instance ONCE, outside the component ---
 const router = createBrowserRouter(routes);

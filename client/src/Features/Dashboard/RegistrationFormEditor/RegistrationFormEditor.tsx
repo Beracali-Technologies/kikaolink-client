@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Field, FieldType } from '@/types/form';
-import FormFieldItem from './Components/FormFieldItem/FormFieldItem';
-import AddCustomField from './Components/AddCustomField/AddCustomField';
-import StandardFieldsPanel from './Components/StandardFieldsPanel/StandardFieldsPanel';
-import PreviewFormModal from '../Components/PreviewFormModal/PreviewFormModal';
+import FormFieldItem from './components/FormFieldItem/FormFieldItem';
+import AddCustomField from './components/AddCustomField/AddCustomField';
+import StandardFieldsPanel from './components/StandardFieldsPanel/StandardFieldsPanel';
+import PreviewFormModal from '../components/PreviewFormModal/PreviewFormModal';
 import { useParams } from 'react-router-dom';
 
 const ALL_STANDARD_FIELDS: Field[] = [

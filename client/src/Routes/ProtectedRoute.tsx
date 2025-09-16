@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../lib/stores/authStore';
-import BrandedLoader from '../Components/ui/BrandedLoader/BrandedLoader';
+import BrandedLoader from '../components/ui/BrandedLoader/BrandedLoader';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
