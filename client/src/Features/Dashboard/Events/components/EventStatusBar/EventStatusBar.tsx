@@ -1,24 +1,22 @@
 import React from 'react';
 import EventStatusBadge from './components/EventStatusBadge';
 import EventUrlCopy from './components/EventUrlCopy';
-import { generateEventUrl } from '../utils/urlHelpers';
 import OpenEventButton from './components/OpenEventButton';
-import { Event } from '../../../../types/event';
-import { useEventStore } from '../../../../../lib/stores/eventStore';
-import { generateEventUrlPath, generateAbsoluteEventUrl, generateDisplayEventUrl } from '../../../../../lib/utils/urlHelpers';
+import { eventsApi } from '../../../../../lib/api/events';
+import {  generateAbsoluteEventUrl, generateDisplayEventUrl } from '../../../../../lib/utils/urlHelpers';
 
 
 
 interface EventStatusBarProps {
-  event: Event;
+  event: any;
   isLoading: boolean;
 }
 
 const EventStatusBar: React.FC<EventStatusBarProps> = ({ event, isLoading }) => {
-  const { toggleLiveStatus } = useEventStore();
+
 
   // Generate URLs
-  const eventUrlPath = generateEventUrlPath(event.title); // /events/house-party
+
   const absoluteEventUrl = generateAbsoluteEventUrl(event.title); // http://localhost:5173/events/house-party
   const displayEventUrl = generateDisplayEventUrl(event.title); // localhost:5173/events/house-party
 
@@ -28,7 +26,7 @@ const EventStatusBar: React.FC<EventStatusBarProps> = ({ event, isLoading }) => 
   // Fixed onToggleLive function that returns the expected format
   const handleToggleLive = async (eventId: string) => {
     try {
-      await toggleLiveStatus(eventId);
+      await eventsApi.toggleLiveStatus(eventId);
 
       return { success: true, message: 'Event status updated successfully' };
 

@@ -13,16 +13,16 @@ const EventList: React.FC = () => {
     const { events, isLoading, error, fetchEvents } = useEventStore();
     // Create local state to hold the user's search input
     const [searchTerm, setSearchTerm] = useState('');
-    const [localError, setLocalError] = useState<string | null>(null);
+
 
     // Fetch the full event list only once when the page loads
     useEffect(() => {
     const loadEvents = async () => {
       try {
         await fetchEvents();
-        setLocalError(null);
+
       } catch (err) {
-        setLocalError(err instanceof Error ? err.message : 'Failed to load events');
+            console.error(`Failed to load Events: `, err);
       }
     };
 
@@ -30,8 +30,7 @@ const EventList: React.FC = () => {
   }, [fetchEvents]);
 
     // --- 2. REAL-TIME FILTERING LOGIC ---
-    // This `useMemo` hook will re-filter the events ONLY when the master list or the search term changes.
-    // This is highly performant.
+    
     const filteredEvents = useMemo(() => {
         // If there's no search term, return the full list.
         if (!searchTerm.trim()) {

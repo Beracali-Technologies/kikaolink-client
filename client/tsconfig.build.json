@@ -2,15 +2,18 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/*": ["*"],
+      "@/types": ["types/types.ts"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
-    "src/tests/**/*" 
+    "src/tests/**/*"
   ]
 }

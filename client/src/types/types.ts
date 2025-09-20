@@ -1,5 +1,6 @@
 // Barrel file for types
 
-export * from './event';
-export * from './form';
+export * from './events/types';
+export * from './forms/types';
 export * from './user';
+export * from './common';

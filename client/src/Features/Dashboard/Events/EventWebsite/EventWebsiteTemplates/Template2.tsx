@@ -1,11 +1,9 @@
 import React from 'react';
-import { Event } from '../../../../types/event';
+import { EventDetails } from '@/types';
 
-interface EventWebsiteProps {
-  event: Event;
-}
 
-const Template2: React.FC<EventWebsiteProps> = ({ event }) => {
+
+const Template2: React.FC<{ event: EventDetails }> = ({ event }) => {
   // Format dates for display
   const formatDateRange = () => {
     if (!event.start_date || !event.end_date) return '';
@@ -32,7 +30,7 @@ const Template2: React.FC<EventWebsiteProps> = ({ event }) => {
           </div>
 
 
-          
+
           <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-md font-medium transition-colors text-sm">
             Register Now
           </button>
@@ -156,7 +154,11 @@ const Template2: React.FC<EventWebsiteProps> = ({ event }) => {
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-light text-center mb-4 text-gray-800">Location</h2>
               <div className="w-16 h-0.5 bg-red-500 mx-auto mb-8"></div>
-              <p className="text-xl text-gray-600 mb-2">{event.location}</p>
+                  <p className="text-xl text-gray-600 mb-2">
+                  {typeof event.location === 'string'
+                        ? event.location
+                        : event.location?.name ?? event.location?.address ?? ''}
+                  </p>
               <p className="text-gray-500">{formatDateRange()}</p>
             </div>
           </div>

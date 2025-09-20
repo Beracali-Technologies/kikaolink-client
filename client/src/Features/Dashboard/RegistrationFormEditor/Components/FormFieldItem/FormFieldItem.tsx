@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field } from '@/types/form';
+import { Field } from '@/types';
 import FieldRenderer from '../FieldRenderer/FieldRenderer';
 
 // --- Icons ---

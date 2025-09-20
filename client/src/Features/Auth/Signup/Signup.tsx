@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
             await api.get('/sanctum/csrf-cookie');
 
             //await initializeApi(); //sets the csrf cookie before making request
-            await api.post('/api/register', payload);
+          const response = await api.post('/api/register', payload);
 
               console.log('Signup Data: ', data);
 

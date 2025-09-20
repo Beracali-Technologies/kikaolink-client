@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Field } from '../../Dashboard/types';
+import { Field } from '@/types';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Don't forget styles!
 
@@ -34,12 +34,42 @@ const PublicRegistrationForm: React.FC<PublicRegistrationFormProps> = ({ fields,
 
              switch(field.fieldType) {
                 case 'textarea': return <textarea {...register(fieldName, { required: field.required })} className={commonInputClass} rows={4} />;
-                case 'multichoice': return <div className="space-y-3 mt-2">{field.options?.map(opt => (
-                    <label key={opt} className="flex items-center text-gray-800 font-medium"><input type="radio" value={opt} {...register(fieldName, { required: field.required })} className="h-4 w-4 mr-3 text-primary-blue focus:ring-primary-blue"/>{opt}</label>
-                ))}</div>;
-                case 'checkbox': return <div className="space-y-3 mt-2">{field.options?.map(opt => (
-                    <label key={opt} className="flex items-center text-gray-800 font-medium"><input type="checkbox" {...register(`${fieldName}.${opt}`)} className="h-4 w-4 mr-3 rounded text-primary-blue focus:ring-primary-blue"/>{opt}</label>
-                ))}</div>;
+
+
+                case 'multichoice':
+                          return (
+                            <div className="space-y-3 mt-2">
+                              {field.options?.map((opt: string) => (
+                                <label key={opt} className="flex items-center text-gray-800 font-medium">
+                                  <input
+                                    type="radio"
+                                    value={opt}
+                                    {...register(fieldName, { required: field.required })}
+                                    className="h-4 w-4 mr-3 text-primary-blue focus:ring-primary-blue"
+                                  />
+                                  {opt}
+                                </label>
+                              ))}
+                            </div>
+                          );
+
+                case 'checkbox':
+                          return (
+                            <div className="space-y-3 mt-2">
+                              {field.options?.map((opt: string) => (
+                                <label key={opt} className="flex items-center text-gray-800 font-medium">
+                                  <input
+                                    type="checkbox"
+                                    {...register(`${fieldName}.${opt}`)}
+                                    className="h-4 w-4 mr-3 rounded text-primary-blue focus:ring-primary-blue"
+                                  />
+                                  {opt}
+                                </label>
+                              ))}
+                            </div>
+                          );
+
+
                 case 'text':
                 default:
                     return <input type="text" {...register(fieldName, { required: field.required })} className={commonInputClass} />;

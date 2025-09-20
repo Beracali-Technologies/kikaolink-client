@@ -1,5 +1,5 @@
 import React from 'react';
-import { Attendee } from '@/types/form';
+import { Attendee } from '@/types';
 
 const AttendeeCard: React.FC<{ attendee: Attendee | null }> = ({ attendee }) => (
     <footer className={`

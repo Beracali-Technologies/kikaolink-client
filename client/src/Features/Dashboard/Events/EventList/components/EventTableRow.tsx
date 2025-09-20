@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TEvent, EventStatus } from '@/types/event'; // Ensure you have this type defined
+import { TEvent, EventStatus } from '@/types'; // Ensure you have this type defined
 import { FiCalendar } from 'react-icons/fi';
 
 // This helper function creates the colored "status chip"
@@ -9,6 +9,8 @@ const getStatusChip = (status: EventStatus) => {
         LIVE: "bg-green-100 text-green-800",
         DRAFT: "bg-yellow-100 text-yellow-800",
         COMPLETED: "bg-gray-200 text-gray-700",
+        ACTIVE: "bg-blue-100 text-blue-800",
+        INACTIVE: "bg-red-100 text-red-800",
     };
     const color = statusMap[status] || statusMap.DRAFT;
     return <span className={`flex-shrink-0 text-xs font-medium px-2.5 py-1 rounded-full ${color}`}>{status}</span>;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Field, FieldType } from '@/types/form';
+import { Field, FieldType } from '@/types';
 import FormFieldItem from './components/FormFieldItem/FormFieldItem';
 import AddCustomField from './components/AddCustomField/AddCustomField';
 import StandardFieldsPanel from './components/StandardFieldsPanel/StandardFieldsPanel';

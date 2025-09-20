@@ -1,7 +1,7 @@
 import api from '../lib/axios';
 import { useAuthStore } from '../lib/stores/authStore';
 import { TLoginCredentials } from '@/types/user';
-import { storeAuthToken, clearAuthToken, getAuthToken } from '../lib/utils/tokenUtils';
+import { storeAuthToken, getAuthToken } from '../lib/utils/tokenUtils';
 
 
 

@@ -11,7 +11,7 @@ import EditEventHeader from './components/EditEventHeader';
 
 const EditEvent: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
-  const { currentEvent, fetchEventById, updateEvent, error } = useEventStore();
+  const { currentEvent, fetchEventById, updateEvent, error, isLoading } = useEventStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const EditEvent: React.FC = () => {
       <Toaster position="top-right" />
 
       {/* Status Bar at the very top */}
-      <EventStatusBar event={currentEvent} />
+      <EventStatusBar event={currentEvent} isLoading={isLoading} />
 
       <div className="px-4 py-8">
         <BackButton />

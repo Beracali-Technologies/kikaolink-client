@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Field } from '@/types/form';
+import { Field } from '@/types';
 
 interface FieldPreviewProps {
     field: Field;

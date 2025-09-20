@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { FiLoader } from 'react-icons/fi';
-import { TEvent, TEventCreate } from '@/types/event';
+import { TEvent, TEventCreate } from '@/types';
 
 interface EventFormProps {
     event?: TEvent | null; // Passing existing event to switch to "edit" mode
@@ -30,8 +30,11 @@ const EventForm: React.FC<EventFormProps> = ({ event, onFormSubmit = () => {}, i
                 startTime: startDate.toTimeString().substring(0, 5),
                 endDate: endDate.toISOString().split('T')[0],
                 endTime: endDate.toTimeString().substring(0, 5),
-                location: event.location || '',
-            });
+                location:
+                          typeof event.location === 'string'
+                            ? event.location
+                            : event.location?.name || '',
+                                  });
         }
     }, [event, reset, mode]);
 

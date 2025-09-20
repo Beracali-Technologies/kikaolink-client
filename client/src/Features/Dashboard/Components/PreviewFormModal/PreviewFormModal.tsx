@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Field } from '@/types/form';
+import { Field } from '@/types';
 import PublicRegistrationForm from '../../../Landing/PublicRegistrationForm/PublicRegistrationForm';
 
 interface PreviewFormModalProps {

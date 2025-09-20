@@ -1,14 +1,10 @@
 import React from "react";
+import { EventDetails } from '@/types';
 
-interface Event {
-  title: string;
-  date: string;
-  location: string;
-  description: string;
-  image?: string;
-}
 
-const Template1: React.FC<{ event: Event }> = ({ event }) => {
+
+
+const Template1: React.FC<{ event: EventDetails }> = ({ event }) => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Hero Section */}
@@ -42,13 +38,17 @@ const Template1: React.FC<{ event: Event }> = ({ event }) => {
                 <span className="block text-indigo-600 font-semibold text-sm uppercase tracking-wide">
                   Date
                 </span>
-                <p className="mt-4 text-gray-700 text-lg">{event.date}</p>
+                      <p className="mt-4 text-gray-700 text-lg">
+                          {event.startDate ?? event.start_date ?? ''}
+                      </p>
               </div>
               <div>
                 <span className="block text-indigo-600 font-semibold text-sm uppercase tracking-wide">
                   Location
                 </span>
-                <p className="mt-4 text-gray-700 text-lg">{event.location}</p>
+                      <p className="mt-4 text-gray-700 text-lg">
+                            {typeof event.location === 'string' ? event.location : (event.location?.name ?? event.location?.address ?? '')}
+                      </p>
               </div>
               <div>
                 <span className="block text-indigo-600 font-semibold text-sm uppercase tracking-wide">

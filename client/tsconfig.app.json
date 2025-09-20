@@ -15,9 +15,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"],
+      "@/types": ["types/types.ts"],
+      "@/types/*": ["types/*"]
     },
 
     /* Linting */

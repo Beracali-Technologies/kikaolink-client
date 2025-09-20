@@ -1,6 +1,6 @@
 // authStore.ts
 import { create } from 'zustand';
-import { TUser, TLoginCredentials } from '@/types/user';
+import { TUser, TLoginCredentials } from '@/types';
 import { loginUser, logoutUser, checkAuthStatus } from '../../services/authService';
 
 interface AuthState {
