@@ -1,7 +1,7 @@
 import { FC, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './Routes/routeDefinitions';
-import BrandedLoader from './components/ui/BrandedLoader/BrandedLoader';
+import BrandedLoader from './components/ui/BrandedLoader';
 
 
 // --- Creating the router instance ONCE, outside the component ---
