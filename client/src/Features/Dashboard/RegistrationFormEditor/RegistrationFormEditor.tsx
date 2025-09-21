@@ -21,7 +21,7 @@ const RegistrationFormEditor: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
     const [fields, setFields] = useState<Field[]>(() =>
         ALL_STANDARD_FIELDS.filter(f => ['firstName', 'lastName', 'email'].includes(f.systemName!))
-    );
+    ); 
     const [editingFieldId, setEditingFieldId] = useState<number | null>(null);
     const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
