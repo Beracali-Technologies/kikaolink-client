@@ -1,8 +1,8 @@
 import React from 'react';
-import { Event } from '../../../../lib/types/event';
+import { EventDetails } from '@/types';
 
 interface Template1Props {
-  event: Event;
+  event: EventDetails;
 }
 
 const Template1: React.FC<Template1Props> = ({ event }) => {
@@ -96,7 +96,7 @@ const Template1: React.FC<Template1Props> = ({ event }) => {
               <h3 className="text-white font-semibold text-lg mb-2">Location</h3>
               {event.location && (
                 <p className="text-gray-300">
-                  {event.location}
+                        {typeof event.location === 'string' ? event.location : JSON.stringify(event.location)}
                 </p>
               )}
               <button className="mt-4 text-blue-300 text-sm hover:text-blue-200 transition-colors">

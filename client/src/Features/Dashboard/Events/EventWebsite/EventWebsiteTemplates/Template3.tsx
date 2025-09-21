@@ -1,8 +1,8 @@
 import React from 'react';
-import { Event } from '../../../../lib/types/event';
+import { EventDetails } from '@/types';
 
 interface Template3Props {
-  event: Event;
+  event: EventDetails;
 }
 
 const Template3: React.FC<Template3Props> = ({ event }) => {
@@ -75,7 +75,9 @@ const Template3: React.FC<Template3Props> = ({ event }) => {
               <div key={index} className="text-center">
                 <div className="text-2xl mb-2">{stat.icon}</div>
                 <div className="text-sm text-gray-500 mb-1">{stat.label}</div>
-                <div className="text-gray-900 font-semibold text-sm">{stat.value}</div>
+                <div className="text-gray-900 font-semibold text-sm">
+                    {typeof stat.value === 'string' ? stat.value : JSON.stringify(stat.value)}
+                </div>
               </div>
             ))}
           </div>
@@ -141,7 +143,10 @@ const Template3: React.FC<Template3Props> = ({ event }) => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
-                    <p className="text-gray-600 mb-2">{event.location || 'To be announced'}</p>
+                    <p className="text-gray-600 mb-2">
+                          {(typeof event.location === 'string' ? event.location : JSON.stringify(event.location)) || 'To be announced'}
+
+                    </p>
                     <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                       View on Map →
                     </button>
@@ -216,7 +221,7 @@ const Template3: React.FC<Template3Props> = ({ event }) => {
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="text-center">
 
-            
+
             <p className="text-gray-500 text-sm">
               © 2024 Beracali Technologies. All rights reserved.
               Creating memorable experiences since 2024.

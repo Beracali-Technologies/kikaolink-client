@@ -5,6 +5,7 @@ interface OpenEventButtonProps {
   eventId: string;
   isLive: boolean;
   onToggleLive: (eventId: string) => Promise<any>;
+  isLoading?: boolean;
 }
 
 const templates = [

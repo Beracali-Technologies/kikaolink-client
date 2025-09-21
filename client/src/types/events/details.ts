@@ -1,10 +1,10 @@
 // src/types/events/details.ts
-import { TEvent } from './base';
+import { TEvent, TEventCreate } from './base';
 import { EventOrganizer } from './organizer';
 import { EventLiveDetail } from './live';
 import { EventLocation } from './location';
 
-export interface EventDetails extends TEvent, Partial<EventOrganizer> {
+export type EventDetails = TEvent & Partial<TEventCreate> & Partial<EventOrganizer> & {
   // allow either string or structured location (TEvent already supports this)
   location?: string | EventLocation | null;
 
