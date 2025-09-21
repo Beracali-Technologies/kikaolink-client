@@ -24,6 +24,7 @@ export type TEvent = {
   updated_at?: string;
   location?: string | EventLocation | null;
   status: EventStatus;
+  template?: 'template1' | 'template2';
 };
 
 // Create / edit payload shape used in forms

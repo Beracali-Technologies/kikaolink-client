@@ -1,20 +1,26 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useEventStore } from '../../../../lib/stores/eventStore';
 import Template1 from './EventWebsiteTemplates/Template1';
+import Template2 from './EventWebsiteTemplates/Template2';
+import Template3 from './EventWebsiteTemplates/Template3';
 
 
 const EventWebsite: React.FC = () => {
   const { eventSlug } = useParams<{ eventSlug: string }>();
+  const { search } = useLocation();
   const { events, fetchEvents } = useEventStore();
+
+  // Extract ?template= value
+  const queryParams = new URLSearchParams(search);
+  const template = queryParams.get('template') || 'template1';
 
   React.useEffect(() => {
     if (events.length === 0) {
-          fetchEvents();
+      fetchEvents();
     }
   }, [events.length, fetchEvents]);
 
-  // Finding event by slug
   const event = events.find(e => {
     const slug = e.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     return slug === eventSlug;
@@ -31,7 +37,17 @@ const EventWebsite: React.FC = () => {
     );
   }
 
-  return <Template1 event={event} />;
+  // Choose template
+  switch (template) {
+    case 'template2':
+        return <Template2 event={event} />;
+    case 'template1':
+        return <Template1 event={event} />;
+    case 'template3':
+        return <Template3 event={event} />;
+    default:
+      return <Template1 event={event} />;
+  }
 };
 
 export default EventWebsite;
