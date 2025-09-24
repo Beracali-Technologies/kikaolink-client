@@ -1,11 +1,10 @@
 import React from 'react';
-import { EventDetails } from '@/types';
+import { TemplateProps } from './templateProps/templateProps';
+import { Link } from 'react-router-dom';
 
-interface Template3Props {
-  event: EventDetails;
-}
 
-const Template3: React.FC<Template3Props> = ({ event }) => {
+
+const Template3: React.FC<TemplateProps> = ({ event, registrationLink }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -37,9 +36,13 @@ const Template3: React.FC<Template3Props> = ({ event }) => {
               </div>
               <span className="text-gray-900 font-semibold">Beracali Technologies</span>
             </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors duration-200">
-              Register Now
-            </button>
+
+                  <Link to={registrationLink}>
+                          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors duration-200">
+                                Register Now
+                          </button>
+                  </Link>
+
           </div>
         </div>
       </header>
@@ -185,9 +188,11 @@ const Template3: React.FC<Template3Props> = ({ event }) => {
                 </div>
               </div>
 
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold mt-6 transition-all duration-300 transform hover:scale-105">
-                Register Now
-              </button>
+                  <Link to={registrationLink}>
+                      <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold mt-6 transition-all duration-300 transform hover:scale-105">
+                            Register Now
+                      </button>
+                  </Link>
 
               <p className="text-center text-gray-500 text-sm mt-4">
                 🔒 Secure payment · 🎫 Instant confirmation

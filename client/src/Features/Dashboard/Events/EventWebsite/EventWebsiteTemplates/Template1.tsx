@@ -1,11 +1,10 @@
 import React from 'react';
-import { EventDetails } from '@/types';
+import { TemplateProps } from './templateProps/templateProps';
+import { Link } from 'react-router-dom';
 
-interface Template1Props {
-  event: EventDetails;
-}
 
-const Template1: React.FC<Template1Props> = ({ event }) => {
+
+const Template1: React.FC<TemplateProps> = ({ event, registrationLink }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -52,9 +51,13 @@ const Template1: React.FC<Template1Props> = ({ event }) => {
 
             {/* CTA Button */}
             <div className="space-y-4 sm:space-y-0 sm:space-x-6">
-              <button className="w-full sm:w-auto bg-white text-slate-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                🎟️ Register Now
-              </button>
+
+                  <Link to={registrationLink}>
+                        <button className="w-full sm:w-auto bg-white text-slate-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                            🎟️ Register Now
+                        </button>
+                  </Link>
+
               <button className="w-full sm:w-auto border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-slate-900 transition-all duration-300">
                 📅 Add to Calendar
               </button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { Attendee } from '@/types/user';
+import { Attendee } from '@/types';
 
 // --- SUBCOMPONENTS ---
 import Scanner from './components/Scanner';
@@ -12,6 +12,7 @@ import CheckinHeader from './components/CheckinHeader';
 // Mock data for a successful scan
 const MOCK_ATTENDEE: Attendee = {
     id: '2564341F1F9',
+    event_id: 123,
     name: 'Alan Chan',
     email: 'george.linn@eventnook.com',
     table: 'Table 1',

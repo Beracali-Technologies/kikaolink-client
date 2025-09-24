@@ -11,6 +11,8 @@ const EventWebsite: React.FC = () => {
   const { search } = useLocation();
   const { events, fetchEvents } = useEventStore();
 
+
+
   // Extract ?template= value
   const queryParams = new URLSearchParams(search);
   const template = queryParams.get('template') || 'template1';
@@ -26,6 +28,8 @@ const EventWebsite: React.FC = () => {
     return slug === eventSlug;
   });
 
+
+
   if (!event) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -37,16 +41,20 @@ const EventWebsite: React.FC = () => {
     );
   }
 
+
+  const registrationLink = `/register-attendee/${eventSlug}/${event.id}`;
+
+
   // Choose template
   switch (template) {
     case 'template2':
-        return <Template2 event={event} />;
+        return <Template2 event={event} registrationLink={registrationLink} />;
     case 'template1':
-        return <Template1 event={event} />;
+        return <Template1 event={event} registrationLink={registrationLink} />;
     case 'template3':
-        return <Template3 event={event} />;
+        return <Template3 event={event} registrationLink={registrationLink} />;
     default:
-      return <Template1 event={event} />;
+      return <Template1 event={event} registrationLink={registrationLink} />;
   }
 };
 

@@ -11,14 +11,3 @@ export type TLoginCredentials = {
     email?: string;
     password?: string;
 };
-
-
-export interface Attendee {
-    id: ID;
-    name: string;
-    email: string;
-    table?: string;
-    seat?: number;
-    ticketType?: string;
-    isCheckedIn: boolean;
-}

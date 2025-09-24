@@ -21,6 +21,9 @@ const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsite/EventWebsite'));
+const AttendeeRegistrationPage = lazy(() => import('../Features/Registration/pages/AttendeeRegistrationPage/AttendeeRegistrationPage'));
+const RegistrationSuccessPage = lazy(() => import('../Features/Registration/pages/RegistrationSuccessPage/RegistrationSuccessPage')) ;
+
 
 // --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
 export const routes: RouteObject[] = [
@@ -32,7 +35,8 @@ export const routes: RouteObject[] = [
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
             { path: '/events/:eventSlug', element: <EventWebsite /> },
-
+            { path: '/register-attendee/:eventSlug/:eventId', element: <AttendeeRegistrationPage /> },
+            { path: '/registration-success/:eventSlug', element: <RegistrationSuccessPage /> },
         ]
     },
     // --- Private Dashboard Routes ---

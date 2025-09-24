@@ -1,9 +1,9 @@
 import React from 'react';
-import { EventDetails } from '@/types';
+import { Link } from 'react-router-dom';
+import { TemplateProps } from './templateProps/templateProps';
 
 
-
-const Template2: React.FC<{ event: EventDetails }> = ({ event }) => {
+const Template2: React.FC<TemplateProps> = ({ event, registrationLink }) => {
   // Format dates for display
   const formatDateRange = () => {
     if (!event.start_date || !event.end_date) return '';
@@ -30,10 +30,12 @@ const Template2: React.FC<{ event: EventDetails }> = ({ event }) => {
           </div>
 
 
+            <Link to={registrationLink}>
+                <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-md font-medium transition-colors text-sm">
+                    Register Now
+                </button>
+            </Link>
 
-          <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-md font-medium transition-colors text-sm">
-            Register Now
-          </button>
         </div>
       </header>
 
@@ -57,9 +59,13 @@ const Template2: React.FC<{ event: EventDetails }> = ({ event }) => {
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-5">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-md font-medium text-base transition-colors shadow-md">
-                Register Now
-              </button>
+
+                    <Link to={registrationLink}>
+                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-md font-medium text-base transition-colors shadow-md">
+                                Register Now
+                            </button>
+                    </Link>
+
               <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 rounded-md font-medium text-base transition-colors">
                 View Schedule
               </button>

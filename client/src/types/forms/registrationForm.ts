@@ -4,7 +4,7 @@ export type FieldType =
   | 'textarea'
   | 'multichoice'
   | 'checkbox'
-  | 'country'
+  | 'country' | 'email'
   | 'date'
   | 'paragraph'
   | 'header'
