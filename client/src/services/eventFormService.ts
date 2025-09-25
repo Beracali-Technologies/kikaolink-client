@@ -12,10 +12,20 @@ export const eventFormService = {
         return response.data;
     },
 
-    saveFormConfig: async (eventId: number, fields: any[]) => {
-        const response = await api.post(`/api/events/${eventId}/form-config`, { fields });
-        return response.data;
-    },
+  
+  saveFormConfig: async (eventId: number, fields: any[]) => {
+      const response = await api.post(`/api/events/${eventId}/form-config`, {
+          fields: fields.map(field => ({
+              id: field.id,
+              label: field.label,
+              fieldType: field.fieldType,
+              required: field.required,
+              options: field.options,
+              isStandard: field.isStandard // Make sure this is included
+          }))
+      });
+      return response.data;
+  },
 
     getPublicFormConfig: async (eventId: number) => {
         const response = await api.get(`/api/events/${eventId}/public-form-config`);
