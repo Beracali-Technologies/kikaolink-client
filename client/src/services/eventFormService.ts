@@ -12,7 +12,7 @@ export const eventFormService = {
         return response.data;
     },
 
-  
+
   saveFormConfig: async (eventId: number, fields: any[]) => {
       const response = await api.post(`/api/events/${eventId}/form-config`, {
           fields: fields.map(field => ({
@@ -21,7 +21,8 @@ export const eventFormService = {
               fieldType: field.fieldType,
               required: field.required,
               options: field.options,
-              isStandard: field.isStandard // Make sure this is included
+              isStandard: field.isStandard,
+              systemName: field.systemName
           }))
       });
       return response.data;
