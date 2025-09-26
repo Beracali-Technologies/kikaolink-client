@@ -1,7 +1,6 @@
-// src/components/QrAwaitDisplay.tsx
 import React from 'react';
 import { usePollQr } from '@/lib/hooks/usePollQr';
-import api from '@/lib/axios'; // use central api instance
+import api from '@/lib/axios';
 
 interface Props {
   qrPollUrl: string | null;

@@ -4,6 +4,9 @@ import { eventFormService } from '../../../../services/eventFormService';
 import { attendeeRegistrationService } from '@/services/attendeeRegistrationService';
 import FieldRenderer from '../../../Dashboard/RegistrationFormEditor/components/FieldRenderer/FieldRenderer';
 import { Field } from '@/types';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const AttendeeRegistrationPage: React.FC = () => {
     const { eventSlug, eventId } = useParams<{ eventSlug: string; eventId: string }>();
@@ -11,6 +14,8 @@ const AttendeeRegistrationPage: React.FC = () => {
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         loadFormConfig();
@@ -81,13 +86,17 @@ const loadFormConfig = async () => {
                       return;
                 }
 
-            await attendeeRegistrationService.register({
+                const response = await attendeeRegistrationService.register({
                 event_id: targetEventId,
                 form_data: formData,
             });
+            console.log(response);
 
-            // Redirect to success page with the event slug
-            window.location.href = `/registration-success/${eventSlug || 'event'}`;
+            navigate(`/registration-success/${eventSlug || 'event'}`, {
+                  state: { attendee: response.attendee } // pass the returned attendee data from API
+                });
+
+
         } catch (error) {
             console.error('Registration failed:', error);
             alert('Registration failed. Please try again.');
