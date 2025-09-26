@@ -5,7 +5,8 @@ import Footer from '../../Features/Landing/components/Footer/Footer';
 const PublicLayout: React.FC = () => {
         const location = useLocation();
 
-        const hideFooter = location.pathname.startsWith(`/events/`) || location.pathname.startsWith('/register-attendee/');
+        const hideFooter = location.pathname.startsWith(`/events/`) || location.pathname.startsWith('/register-attendee/')
+                            || location.pathname.startsWith('/registration-success/');
 
     return (
         <div>

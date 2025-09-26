@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { eventFormService } from '@/services/eventFormService';
-import { attendeeRegistrationService } from '@/services/attendeeRegistrationService';
+import { useRegistration } from '@/hooks/useRegistration'; // Import the hook
 import FieldRenderer from '../../../Dashboard/RegistrationFormEditor/components/FieldRenderer/FieldRenderer';
 import { Field } from '@/types';
 
 const AttendeeForm: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
+    const navigate = useNavigate();
     const [fields, setFields] = useState<Field[]>([]);
     const [formData, setFormData] = useState<Record<string, any>>({});
-    const [loading, setLoading] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
+
+    // Use the registration hook
+    const { register, loading: submitting, error } = useRegistration();
 
     useEffect(() => {
         if (eventId) {
@@ -20,7 +23,7 @@ const AttendeeForm: React.FC = () => {
 
     const loadFormConfig = async () => {
         try {
-            setLoading(true);
+            setFormLoading(true);
             const response = await eventFormService.getPublicFormConfig(parseInt(eventId!));
             setFields(response.fields);
 
@@ -37,7 +40,7 @@ const AttendeeForm: React.FC = () => {
         } catch (error) {
             console.error('Error loading form config:', error);
         } finally {
-            setLoading(false);
+            setFormLoading(false);
         }
     };
 
@@ -51,40 +54,59 @@ const AttendeeForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate required fields
-        const missingFields = fields
-            .filter(field => field.required && !formData[field.label])
-            .map(field => field.label);
+        // Extract required fields from form data
+        // You need to map your form fields to the RegistrationData structure
+        const registrationData = {
+            event_id: parseInt(eventId!),
+            first_name: formData.first_name || formData['First Name'] || '',
+            last_name: formData.last_name || formData['Last Name'] || '',
+            email: formData.email || formData['Email'] || '',
+            phone: formData.phone || formData['Phone'] || '',
+            custom_data: formData // Include all form data as custom data
+        };
 
-        if (missingFields.length > 0) {
-            alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        console.log('📝 Prepared registration data:', registrationData);
+
+        // Validate required fields
+        if (!registrationData.first_name || !registrationData.last_name || !registrationData.email) {
+            alert('Please fill in all required fields: First Name, Last Name, and Email');
             return;
         }
 
-        setSubmitting(true);
         try {
-            await attendeeRegistrationService.register({
-                event_id: parseInt(eventId!),
-                form_data: formData
+            // Use the registration hook
+            const result = await register(registrationData);
+
+            console.log('✅ Registration successful, navigating to success page');
+            console.log('✅ Result data:', result);
+
+            // Navigate to success page with the data
+            navigate(`/registration-success/${eventId}`, {
+                state: {
+                    registrationData: result
+                }
             });
 
-            // Redirect to success page
-            window.location.href = `/registration-success/${eventId}`;
-        } catch (error) {
-            console.error('Registration failed:', error);
-            alert('Registration failed. Please try again.');
-        } finally {
-            setSubmitting(false);
+        } catch (err) {
+            console.error('❌ Registration error:', err);
+            // Error is already handled by the hook, but you can show a specific message
+            alert(error || 'Registration failed. Please try again.');
         }
     };
 
-    if (loading) {
+    if (formLoading) {
         return <div className="max-w-md mx-auto p-6">Loading form...</div>;
     }
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
             <h1 className="text-2xl font-bold mb-6 text-center">Register for Event</h1>
+
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 {fields.map((field) => (

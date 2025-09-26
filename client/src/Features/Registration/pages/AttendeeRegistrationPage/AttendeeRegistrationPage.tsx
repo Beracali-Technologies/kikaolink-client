@@ -83,7 +83,7 @@ const loadFormConfig = async () => {
 
             await attendeeRegistrationService.register({
                 event_id: targetEventId,
-                form_data: formData
+                form_data: formData,
             });
 
             // Redirect to success page with the event slug
