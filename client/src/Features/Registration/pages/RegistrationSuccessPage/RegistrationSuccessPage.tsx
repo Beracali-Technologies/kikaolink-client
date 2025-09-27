@@ -10,10 +10,9 @@ const RegistrationSuccessPage: React.FC = () => {
 
   // Expect attendee object directly
   const state = location.state as { attendee: any };
-  const attendee = state?.attendee?.attendee;
-  
+  const attendee = state?.attendee;
 
-  console.log(attendee.first_name);
+
 
   if (!attendee) {
     return (
