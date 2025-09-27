@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { eventFormService } from '@/services/eventFormService';
-import { useRegistration } from '@/hooks/useRegistration'; // Import the hook
+import { useRegistration } from '../../../../lib/hooks/useRegistration';
 import FieldRenderer from '../../../Dashboard/RegistrationFormEditor/components/FieldRenderer/FieldRenderer';
 import { Field } from '@/types';
+
 
 const AttendeeForm: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();

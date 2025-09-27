@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Confetti from '../../../../components/ui/Confetti/Confetti';
-import BouncingTick from '@/components/ui/BouncingTick';
+import { BouncingTick } from '@/components/ui/BouncingTick';
 import QrCodeDisplay from '../../components/QrCode/QrCodeDisplay';
 
 const RegistrationSuccessPage: React.FC = () => {
@@ -31,7 +31,6 @@ const RegistrationSuccessPage: React.FC = () => {
           size="xl"
           color="text-green-500"
           glowColor="text-green-400"
-          glowSize="lg"
           className="mb-6"
         />
 

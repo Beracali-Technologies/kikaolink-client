@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RegistrationData, RegistrationResponse } from '@/types';
-import { registrationService } from '../../services/registrationService';
+import { registrationService } from '../../services/registration/registrationService';
 
 
 

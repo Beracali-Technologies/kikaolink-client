@@ -59,7 +59,7 @@ const Confetti: React.FC = () => {
         />
       ))}
 
-      <style jsx>{`
+      <style>{`
         @keyframes confetti-fall {
           0% {
             transform: translateY(-20px) rotate(0deg);

@@ -23,9 +23,3 @@ export interface AttendeeRegistrationData {
   event_id: ID;
   attendees: Attendee[];
 }
-
-export interface RegistrationResponse {
-  success: boolean;
-  message: string;
-  attendee?: Attendee;
-}
