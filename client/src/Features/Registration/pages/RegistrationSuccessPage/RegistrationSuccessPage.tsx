@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Confetti from '../../../../components/ui/Confetti/Confetti';
-import BouncingTick from '../../../../components/ui/BouncingTick/BouncingTick';
+import BouncingTick from '@/components/ui/BouncingTick';
 import QrCodeDisplay from '../../components/QrCode/QrCodeDisplay';
 
 const RegistrationSuccessPage: React.FC = () => {
