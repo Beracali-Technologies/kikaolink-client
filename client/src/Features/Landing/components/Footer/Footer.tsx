@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
                     {/* Column 1: Brand Info */}
                     <div className="md:col-span-1">
                         <h2 className="text-xl font-bold">
-                           <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Connect</span>
+                           <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Link</span>
                         </h2>
                         <p className="mt-2 text-sm text-light-text">
                             A product by <strong className="text-dark-text">Beracali Technologies</strong>.

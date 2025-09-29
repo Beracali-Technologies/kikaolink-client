@@ -1,14 +1,14 @@
-// authStore.ts
 import { create } from 'zustand';
-import { TUser, TLoginCredentials } from '@/types';
-import { loginUser, logoutUser, checkAuthStatus } from '../../services/authService';
+import { TUser, TLoginCredentials, TSignupCredentials } from '@/types';
+import { loginUser, logoutUser, checkAuthStatus, registerUser } from '../../services/authService';
 
 interface AuthState {
   user: TUser | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
-  hasCheckedAuth: boolean; // NEW: Track if we've already checked
+  hasCheckedAuth: boolean;
   login: (credentials: TLoginCredentials) => Promise<void>;
+  signup: (credentials: TSignupCredentials) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -17,11 +17,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isAuthenticated: false,
   isAuthLoading: true,
-  hasCheckedAuth: false, // Initialize as false
+  hasCheckedAuth: false,
 
   login: async (credentials) => {
-    await loginUser(credentials);
-    set({ isAuthenticated: true });
+    const response = await loginUser(credentials);
+    if (response.token || response.access_token) {
+      set({ isAuthenticated: true });
+    }
+  },
+
+  signup: async (credentials) => {
+    const response = await registerUser(credentials);
+    if (response.token || response.access_token) {
+      set({ isAuthenticated: true });
+    }
   },
 
   logout: async () => {
@@ -30,7 +39,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   checkAuth: async () => {
-    // Prevent multiple simultaneous auth checks
     if (get().hasCheckedAuth) {
       return;
     }
@@ -38,8 +46,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isAuthLoading: true });
 
     try {
-      await checkAuthStatus();
-      set({ hasCheckedAuth: true, isAuthLoading: false });
+      const data = await checkAuthStatus();
+      set({ user: data, hasCheckedAuth: true, isAuthLoading: false, isAuthenticated: !!data });
     } catch (error) {
       console.log("No active session found.");
       set({

@@ -11,25 +11,24 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     const { isAuthenticated, isAuthLoading, checkAuth } = useAuthStore();
     const location = useLocation();
 
-
     useEffect(() => {
-    // Only check auth if not already authenticated and not already loading
-    if (!isAuthenticated && isAuthLoading) {
-      checkAuth();
-    }
-  }, [isAuthenticated, isAuthLoading, checkAuth]);
+        // Only check auth if not already checked and loading
+        if (!isAuthLoading && !isAuthenticated) {
+            checkAuth();
+        }
+    }, [isAuthLoading, isAuthenticated, checkAuth]);
 
-    // 1. While the check is in progress, show a full-screen loader.
+    // Show loader while checking auth
     if (isAuthLoading) {
         return <BrandedLoader />;
     }
 
-    // 2. Once the check is complete, if the user is NOT authenticated, redirect them to login.
+    // Redirect to login if not authenticated
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // 3. If the check is complete and the user IS authenticated, show the requested dashboard content.
+    // Render children if authenticated
     return <>{children}</>;
 };
 

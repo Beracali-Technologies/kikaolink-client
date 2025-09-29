@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
-import 'react-phone-number-input/style.css'; // Don't forget the styles!
-import api from '../../../lib/axios';
+import 'react-phone-number-input/style.css';
+import { useAuthStore } from '../../../lib/stores/authStore';
+import api from '../../../lib/axios'; // Add this import
 
 // --- Placeholder Icons ---
 const EyeOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -23,63 +24,49 @@ const phoneInputStyles = `
 `;
 
 const Signup: React.FC = () => {
-
-      //setError for showing backend errors
-
     const { register, handleSubmit, control, setError, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
-
+    const setAuthenticated = useAuthStore((state) => state.setAuthenticated); // Add this to authStore.ts if not present
 
     const onSubmit = async (data: any) => {
-
         setIsLoading(true);
         setApiError(null);
 
         try {
+            const payload = {
+                name: data.fullName,
+                email: data.email,
+                phone: data.phone,
+                password: data.password,
+            };
 
-          const payload = {
-              name: data.fullName, // Change FullName to name
-              email: data.email,
-              phone: data.phone,
-              password: data.password,
-          };
+            const response = await api.post('/api/register', payload);
+            console.log('Register Response:', response.data); // Debug
 
-
-            await api.get('/sanctum/csrf-cookie');
-
-            //await initializeApi(); //sets the csrf cookie before making request
-          const response = await api.post('/api/register', payload);
-
-              console.log('Signup Data: ', data);
-
-              if (response.status === 201) {
-                    navigate('/dashboard/events');
-                }
-
-
-
-
+            if (response.data.token) {
+                storeAuthToken(response.data.token);
+                setAuthenticated(true); // Update auth state
+                navigate('/dashboard/events', { replace: true });
+            } else {
+                setApiError('Registration failed: Token not received.');
+            }
         } catch (error: any) {
-          if (error.response && error.response.status === 422) {
-              // This is a Laravel validation error.
-              // display specific errors next to each field.
-              const validationErrors = error.response.data.errors;
-              Object.keys(validationErrors).forEach((fieldName) => {
-                  const field = fieldName === 'name' ? 'fullName' : fieldName; // Map 'name' back to 'fullName' for the form
-                  setError(field as any, {
-                      type: 'server',
-                      message: validationErrors[fieldName][0]
-                  });
-              });
-          } else {
-              // This is a generic network or server error (500, 404).
-              setApiError('An unexpected error occurred. Please check your network and try again.');
-          }
-
+            console.error('Register Error:', error.response?.data || error);
+            if (error.response && error.response.status === 422) {
+                const validationErrors = error.response.data.errors;
+                Object.keys(validationErrors).forEach((fieldName) => {
+                    const field = fieldName === 'name' ? 'fullName' : fieldName;
+                    setError(field as any, {
+                        type: 'server',
+                        message: validationErrors[fieldName][0]
+                    });
+                });
+            } else {
+                setApiError('An unexpected error occurred. Please check your network and try again.');
+            }
         } finally {
             setIsLoading(false);
         }

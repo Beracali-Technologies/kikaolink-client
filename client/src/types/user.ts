@@ -11,3 +11,10 @@ export type TLoginCredentials = {
     email?: string;
     password?: string;
 };
+
+export type TSignupCredentials = {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+};

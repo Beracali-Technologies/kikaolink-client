@@ -1,16 +1,19 @@
 import React from 'react';
+import ResendEmailButton from './ResendEmailButton';
+
 
 interface Props {
   qrCodeUrl: string;
   registrationCode?: string;
+  qrPollUrl: string | null;
+   initialMessage?: string;
+   attendeeId: number;
 }
 
-const QrCodeDisplay: React.FC<Props> = ({ qrCodeUrl, registrationCode }) => {
+const QrCodeDisplay: React.FC<Props> = ({ qrCodeUrl, registrationCode, initialMessage, attendeeId }) => {
   if (!qrCodeUrl) return null;
 
-  /*const handleOpenQr = () => {
-    window.open(qrCodeUrl, '_blank');
-  }; */
+
 
   const handleDownload = () => {
     const link = document.createElement('a');
@@ -26,15 +29,14 @@ const QrCodeDisplay: React.FC<Props> = ({ qrCodeUrl, registrationCode }) => {
       <img src={qrCodeUrl} alt="Your QR Code" className="w-40 h-40 border rounded" />
       <div className="mt-3 flex gap-3">
 
-        {/*
-          <button onClick={handleOpenQr} className="px-3 py-1 bg-green-600 text-white rounded">
-            Open
-          </button>
-          */}
+
         <button onClick={handleDownload} className="px-3 py-1 bg-gray-800 text-white rounded">
           Download
         </button>
       </div>
+
+          <ResendEmailButton attendeeId={attendeeId} />
+
     </div>
   );
 };

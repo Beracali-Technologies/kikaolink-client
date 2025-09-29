@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { eventFormService } from '../../../../services/eventFormService';
-import { attendeeRegistrationService } from '@/services/attendeeRegistrationService';
+import { registrationService } from '@/services/registration/registrationService';
 import FieldRenderer from '../../../Dashboard/RegistrationFormEditor/components/FieldRenderer/FieldRenderer';
 import { Field } from '@/types';
 import { useNavigate } from 'react-router-dom';
@@ -86,7 +86,7 @@ const loadFormConfig = async () => {
                       return;
                 }
 
-                const response = await attendeeRegistrationService.register({
+                const response = await registrationService.register({
                 event_id: targetEventId,
                 form_data: formData,
             });
