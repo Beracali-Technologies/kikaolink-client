@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useEventStore } from '../../lib/stores/eventStore';
 import BrandedLoader from '../../components/ui/BrandedLoader/BrandedLoader';
-import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo } from 'react-icons/fi';
+import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo, FiCreditCard } from 'react-icons/fi';
 import { SideBarGroup } from './components/SideBarGroup';
 import { SideBarLink } from './components/SideBarLink';
 import { StepIndicator } from './components/StepIndicator';
@@ -36,12 +36,13 @@ const EventSettingsLayout: React.FC = () => {
     // Enhanced current step detection
     const currentStep = useMemo(() => {
         if (pathname.includes('/registration-form')) return 1;
-        if (pathname.includes('/tickets')) return 2;
-        if (pathname.includes('/email')) return 3;
+        if (pathname.includes('/email')) return 2;
+        if (pathname.includes('/tickets')) return 3;
+
         return 0; // Event Information
     }, [pathname]);
 
-    const eventSteps = ['Event Info', 'Registration', 'Tickets', 'Email'];
+    const eventSteps = ['Event Info', 'Registration', 'Email', 'Tickets', ];
 
     // Navigation data
     const settingsNavigation: NavLinkGroup[] = [
@@ -67,6 +68,12 @@ const EventSettingsLayout: React.FC = () => {
                     icon: FiMail,
                     disabled: false
                 },
+                {
+                    name: 'Tickets & Pricing',
+                    to: `/dashboard/events/${eventId}/tickets`,
+                    icon: FiCreditCard,
+                    disabled: false
+                }
             ]
         },
         {
