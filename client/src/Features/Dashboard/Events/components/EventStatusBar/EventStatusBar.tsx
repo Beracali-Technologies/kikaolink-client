@@ -1,11 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import EventStatusBadge from './components/EventStatusBadge';
 import EventUrlCopy from './components/EventUrlCopy';
 import OpenEventButton from './components/OpenEventButton';
 import { eventsApi } from '../../../../../lib/api/events';
 import {  generateAbsoluteEventUrl, generateDisplayEventUrl } from '../../../../../lib/utils/urlHelpers';
-
-
 
 interface EventStatusBarProps {
   event: any;
@@ -13,23 +11,22 @@ interface EventStatusBarProps {
 }
 
 const EventStatusBar: React.FC<EventStatusBarProps> = ({ event, isLoading }) => {
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
-
-  // Generate URLs
-
+  // Generate base URLs
   const absoluteEventUrl = generateAbsoluteEventUrl(event.title); // http://localhost:5173/events/house-party
   const displayEventUrl = generateDisplayEventUrl(event.title); // localhost:5173/events/house-party
 
-  /* Use provided live_url or generate one from event title
-  const eventUrl = event.live_detail?.live_url || generateEventUrl(event.title); */
+  // Append selected template to URLs if a template is chosen
+  const getDynamicUrl = (baseUrl: string) => {
+    return selectedTemplate ? `${baseUrl}?template=${selectedTemplate}` : baseUrl;
+  };
 
   // Fixed onToggleLive function that returns the expected format
   const handleToggleLive = async (eventId: string) => {
     try {
       await eventsApi.toggleLiveStatus(eventId);
-
       return { success: true, message: 'Event status updated successfully' };
-
     } catch (error) {
       return {
         success: false,
@@ -46,23 +43,29 @@ const EventStatusBar: React.FC<EventStatusBarProps> = ({ event, isLoading }) => 
 
         {/* Center: URL copy - hidden on small screens, shown on medium+ */}
         <div className="hidden md:flex flex-1 items-center justify-center">
-          <EventUrlCopy url={displayEventUrl} compact />
+          <EventUrlCopy url={getDynamicUrl(displayEventUrl)} compact />
         </div>
 
         {/* Right side: Open Event button */}
         <OpenEventButton
-          url={absoluteEventUrl}
+          url={getDynamicUrl(absoluteEventUrl)}
           eventId={event.id.toString()}
           isLive={event.status === 'LIVE'}
           onToggleLive={handleToggleLive}
           isLoading={isLoading}
+          onTemplateSelect={setSelectedTemplate}
         />
       </div>
 
       {/* URL copy for mobile - appears below on small screens */}
       <div className="md:hidden mt-2 flex justify-center">
-        <EventUrlCopy url={displayEventUrl} compact />
+        <EventUrlCopy url={getDynamicUrl(displayEventUrl)} compact />
       </div>
+
+      {/* Information note for attendees */}
+      <p className="mt-2 text-xs text-gray-500 text-center">
+        This is the link to be copied and shared with attendees.
+      </p>
     </div>
   );
 };

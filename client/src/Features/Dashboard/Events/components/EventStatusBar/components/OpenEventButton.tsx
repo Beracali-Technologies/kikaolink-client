@@ -6,6 +6,7 @@ interface OpenEventButtonProps {
   isLive: boolean;
   onToggleLive: (eventId: string) => Promise<any>;
   isLoading?: boolean;
+  onTemplateSelect: (template: string) => void;
 }
 
 const templates = [
@@ -14,7 +15,7 @@ const templates = [
   { id: 'template3', name: 'Template 3' },
 ];
 
-const OpenEventButton: React.FC<OpenEventButtonProps> = ({ url, eventId, isLive, onToggleLive }) => {
+const OpenEventButton: React.FC<OpenEventButtonProps> = ({ url, eventId, isLive, onToggleLive, onTemplateSelect }) => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,6 +27,7 @@ const OpenEventButton: React.FC<OpenEventButtonProps> = ({ url, eventId, isLive,
   };
 
   const handleTemplateClick = (template: string) => {
+    onTemplateSelect(template); // Update the selected template in parent
     window.open(`${url}?template=${template}`, '_blank', 'noopener,noreferrer');
     setOpen(false);
   };

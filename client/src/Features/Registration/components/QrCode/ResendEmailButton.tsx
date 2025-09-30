@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '@/lib/axios';
+import api from '@/lib/axios'; 
 
 interface Props {
   attendeeId: number;
@@ -10,12 +10,15 @@ const ResendEmailButton: React.FC<Props> = ({ attendeeId }) => {
   const [message, setMessage] = useState<string | null>(null);
 
   const handleResend = async () => {
+    console.log('Resend request for attendeeId:', attendeeId);
     setLoading(true);
     setMessage(null);
     try {
       const res = await api.post(`/attendees/${attendeeId}/resend-qr`);
+      console.log('Resend response:', res.data);
       setMessage(res.data.message);
     } catch (err: any) {
+      console.error('Resend error:', err.response?.data || err);
       setMessage(err.response?.data?.message || 'Failed to resend email. Try again.');
     } finally {
       setLoading(false);

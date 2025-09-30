@@ -11,6 +11,7 @@ interface AuthState {
   signup: (credentials: TSignupCredentials) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  setAuthenticated: (value: boolean) => void; // Ensure this is defined
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -58,4 +59,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     }
   },
+
+  setAuthenticated: (value: boolean) => set({ isAuthenticated: value }), // Implementation
 }));

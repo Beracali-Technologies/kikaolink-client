@@ -4,7 +4,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { useAuthStore } from '../../../lib/stores/authStore';
-import api from '../../../lib/axios'; // Add this import
+import api from '../../../lib/axios';
+import { storeAuthToken } from '../../../lib/utils/tokenUtils';
 
 // --- Placeholder Icons ---
 const EyeOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -29,7 +30,7 @@ const Signup: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
-    const setAuthenticated = useAuthStore((state) => state.setAuthenticated); // Add this to authStore.ts if not present
+    const setAuthenticated = useAuthStore((state) => state.setAuthenticated); // Should now work
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
@@ -48,7 +49,7 @@ const Signup: React.FC = () => {
 
             if (response.data.token) {
                 storeAuthToken(response.data.token);
-                setAuthenticated(true); // Update auth state
+                setAuthenticated(true); // Should now function
                 navigate('/dashboard/events', { replace: true });
             } else {
                 setApiError('Registration failed: Token not received.');
@@ -135,15 +136,13 @@ const Signup: React.FC = () => {
                         </div>
 
                         {/* --- Submit Button --- */}
-
-                          <button type="submit" disabled={isLoading} className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <button type="submit" disabled={isLoading} className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed">
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>
-
                     </form>
                 </div>
 
-                 {/* --- Footer Link --- */}
+                {/* --- Footer Link --- */}
                 <p className="text-center mt-6 text-sm text-light-text">
                     Already have an account? <NavLink to="/login" className="font-medium text-primary-blue hover:underline">Log in</NavLink>
                 </p>
