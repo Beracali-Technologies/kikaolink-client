@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import { eventFormService } from '../../../../services/eventFormService';
 import { attendeeRegistrationService } from '@/services/attendeeRegistration/attendeeRegistrationService';
 import FieldRenderer from '../../../Dashboard/RegistrationFormEditor/components/FieldRenderer/FieldRenderer';
-import { Field } from '@/types';
+import { Field, RegistrationData } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import ResendEmailButton from '../../components/QrCode/ResendEmailButton';
+
 
 const AttendeeRegistrationPage: React.FC = () => {
   const { eventSlug, eventId } = useParams<{ eventSlug: string; eventId: string }>();
@@ -77,10 +78,19 @@ const AttendeeRegistrationPage: React.FC = () => {
         return;
       }
 
-      const response = await attendeeRegistrationService.register({
+      // Map formData to RegistrationData structure
+      const registrationData: RegistrationData = {
         event_id: targetEventId,
-        form_data: formData,
-      });
+        first_name: formData['first_name'] || '', // Adjust based on field labels
+        last_name: formData['last_name'] || '',
+        email: formData['email'] || '',
+        phone: formData['phone'] || undefined,
+        custom_data: Object.fromEntries(
+          Object.entries(formData).filter(([key]) => !['first_name', 'last_name', 'email', 'phone'].includes(key))
+        ),
+      };
+
+      const response = await attendeeRegistrationService.register(registrationData);
       console.log('Registration response:', response);
 
       if (response.attendee && response.attendee.id) {
@@ -140,7 +150,7 @@ const AttendeeRegistrationPage: React.FC = () => {
           {submitting ? 'Registering...' : 'Register'}
         </button>
       </form>
-      {attendeeId && <ResendEmailButton attendeeId={attendeeId} />} {/* Render button only if attendeeId exists */}
+      {attendeeId && <ResendEmailButton attendeeId={attendeeId} />}
     </div>
   );
 };

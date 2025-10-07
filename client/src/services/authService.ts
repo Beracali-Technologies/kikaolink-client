@@ -1,6 +1,6 @@
 import api from '../lib/axios';
 import { TLoginCredentials, TSignupCredentials } from '@/types/user';
-import { storeAuthToken } from '../lib/utils/tokenUtils';
+import { storeAuthToken, getAuthToken } from '../lib/utils/tokenUtils';
 
 export const registerUser = async (credentials: TSignupCredentials) => {
   const response = await api.post('/api/register', credentials);

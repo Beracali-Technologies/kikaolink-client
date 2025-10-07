@@ -23,3 +23,14 @@ export interface AttendeeRegistrationData {
   event_id: ID;
   attendees: Attendee[];
 }
+
+
+export interface CheckinAttendee {
+    id: number;
+    uuid: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    status: string;
+    zpl: string;
+}

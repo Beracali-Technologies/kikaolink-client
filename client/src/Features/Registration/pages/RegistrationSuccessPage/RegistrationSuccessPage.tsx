@@ -31,6 +31,11 @@ const RegistrationSuccessPage: React.FC = () => {
     );
   }
 
+
+
+  const qrPollUrl = `/api/qr-poll/${attendee.id}`;
+  const attendeeId = attendee.id;
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <Confetti />
@@ -85,6 +90,8 @@ const RegistrationSuccessPage: React.FC = () => {
                     <QrCodeDisplay
                       qrCodeUrl={attendee.qr_code_url}
                       registrationCode={attendee.attendee_uuid}
+                      qrPollUrl={qrPollUrl}
+                      attendeeId={attendeeId}
                     />
                   </div>
                 )}

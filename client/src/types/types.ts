@@ -6,3 +6,4 @@ export * from './user';
 export * from './common';
 export * from './attendee/types';
 export * from './registration/types';
+export * from './dashboard/types';

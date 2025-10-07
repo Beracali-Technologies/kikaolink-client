@@ -6,11 +6,11 @@ interface Props {
   qrCodeUrl: string;
   registrationCode?: string;
   qrPollUrl: string | null;
-   initialMessage?: string;
+
    attendeeId: number;
 }
 
-const QrCodeDisplay: React.FC<Props> = ({ qrCodeUrl, registrationCode, initialMessage, attendeeId }) => {
+const QrCodeDisplay: React.FC<Props> = ({ qrCodeUrl, registrationCode, attendeeId }) => {
   if (!qrCodeUrl) return null;
 
 

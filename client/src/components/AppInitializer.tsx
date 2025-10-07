@@ -1,33 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../lib/stores/authStore';
-import { initializeApi } from '../lib/axios';
 import BrandedLoader from './ui/BrandedLoader/BrandedLoader';
 
 export const AppInitializer = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthLoading, checkAuth, user } = useAuthStore();
+  const { isAuthLoading, checkAuth } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
-
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-              //only to initilize csrf if the user is autheniticated
-            if(user) {
-                  const { user, checkAuth } = useAuthStore();
-            }
-
         await checkAuth(); // Check authentication status
-          setIsInitialized(true);
+        setIsInitialized(true);
       } catch (error) {
         console.log('App initialization failed', error);
-           setIsInitialized(true);
+        setIsInitialized(true); // Proceed even on error
       }
     };
 
     initializeApp();
   }, [checkAuth]);
 
-  if (isAuthLoading) {
+  if (isAuthLoading || !isInitialized) {
     return <BrandedLoader />;
   }
 
