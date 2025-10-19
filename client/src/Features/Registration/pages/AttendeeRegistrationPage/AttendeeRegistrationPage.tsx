@@ -81,12 +81,12 @@ const AttendeeRegistrationPage: React.FC = () => {
       // Map formData to RegistrationData structure
       const registrationData: RegistrationData = {
         event_id: targetEventId,
-        first_name: formData['first_name'] || '', // Adjust based on field labels
-        last_name: formData['last_name'] || '',
-        email: formData['email'] || '',
-        phone: formData['phone'] || undefined,
+        first_name: formData['First Name'] || '', // Adjust based on field labels
+        last_name: formData['Last Name'] || '',
+        email: formData['Email Address'] || '',
+        phone: formData['Mobile Phone'] || undefined,
         custom_data: Object.fromEntries(
-          Object.entries(formData).filter(([key]) => !['first_name', 'last_name', 'email', 'phone'].includes(key))
+          Object.entries(formData).filter(([key]) => !['First Name', 'Last Name', 'Email Address', 'Mobile Phone'].includes(key))
         ),
       };
 
