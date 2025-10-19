@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '@/lib/axios'; 
+import api from '@/lib/axios';
 
 interface Props {
   attendeeId: number;
@@ -14,7 +14,7 @@ const ResendEmailButton: React.FC<Props> = ({ attendeeId }) => {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await api.post(`/attendees/${attendeeId}/resend-qr`);
+      const res = await api.post(`/api/attendees/${attendeeId}/resend-qr`);
       console.log('Resend response:', res.data);
       setMessage(res.data.message);
     } catch (err: any) {

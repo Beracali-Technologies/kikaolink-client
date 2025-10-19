@@ -6,12 +6,21 @@ import { eventsApi } from '../../../../../lib/api/events';
 import {  generateAbsoluteEventUrl, generateDisplayEventUrl } from '../../../../../lib/utils/urlHelpers';
 
 interface EventStatusBarProps {
-  event: any;
+  event: any | null;
   isLoading: boolean;
 }
 
 const EventStatusBar: React.FC<EventStatusBarProps> = ({ event, isLoading }) => {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  if (!event) {
+    // Optionally render something else, but returning null/loading is safe.
+    if (isLoading) {
+      return <div>Loading event data...</div>;
+    }
+    return null; // Don't render anything if no event data exists.
+  }
+
 
   // Generate base URLs
   const absoluteEventUrl = generateAbsoluteEventUrl(event.title); // http://localhost:5173/events/house-party
