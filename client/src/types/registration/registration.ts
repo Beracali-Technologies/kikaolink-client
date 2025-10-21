@@ -5,6 +5,8 @@ export interface RegistrationData {
   last_name: string;
   email: string;
   phone?: string;
+  job_title?: string;
+  company_name?: string;
   custom_data?: Record<string, any>;
 }
 

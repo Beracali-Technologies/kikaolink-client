@@ -85,6 +85,8 @@ const AttendeeRegistrationPage: React.FC = () => {
         last_name: formData['Last Name'] || '',
         email: formData['Email Address'] || '',
         phone: formData['Mobile Phone'] || undefined,
+        job_title: formData['Job Title'] || undefined,
+        company_name: formData['Company Name'] || undefined,
         custom_data: Object.fromEntries(
           Object.entries(formData).filter(([key]) => !['First Name', 'Last Name', 'Email Address', 'Mobile Phone'].includes(key))
         ),
