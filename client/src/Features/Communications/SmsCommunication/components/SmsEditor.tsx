@@ -1,17 +1,24 @@
 // SmsEditor.tsx
 import React from 'react';
 
-interface Props {
+interface SmsEditorProps {
   message: string;
-  setMessage: (m: string) => void;
+  setMessage: (message: string) => void;
   isSending: boolean;
   onSend: () => void;
   selectedCount: number;
 }
 
-const SmsEditor: React.FC<Props> = ({ message, setMessage, isSending, onSend, selectedCount }) => {
+const SmsEditor: React.FC<SmsEditorProps> = ({ message, setMessage, isSending, onSend, selectedCount }) => {
   const len = message.length;
   const over = len > 160;
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newMessage = e.target.value;
+        if (newMessage.length <= 160) {
+            setMessage(newMessage);
+        }
+    };
 
   return (
     <div className="bg-white border rounded-md p-6 shadow-sm">
@@ -23,7 +30,7 @@ const SmsEditor: React.FC<Props> = ({ message, setMessage, isSending, onSend, se
       <textarea
         className="mt-4 w-full h-40 p-4 border rounded-md resize-none focus:ring-red-400 focus:border-red-400"
         value={message}
-        onChange={e => setMessage(e.target.value)}
+        onChange={handleChange}
         placeholder="Write your message... (use placeholders like {{FIRST_NAME}})"
       />
 

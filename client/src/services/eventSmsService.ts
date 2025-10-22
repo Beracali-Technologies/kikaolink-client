@@ -6,7 +6,7 @@ export const fetchAttendees = async (eventId: string, params?: { search?: string
     if (params?.search) query.append('search', params.search);
     if (params?.status) query.append('status', params.status);
 
-    const url = query.toString() ? `/api/events/${eventId}/attendees?${query.toString()}` : `/events/${eventId}/attendees`;
+    const url = query.toString() ? `/api/events/${eventId}/attendees?${query.toString()}` : `/api/events/${eventId}/attendees`;
     const res = await api.get(url);
     return res.data;
 };
