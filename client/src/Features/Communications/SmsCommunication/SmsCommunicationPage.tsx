@@ -1,94 +1,168 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// SmsCommunicationPage.tsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { sendBulkSms, fetchSmsLogs } from '../../../services/eventSmsService';
-import SmsSendForm from './components/SmsSendForm';
+import { fetchAttendees, fetchSmsLogs, sendBulkSms } from '../../../services/eventSmsService';
+import { Attendee, SmsLog, SMS_TEMPLATES, TimingLabel } from './SmsTypes';
+import RecipientSelector from './components/RecipientSelector';
+import SmsEditor from './components/SmsEditor';
+import SmsPreview from './components/SmsPreview';
 import SmsHistoryLog from './components/SmsHistoryLog';
-import { SmsLog, SMS_TEMPLATES, TimingLabel } from './SmsTypes';
 
 const SmsCommunicationPage: React.FC = () => {
-    const { eventId } = useParams<{ eventId: string }>();
+  const { eventId } = useParams<{ eventId: string }>();
 
-    // --- State Management ---
-    const [timing, setTiming] = useState<TimingLabel>('Pre-Event');
-    const [message, setMessage] = useState(SMS_TEMPLATES[timing]);
-    const [isSending, setIsSending] = useState(false);
-    const [statusMessage, setStatusMessage] = useState('');
-    const [logs, setLogs] = useState<SmsLog[]>([]);
-    const [logsLoading, setLogsLoading] = useState(true);
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [timing, setTiming] = useState<TimingLabel>('Pre-Event');
+  const [message, setMessage] = useState<string>(SMS_TEMPLATES['Pre-Event']);
+  const [logs, setLogs] = useState<SmsLog[]>([]);
 
-    // --- Data Fetching Logic ---
-    const fetchLogs = useCallback(async () => {
-        if (!eventId) return;
-        setLogsLoading(true);
-        try {
-            const data = await fetchSmsLogs(eventId);
-            setLogs(data);
-        } catch (error: any) {
-            console.error("Failed to fetch SMS logs:", error);
-        } finally {
-            setLogsLoading(false);
-        }
-    }, [eventId]);
+  const [search, setSearch] = useState('');
+  const [logsLoading, setLogsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [counts, setCounts] = useState<AttendeeCounts>({ all: 0, checkedIn: 0, absent: 0, with_phone: 0 });
 
-    useEffect(() => {
-        fetchLogs();
-    }, [fetchLogs]);
 
-    // --- Action Handler ---
-    const handleSend = async () => {
-        if (!eventId) return;
+  const loadAttendees = useCallback(async (searchTerm: string = '') => {
+    if (!eventId) return;
+    try {
+const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
+      setAttendees(data.attendees);
+      setCounts(data.counts);
 
-        if (!window.confirm('CRITICAL ACTION: You are about to send a bulk SMS to ALL attendees. This is a paid, non-cancellable action that will be processed immediately. Proceed?')) {
-            return;
-        }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [eventId]);
 
-        setIsSending(true);
-        setStatusMessage('');
+  const loadLogs = useCallback(async () => {
+    if (!eventId) return;
+    setLogsLoading(true);
+    try {
+      const data = await fetchSmsLogs(eventId);
+      setLogs(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLogsLoading(false);
+    }
+  }, [eventId]);
 
-        try {
-            const response = await sendBulkSms(eventId, message, timing);
-            setStatusMessage(`Job Dispatched: ${response.message} The queue will process this shortly.`);
-            fetchLogs(); // Refresh logs to show the new 'Pending' entry
-        } catch (error: any) {
-            console.error("SMS Send Error:", error.response || error);
-            const apiErrorMessage = error.response?.data?.message || error.message;
-            setStatusMessage(`Error: Failed to dispatch SMS. (${apiErrorMessage})`);
-        } finally {
-            setIsSending(false);
-        }
-    };
+      useEffect(() => {
+            const timeoutId = setTimeout(() => {
+                  loadAttendees(search);
+            }, 300);
+            return () => clearTimeout(timeoutId);
+      }, [search, loadAttendees]);
 
-    const handleTimingChange = (selectedTiming: TimingLabel) => {
-        setTiming(selectedTiming);
-        setMessage(SMS_TEMPLATES[selectedTiming]);
-    };
+  // quick filters can be added in sidebar - for demo we will not force external quickFilter
+  const handleSend = async () => {
+    if (!eventId) return;
+    if (selectedIds.length === 0) {
+      alert('Select at least one attendee or use the select-all button.');
+      return;
+    }
+    if (!window.confirm('Send SMS to selected recipients? This action is immediate.')) return;
+    setIsSending(true);
+    setStatusMessage('');
+    try {
+      await sendBulkSms(eventId, message, timing, 'custom', selectedIds);
+      setStatusMessage('SMS dispatched successfully. Refreshing history...');
+      setSelectedIds([]);
+      loadLogs();
+    } catch (err: any) {
+      console.error(err);
+      setStatusMessage(err?.message || 'Failed to send SMS');
+    } finally {
+      setIsSending(false);
+    }
+  };
 
-    return (
-        <div className="p-6 md:p-10 bg-gray-50 min-h-screen">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">SMS Communication Center</h1>
-            <p className="text-lg text-gray-600 border-b pb-4 mb-8">
-                Leverage high-impact, low-latency SMS to communicate critical updates to your entire attendee list.
-                Messages are queued and processed asynchronously via Beem Africa.
-            </p>
 
-            {/* Campaign Setup and Dispatch (SmsSendForm) */}
-            <SmsSendForm
-                timing={timing}
-                message={message}
-                isSending={isSending}
-                statusMessage={statusMessage}
-                onTimingChange={handleTimingChange}
-                onMessageChange={setMessage}
-                onSend={handleSend}
-            />
 
-            {/* Audit Log (SmsHistoryLog) */}
-            <SmsHistoryLog
-                logs={logs}
-                isLoading={logsLoading}
-            />
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Left sidebar */}
+      <aside className="w-96 bg-white border-r border-gray-200 p-6 flex flex-col gap-6">
+        <div>
+          <h1 className="text-xl font-bold text-red-600">Recipients</h1>
+          <p className="text-sm text-gray-500 mt-1">Select attendees to target. Use search or filters.</p>
         </div>
-    );
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSelectedIds(attendees.map(a => a.id))}
+            className="text-sm px-3 py-2 rounded-md bg-red-600 text-white"
+          >
+            Select all ({counts.all})
+          </button>
+          <button
+            onClick={() => setSelectedIds(attendees.filter(a => a.status === 'checkedIn').map(a => a.id))}
+            className="text-sm px-3 py-2 rounded-md bg-white border border-gray-200"
+          >
+            Checked-in ({counts.checkedIn})
+          </button>
+          <button
+            onClick={() => setSelectedIds(attendees.filter(a => a.status === 'absent').map(a => a.id))}
+            className="text-sm px-3 py-2 rounded-md bg-white border border-gray-200"
+          >
+            Absent ({counts.absent})
+          </button>
+        </div>
+
+        <div className="flex-1">
+          <RecipientSelector attendees={attendees} selected={selectedIds} onChange={setSelectedIds} />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Timing</label>
+          <select
+            value={timing}
+            onChange={e => { const val = e.target.value as TimingLabel; setTiming(val); setMessage(SMS_TEMPLATES[val]); }}
+            className="w-full p-2 border rounded-md focus:ring-red-400 focus:border-red-400"
+          >
+            <option value="Pre-Event">Pre-Event</option>
+            <option value="At-Event">At-Event</option>
+            <option value="Post-Event">Post-Event</option>
+          </select>
+        </div>
+      </aside>
+
+      {/* Center */}
+      <main className="flex-1 p-8 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <SmsEditor
+              message={message}
+              setMessage={setMessage}
+              isSending={isSending}
+              onSend={handleSend}
+              selectedCount={selectedIds.length}
+            />
+            <div className="mt-3 text-sm text-gray-500">{statusMessage}</div>
+          </div>
+
+          <div className="space-y-6">
+            <SmsPreview message={message} timing={timing} recipientsCount={selectedIds.length} />
+            <div className="bg-white border rounded-md p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">Quick Tips</h3>
+              <ul className="text-xs text-gray-500 list-disc ml-5 space-y-1">
+                <li>Keep messages under 160 chars to avoid extra costs.</li>
+                <li>Use {`{{FIRST_NAME}}`} to personalize messages.</li>
+                <li>Check selected recipients before sending.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">History</h3>
+          <SmsHistoryLog logs={logs} isLoading={logsLoading} />
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default SmsCommunicationPage;

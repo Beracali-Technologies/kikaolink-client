@@ -1,19 +1,43 @@
-// Define the shape of the log data received from the backend
-export interface SmsLog {
-    id: number;
-    message: string;
-    timing_label: string;
-    recipient_count: number;
-    status: 'Pending' | 'Processing' | 'Sent' | 'Failed';
-    created_at: string;
+export interface Attendee {
+    id: string;
+    uuid: string;
+    name: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string | null;
+    company: string | null;
+    job_title: string | null;
+    status: 'checkedIn' | 'absent' | 'pending';
+    has_phone: boolean;
 }
 
-// Define the available timing labels (used for templates)
+export interface AttendeeCounts {
+    all: number;
+    checkedIn: number;
+    absent: number;
+    with_phone: number;
+}
+
+export interface AttendeesResponse {
+    attendees: Attendee[];
+    counts: AttendeeCounts;
+    total: number;
+}
+
 export type TimingLabel = 'Pre-Event' | 'At-Event' | 'Post-Event';
 
-// Client-side SMS Templates
+export interface SmsLog {
+    id: string;
+    event_id: string;
+    recipient_count: number;
+    message: string;
+    timing: TimingLabel;
+    sent_at: string;
+}
+
 export const SMS_TEMPLATES: Record<TimingLabel, string> = {
-    'Pre-Event': "Hi, thanks for registering for {{EVENT_NAME}}! We look forward to seeing you on {{START_DATE}}. Please check your email for any last-minute updates.",
-    'At-Event': "Welcome to {{EVENT_NAME}}! The event is now live. If you need assistance, please visit the info desk.",
-    'Post-Event': "Thank you for attending {{EVENT_NAME}}! We hope you had a great time. Find photos and feedback link at [Link].",
+    'Pre-Event': 'Welcome to {{EVENT_NAME}}, {{FIRST_NAME}}! Your QR code is ready. Check-in starts at {{CHECKIN_TIME}}.',
+    'At-Event': 'Thanks for attending {{EVENT_NAME}}, {{FIRST_NAME}}! Please show your QR code at the entrance.',
+    'Post-Event': 'Thank you for joining {{EVENT_NAME}}, {{FIRST_NAME}}! We hope to see you at our next event.'
 };

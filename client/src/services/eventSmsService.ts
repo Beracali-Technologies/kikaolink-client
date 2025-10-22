@@ -1,33 +1,27 @@
-import api from '../lib/axios'; 
+import api from '../lib/axios';
+import { AttendeesResponse } from '../Features/Communications/SmsCommunication/SmsTypes';
 
-interface SmsLog {
-    id: number;
-    message: string;
-    timing_label: string;
-    recipient_count: number;
-    status: 'Pending' | 'Processing' | 'Sent' | 'Failed';
-    created_at: string;
-}
+export const fetchAttendees = async (eventId: string, params?: { search?: string; status?: string }): Promise<AttendeesResponse> => {
+    const query = new URLSearchParams();
+    if (params?.search) query.append('search', params.search);
+    if (params?.status) query.append('status', params.status);
 
-/**
- * Dispatches a bulk SMS job to the backend.
- * @param eventId The ID of the current event.
- * @param message The SMS message content.
- * @param timing_label The context (e.g., Pre-Event).
- */
-export const sendBulkSms = async (eventId: string, message: string, timing_label: string) => {
-    const response = await api.post(`/events/${eventId}/sms/send`, {
-        message,
-        timing_label,
-    });
-    return response.data;
+    const url = query.toString() ? `/api/events/${eventId}/attendees?${query.toString()}` : `/events/${eventId}/attendees`;
+    const res = await api.get(url);
+    return res.data;
 };
 
-/**
- * Fetches the history of bulk SMS jobs for an event.
- * @param eventId The ID of the current event.
- */
-export const fetchSmsLogs = async (eventId: string): Promise<SmsLog[]> => {
-    const response = await api.get(`/events/${eventId}/sms/logs`);
-    return response.data;
+export const fetchSmsLogs = async (eventId: string) => {
+    const res = await api.get(`/api/events/${eventId}/sms/logs`);
+    return res.data;
+};
+
+export const sendBulkSms = async (eventId: string, message: string, timing: string, type: string, attendeeIds: string[]) => {
+    const res = await api.post(`/api/events/${eventId}/sms/send`, {
+        message,
+        timing,
+        type,
+        attendee_ids: attendeeIds,
+    });
+    return res.data;
 };
