@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 // Importing Icons
-import { FiGrid, FiSettings, FiCheckSquare, FiLayout } from 'react-icons/fi';
+import { FiGrid, FiSettings, FiCheckSquare, FiLayout, FiSend  } from 'react-icons/fi';
 
 // Import the new Subcomponents
 import SidebarHeader from './components/SidebarHeader';
@@ -36,6 +36,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
             // Active for event list page but not the individual event settings
             isActive: location.pathname === '/dashboard/events' ||
                        (location.pathname.startsWith('/dashboard/events') && !eventId)
+        },
+        {
+          name: 'Communications',
+          path: `/dashboard/events/${eventId}/communications`,
+          icon: FiSend,
+          isActive: location.pathname === `/dashboard/events/${eventId}/sms`
         },
         {
             name: 'Check-in',

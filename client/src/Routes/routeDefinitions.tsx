@@ -24,7 +24,10 @@ const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsit
 const AttendeeRegistrationPage = lazy(() => import('../Features/Registration/pages/AttendeeRegistrationPage/AttendeeRegistrationPage'));
 const RegistrationSuccessPage = lazy(() => import('../Features/Registration/pages/RegistrationSuccessPage/RegistrationSuccessPage')) ;
 
-
+const CommunicationsLayout = lazy(() => import('../Layouts/CommunicationsLayout/CommunicationsLayout'));
+const CommunicationsOverviewPage = lazy(() => import('../Features/Communications/CommunicationsOverviewPage'))
+const SmsCommunicationPage = lazy(() => import('../Features/Communications/SmsCommunication/SmsCommunicationPage'));
+const EmailCommunicationPage = lazy(() => import('../Features/Communications/EmailCommunication/EmailCommunicationPage'));
 // --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
 export const routes: RouteObject[] = [
     // --- Public Routes ---
@@ -48,25 +51,37 @@ export const routes: RouteObject[] = [
             </ProtectedRoute>
         ),
         children: [
-            { index: true, element: <Navigate to="home" replace /> },
-            { path: 'home', element: <EventDashboard /> },
-            { path: 'events', element: <EventList /> },
-            { path: 'events/create', element: <CreateEvent /> },
-            { path: 'checkin', element: <CheckinPage /> },
+    { index: true, element: <Navigate to="home" replace /> },
+    { path: 'home', element: <EventDashboard /> },
+    { path: 'events', element: <EventList /> },
+    { path: 'events/create', element: <CreateEvent /> },
+    { path: 'checkin', element: <CheckinPage /> },
 
-            // Nested route for managing a single event's settings
-            {
-                path: 'events/:eventId',
-                element: <EventSettingsLayout />,
-                children: [
-                    { index: true, element: <Navigate to="info" replace /> },
-                    { path: 'info', element: <EditEvent /> },
-                    { path: 'registration-form', element: <RegistrationFormEditor /> },
-                    { path: 'tickets', element: <TicketsAndPricing /> },
-                    { path: 'email', element: <EmailConfirmation /> }
-                ]
-            },
-        ],
+    // Communications routes (not inside EventSettingsLayout)
+    {
+      path: 'events/:eventId/communications',
+      element: <CommunicationsLayout />,
+      children: [
+        { index: true, element: <CommunicationsOverviewPage /> },
+        { path: 'sms', element: <SmsCommunicationPage /> },
+        { path: 'email', element: <EmailCommunicationPage /> },
+      ],
+    },
+
+    // Event settings routes
+    {
+      path: 'events/:eventId',
+      element: <EventSettingsLayout />,
+      children: [
+        { index: true, element: <Navigate to="info" replace /> },
+        { path: 'info', element: <EditEvent /> },
+        { path: 'registration-form', element: <RegistrationFormEditor /> },
+        { path: 'tickets', element: <TicketsAndPricing /> },
+        { path: 'email', element: <EmailConfirmation /> },
+      ],
+    },
+  ],
+
     },
     // Add a catch-all 404 at the top level if desired
 ];
