@@ -3,13 +3,13 @@ import React from 'react';
 
 interface LogoProps {
     size?: 'sm' | 'md' | 'lg';
-    showIcon?: boolean;
+
     className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({
     size = 'md',
-    showIcon = true,
+
     className = ''
 }) => {
     const sizeClasses = {
@@ -34,11 +34,7 @@ const Logo: React.FC<LogoProps> = ({
 
     return (
         <div className={`flex items-center space-x-2 ${className}`}>
-            {showIcon && (
-                <div className={`${currentSize.icon} rounded-lg bg-[#0E2344] flex items-center justify-center`}>
-                    <span className={`text-white font-bold ${currentSize.iconText}`}>K</span>
-                </div>
-            )}
+
             <div className="flex items-baseline">
                     <span className={`text-white ${currentSize.text} font-bold tracking-tight`}>
                           Kikao
