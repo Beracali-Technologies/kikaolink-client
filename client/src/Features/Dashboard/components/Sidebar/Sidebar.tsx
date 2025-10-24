@@ -43,12 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
           icon: FiSend,
           isActive: location.pathname === `/dashboard/events/${eventId}/sms`
         },
-        {
-            name: 'Check-in',
-            path: '/dashboard/checkin', // The new Check-in link
-            icon: FiCheckSquare,
-            isActive: location.pathname.startsWith('/dashboard/checkin')
-        },
+
         {
             name: 'Settings',
                   //using eventId if available otherwise to event list page

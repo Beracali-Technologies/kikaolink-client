@@ -4,10 +4,12 @@ import { Navigate, RouteObject } from 'react-router-dom';
 // --- LAYOUTS (for route definitions) ---
 import PublicLayout from '../Layouts/PublicLayout/PublicLayout';
 import DashboardLayout from '../Layouts/DashboardLayout/DashboardLayout';
+import LandingLayout from '../Layouts/LandingLayout/LandingLayout';
 import EventSettingsLayout from '../Layouts/EventSettingsLayout/EventSettingsLayout';
 import ProtectedRoute from './ProtectedRoute';
 
 // --- LAZY-LOADED PAGE COMPONENTS ---
+const LandingPage = lazy(() => import('../Features/Landing/LandingPage'));
 const HeroPage = lazy(() => import('../Features/Landing/HeroPage/HeroPage'));
 const Login = lazy(() => import('../Features/Auth/Login/Login'));
 const Signup = lazy(() => import('../Features/Auth/Signup/Signup'));
@@ -37,11 +39,13 @@ export const routes: RouteObject[] = [
             { path: '/', element: <HeroPage /> },
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
+
             { path: '/events/:eventSlug', element: <EventWebsite /> },
             { path: '/register-attendee/:eventSlug/:eventId', element: <AttendeeRegistrationPage /> },
             { path: '/registration-success/:eventSlug', element: <RegistrationSuccessPage /> },
         ]
     },
+
     // --- Private Dashboard Routes ---
     {
         path: '/dashboard',
@@ -52,6 +56,7 @@ export const routes: RouteObject[] = [
         ),
         children: [
     { index: true, element: <Navigate to="home" replace /> },
+
     { path: 'home', element: <EventDashboard /> },
     { path: 'events', element: <EventList /> },
     { path: 'events/create', element: <CreateEvent /> },
@@ -83,5 +88,18 @@ export const routes: RouteObject[] = [
   ],
 
     },
+
+    // --- Landing Page (No Sidebar) ---
+ {
+     path: '/dashboard/landing',
+     element: (
+         <ProtectedRoute>
+             <LandingLayout />
+         </ProtectedRoute>
+     ),
+     children: [
+         { index: true, element: <LandingPage /> },
+     ],
+ },
     // Add a catch-all 404 at the top level if desired
 ];

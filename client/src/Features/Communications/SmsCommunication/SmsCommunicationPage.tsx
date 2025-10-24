@@ -8,6 +8,14 @@ import SmsEditor from './components/SmsEditor';
 import SmsPreview from './components/SmsPreview';
 import SmsHistoryLog from './components/SmsHistoryLog';
 
+// Add this interface if it's missing
+interface AttendeeCounts {
+  all: number;
+  checkedIn: number;
+  absent: number;
+  with_phone: number;
+}
+
 const SmsCommunicationPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
 
@@ -23,14 +31,12 @@ const SmsCommunicationPage: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const [counts, setCounts] = useState<AttendeeCounts>({ all: 0, checkedIn: 0, absent: 0, with_phone: 0 });
 
-
   const loadAttendees = useCallback(async (searchTerm: string = '') => {
     if (!eventId) return;
     try {
-const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
+      const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
       setAttendees(data.attendees);
       setCounts(data.counts);
-
     } catch (err) {
       console.error(err);
     }
@@ -49,14 +55,13 @@ const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
     }
   }, [eventId]);
 
-      useEffect(() => {
-            const timeoutId = setTimeout(() => {
-                  loadAttendees(search);
-            }, 300);
-            return () => clearTimeout(timeoutId);
-      }, [search, loadAttendees]);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      loadAttendees(search);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [search, loadAttendees]);
 
-  // quick filters can be added in sidebar - for demo we will not force external quickFilter
   const handleSend = async () => {
     if (!eventId) return;
     if (selectedIds.length === 0) {
@@ -79,8 +84,6 @@ const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
     }
   };
 
-
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Left sidebar */}
@@ -90,36 +93,26 @@ const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
           <p className="text-sm text-gray-500 mt-1">Select attendees to target. Use search or filters.</p>
         </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setSelectedIds(attendees.map(a => a.id))}
-            className="text-sm px-3 py-2 rounded-md bg-red-600 text-white"
-          >
-            Select all ({counts.all})
-          </button>
-          <button
-            onClick={() => setSelectedIds(attendees.filter(a => a.status === 'checkedIn').map(a => a.id))}
-            className="text-sm px-3 py-2 rounded-md bg-white border border-gray-200"
-          >
-            Checked-in ({counts.checkedIn})
-          </button>
-          <button
-            onClick={() => setSelectedIds(attendees.filter(a => a.status === 'absent').map(a => a.id))}
-            className="text-sm px-3 py-2 rounded-md bg-white border border-gray-200"
-          >
-            Absent ({counts.absent})
-          </button>
-        </div>
+        {/* REMOVED: The duplicate filter buttons */}
 
+        {/* The RecipientSelector now has its own filters */}
         <div className="flex-1">
-          <RecipientSelector attendees={attendees} selected={selectedIds} onChange={setSelectedIds} />
+          <RecipientSelector
+            attendees={attendees}
+            selected={selectedIds}
+            onChange={setSelectedIds}
+          />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Timing</label>
           <select
             value={timing}
-            onChange={e => { const val = e.target.value as TimingLabel; setTiming(val); setMessage(SMS_TEMPLATES[val]); }}
+            onChange={e => {
+              const val = e.target.value as TimingLabel;
+              setTiming(val);
+              setMessage(SMS_TEMPLATES[val]);
+            }}
             className="w-full p-2 border rounded-md focus:ring-red-400 focus:border-red-400"
           >
             <option value="Pre-Event">Pre-Event</option>
@@ -151,6 +144,7 @@ const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
                 <li>Keep messages under 160 chars to avoid extra costs.</li>
                 <li>Use {`{{FIRST_NAME}}`} to personalize messages.</li>
                 <li>Check selected recipients before sending.</li>
+                <li>Use the filters to target specific attendee groups.</li>
               </ul>
             </div>
           </div>
