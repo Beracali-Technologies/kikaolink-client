@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import badgeBg from '@/assets/badge/badge.png';
+import badgeBg from '@/assets/images/badge/badge.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();

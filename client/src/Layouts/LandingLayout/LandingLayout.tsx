@@ -1,7 +1,7 @@
 // Layouts/LandingLayout/LandingLayout.tsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import TopBar from '../../Features/Dashboard/components/Header/TopBar';
+import TopBar from '../../Features/Dashboard/components/TopBar/TopBar';
 
 const LandingLayout: React.FC = () => {
     return (

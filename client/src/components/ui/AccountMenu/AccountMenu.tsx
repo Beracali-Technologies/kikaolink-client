@@ -1,4 +1,4 @@
-
+// Features/Dashboard/components/Header/AccountMenu.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import AccountButton from './components/AccountButton';
 import AccountDropdown from './components/AccountDropdown';
@@ -28,7 +28,7 @@ const AccountMenu: React.FC = () => {
     };
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative z-[1000]" ref={dropdownRef}>
             <AccountButton
                 isOpen={isOpen}
                 onClick={handleToggle}

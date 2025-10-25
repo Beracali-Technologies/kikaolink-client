@@ -7,6 +7,8 @@ interface AccountButtonProps {
 }
 
 const AccountButton: React.FC<AccountButtonProps> = ({ isOpen, onClick }) => {
+
+  
     return (
         <button
             onClick={onClick}

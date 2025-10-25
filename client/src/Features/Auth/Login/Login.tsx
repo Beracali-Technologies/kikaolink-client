@@ -24,7 +24,7 @@ const Login: React.FC = () => {
             console.log('Login Response:', response); // Debug the response
             // Verify token is stored before navigating
             if (getAuthToken()) {
-                navigate('/dashboard/events', { replace: true });
+                navigate('/dashboard/landing', { replace: true });
             } else {
                 setApiError('Login failed: Token not received.');
             }
