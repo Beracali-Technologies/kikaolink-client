@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../../Features/Dashboard/components/Sidebar/Sidebar';
 import TopBar from '../../Features/Dashboard/components/TopBar/TopBar';
+import DynamicTopBar from '@/Features/Dashboard/components/TopBar/DynamicTopBar';
 
 const DashboardLayout: React.FC = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -32,7 +33,7 @@ const DashboardLayout: React.FC = () => {
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col overflow-hidden">
 
-        <TopBar onMenuClick={() => setMobileNavOpen(true)} />
+        <DynamicTopBar onMenuClick={() => setMobileNavOpen(true)} />
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 md:p-8">
           <div className="max-w-7xl mx-auto">
