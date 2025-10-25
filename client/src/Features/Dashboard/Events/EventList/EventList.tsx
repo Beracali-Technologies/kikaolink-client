@@ -1,80 +1,140 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useEventStore } from '../../../../lib/stores/eventStore';
-
-// --- IMPORT THE NEW SUBCOMPONENTS ---
+// Features/Dashboard/Events/EventList/EventList.tsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getEvents } from '@/services/eventService';
+import { TEvent } from '@/types';
 import EventListHeader from './components/EventListHeader';
 import EventTable from './components/EventTable';
-import NoEventState from './NoEventState';
-import { FiLoader } from 'react-icons/fi';
+import { LoadingSpinner } from '@/components/ui/loading';
 
 const EventList: React.FC = () => {
-    // --- 1. STATE MANAGEMENT ---
-    // Get the master list of events and loading state from the global store
-    const { events, isLoading, error, fetchEvents } = useEventStore();
-    // Create local state to hold the user's search input
+    const navigate = useNavigate();
+    const [events, setEvents] = useState<TEvent[]>([]);
+    const [filteredEvents, setFilteredEvents] = useState<TEvent[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-
-    // Fetch the full event list only once when the page loads
     useEffect(() => {
+        loadEvents();
+    }, []);
+
+    useEffect(() => {
+        filterEvents();
+    }, [events, searchTerm]);
+
     const loadEvents = async () => {
-      try {
-        await fetchEvents();
-
-      } catch (err) {
-            console.error(`Failed to load Events: `, err);
-      }
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await getEvents();
+            console.log('Events loaded:', response.data);
+            setEvents(response.data);
+        } catch (error: any) {
+            console.error('Failed to load events:', error);
+            setError('Failed to load events. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    loadEvents();
-  }, [fetchEvents]);
-
-    // --- 2. REAL-TIME FILTERING LOGIC ---
-    
-    const filteredEvents = useMemo(() => {
-        // If there's no search term, return the full list.
+    const filterEvents = () => {
         if (!searchTerm.trim()) {
-            return events;
+            setFilteredEvents(events);
+            return;
         }
-        // Otherwise, filter the list based on the event title (case-insensitive)
-        return events.filter(event =>
-            event.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+        const filtered = events.filter(event =>
+            event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            event.location?.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [events, searchTerm]); // Dependencies array
-
-
-    // --- 3. RENDER LOGIC ---
-    const renderContent = () => {
-        if (isLoading) {
-            return <div className="text-center p-12"><FiLoader className="animate-spin text-4xl mx-auto text-blue-500" /></div>;
-        }
-        if (error) {
-            return <div className="text-center p-12 bg-red-100 text-red-700 rounded-lg">{error}</div>;
-        }
-        if (events.length === 0) {
-            return <NoEventState />;
-        }
-        if (filteredEvents.length === 0) {
-             return <div className="text-center p-12 bg-gray-50 rounded-lg">
-                        <h3 className="font-bold">No events found for "{searchTerm}"</h3>
-                        <p className="text-gray-500">Try a different search term.</p>
-                    </div>;
-        }
-        // Pass the *filtered* list to the table component
-        return <EventTable events={filteredEvents} />;
+        setFilteredEvents(filtered);
     };
+
+    const handleSearchChange = (term: string) => {
+        setSearchTerm(term);
+    };
+
+    const handleEventSelect = (eventId: number) => {
+        // Navigate to event-specific dashboard
+        navigate(`/dashboard/events/${eventId}/dashboard`);
+    };
+
+    const handleEventManage = (eventId: number) => {
+        // Navigate to event settings/info
+        navigate(`/dashboard/events/${eventId}/info`);
+    };
+
+    if (loading) {
+        return (
+            <LoadingSpinner
+                type="fan"
+                size="lg"
+                text="Loading Events"
+                subText="Fetching your events..."
+                fullScreen={true}
+            />
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center max-w-md">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-2xl">⚠️</span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Events</h3>
+                    <p className="text-gray-600 mb-4">{error}</p>
+                    <button
+                        onClick={loadEvents}
+                        className="bg-[#0E2344] text-white px-6 py-2 rounded-lg hover:bg-[#1a3358] transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8">
-            {/* The Header component receives the state and the function to update it */}
-            <EventListHeader
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-            />
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <EventListHeader
+                    searchTerm={searchTerm}
+                    onSearchChange={handleSearchChange}
+                />
 
-            {/* The main content area renders based on our logic */}
-            <div>
-                {renderContent()}
+                <div className="mt-8">
+                    {filteredEvents.length === 0 ? (
+                        <div className="text-center py-12">
+                            <div className="text-4xl mb-4">📅</div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                {events.length === 0 ? 'No Events Yet' : 'No Events Found'}
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                                {events.length === 0
+                                    ? 'Get started by creating your first event.'
+                                    : 'Try adjusting your search terms.'
+                                }
+                            </p>
+                            {events.length === 0 && (
+                                <button
+                                    onClick={() => navigate('/dashboard/events/create')}
+                                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Create Your First Event
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <EventTable
+                            events={filteredEvents}
+                            onEventSelect={handleEventSelect}
+                            onEventManage={handleEventManage}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

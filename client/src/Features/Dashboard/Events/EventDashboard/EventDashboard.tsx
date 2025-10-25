@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import StatCard from './components/StatCard';
 import RealCharts from './components/RealCharts/RealCharts';
-
 import CustomMetricsPanel from './components/CustomMetricsPanel';
+import { LoadingSpinner } from '@/components/ui/loading';
 import {
   FiUsers,
   FiClipboard,
@@ -12,26 +13,36 @@ import {
   FiTrendingUp,
   FiPercent,
   FiMessageSquare,
-  FiRefreshCw
+  FiRefreshCw,
+  FiArrowLeft
 } from 'react-icons/fi';
 import { dashboardService } from '@/services/dashboard/dashboardService';
 import { getEvents } from '@/services/eventService';
 import { DashboardData, TEvent } from '@/types';
 
 const EventDashboard: React.FC = () => {
+    const { eventId } = useParams<{ eventId: string }>();
+    const navigate = useNavigate();
+
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
     const [events, setEvents] = useState<TEvent[]>([]);
+    const [selectedEventId, setSelectedEventId] = useState<number | null>(
+        eventId ? parseInt(eventId) : null
+    );
     const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
-        loadDashboard();
         loadEvents();
-    }, []);
+        if (selectedEventId) {
+            loadEventDashboard(selectedEventId);
+        } else {
+            loadGlobalDashboard();
+        }
+    }, [selectedEventId]);
 
-    const loadDashboard = async () => {
+    const loadGlobalDashboard = async () => {
         try {
             setLoading(true);
             setError(null);
@@ -47,16 +58,32 @@ const EventDashboard: React.FC = () => {
         }
     };
 
+    const loadEventDashboard = async (specificEventId: number) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await dashboardService.fetchEventDashboard(specificEventId);
+            console.log(`Event ${specificEventId} dashboard data:`, response);
+            setData(response);
+        } catch (error: any) {
+            console.error('Event dashboard load error:', error);
+            setError('Failed to load event dashboard. Please try again.');
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
     const loadEvents = async () => {
         try {
             const response = await getEvents();
             console.log('Events data:', response);
 
             // Filter for LIVE events only, or use all events
-              const allEvents = response.data;
-              const liveEvents = allEvents.filter(event => event.status === 'LIVE');
+            const allEvents = response.data;
+            const liveEvents = allEvents.filter(event => event.status === 'LIVE');
 
-              setEvents(liveEvents.length > 0 ? liveEvents : allEvents);
+            setEvents(liveEvents.length > 0 ? liveEvents : allEvents);
         } catch (error) {
             console.error('Events load error:', error);
             setEvents([]);
@@ -65,28 +92,49 @@ const EventDashboard: React.FC = () => {
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        await loadDashboard();
+        if (selectedEventId) {
+            await loadEventDashboard(selectedEventId);
+        } else {
+            await loadGlobalDashboard();
+        }
         await loadEvents();
     };
 
     const handleCustomUpdate = () => {
-        loadDashboard();
+        if (selectedEventId) {
+            loadEventDashboard(selectedEventId);
+        } else {
+            loadGlobalDashboard();
+        }
     };
 
     const handleEventSelect = (eventId: number) => {
         setSelectedEventId(eventId);
+        // Update URL to event-specific dashboard
+        navigate(`/dashboard/events/${eventId}/dashboard`, { replace: true });
     };
 
-    // Loading State
+    const handleGlobalDashboard = () => {
+        setSelectedEventId(null);
+        navigate('/dashboard/home', { replace: true });
+    };
+
+    const handleBackToEvents = () => {
+        navigate('/dashboard/events');
+    };
+
+    // Get current event details
+    const currentEvent = selectedEventId ? events.find(e => e.id === selectedEventId) : null;
+
+    // Loading State - Using LoadingSpinner component
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#0E2344] mx-auto mb-4"></div>
-                    <p className="text-lg font-semibold text-gray-700">Loading dashboard...</p>
-                    <p className="text-sm text-gray-500 mt-2">Fetching real-time analytics</p>
-                </div>
-            </div>
+            <LoadingSpinner
+                size="lg"
+                text={selectedEventId ? "Loading Event Dashboard" : "Loading Dashboard"}
+                subText="Fetching real-time analytics..."
+                fullScreen={true}
+            />
         );
     }
 
@@ -137,28 +185,28 @@ const EventDashboard: React.FC = () => {
             title: "Active Events",
             value: stats.active_events.toString(),
             color: "blue" as const,
-            description: "Live events"
+            description: selectedEventId ? "Current event" : "Live events"
         },
         {
             icon: FiUsers,
             title: "Total Registrations",
             value: stats.total_registrations.toLocaleString(),
             color: "green" as const,
-            description: "All registrtions"
+            description: selectedEventId ? "For this event" : "All registrations"
         },
         {
             icon: FiDollarSign,
             title: "Total Revenue",
             value: `$${stats.total_revenue.toLocaleString()}`,
             color: "yellow" as const,
-            description: "Total revenue"
+            description: selectedEventId ? "Event revenue" : "Total revenue"
         },
         {
             icon: FiCheckCircle,
             title: "Checked In",
             value: stats.checked_in_attendees.toLocaleString(),
             color: "purple" as const,
-            description: "Attendees checked in"
+            description: selectedEventId ? "Event check-ins" : "All check-ins"
         },
         {
             icon: FiPercent,
@@ -169,10 +217,10 @@ const EventDashboard: React.FC = () => {
         },
         {
             icon: FiTrendingUp,
-            title: "Avg Revenue/Event",
-            value: `$${stats.average_revenue_per_event.toLocaleString()}`,
+            title: selectedEventId ? "Total Revenue" : "Avg Revenue/Event",
+            value: `$${selectedEventId ? stats.total_revenue.toLocaleString() : stats.average_revenue_per_event.toLocaleString()}`,
             color: "orange" as const,
-            description: "Per event average"
+            description: selectedEventId ? "Event total" : "Per event average"
         },
         {
             icon: FiMessageSquare,
@@ -195,10 +243,30 @@ const EventDashboard: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Event Dashboard</h1>
+                    <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-2">
+                            {selectedEventId && (
+                                <button
+                                    onClick={handleBackToEvents}
+                                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                                >
+                                    <FiArrowLeft className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Back to Events</span>
+                                </button>
+                            )}
+                        </div>
+
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            {selectedEventId
+                                ? `Event Dashboard - ${currentEvent?.title || 'Event'}`
+                                : 'Event Dashboard'
+                            }
+                        </h1>
                         <p className="text-gray-600 mt-2">
-                            Real-time analytics and insights for your events
+                            {selectedEventId
+                                ? `Real-time analytics for ${currentEvent?.title || 'this event'}`
+                                : 'Overview of all your events'
+                            }
                         </p>
                         {data?.real_time_updated && (
                             <p className="text-sm text-gray-500 mt-1">
@@ -206,14 +274,40 @@ const EventDashboard: React.FC = () => {
                             </p>
                         )}
                     </div>
-                    <button
-                        onClick={handleRefresh}
-                        disabled={refreshing}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    >
-                        <FiRefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                        {refreshing ? 'Refreshing...' : 'Refresh'}
-                    </button>
+
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                        {/* Event Selector - Only show when not on specific event */}
+                        {!selectedEventId && (
+                            <select
+                                value={selectedEventId || ''}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '') {
+                                        handleGlobalDashboard();
+                                    } else {
+                                        handleEventSelect(parseInt(value));
+                                    }
+                                }}
+                                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">All Events Overview</option>
+                                {events.map((event) => (
+                                    <option key={event.id} value={event.id}>
+                                        {event.title}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+
+                        <button
+                            onClick={handleRefresh}
+                            disabled={refreshing}
+                            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        >
+                            <FiRefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                            {refreshing ? 'Refreshing...' : 'Refresh'}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Stats Grid */}
@@ -239,36 +333,38 @@ const EventDashboard: React.FC = () => {
                     />
                 </div>
 
-                {/* Event Selection for Custom Metrics */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Event Custom Metrics
-                    </h3>
-                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                        <div className="flex-1">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Select Event for Custom Metrics
-                            </label>
-                            <select
-                                value={selectedEventId || ''}
-                                onChange={(e) => handleEventSelect(Number(e.target.value))}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="">Choose an event...</option>
-                                {events.map((event) => (
-                                    <option key={event.id} value={event.id}>
-                                        {event.title} - {new Date(event.start_date).toLocaleDateString()}
-                                    </option>
-                                ))}
-                            </select>
+                {/* Event Selection for Custom Metrics - Only show when not on specific event */}
+                {!selectedEventId && (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            Event Custom Metrics
+                        </h3>
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Select Event for Custom Metrics
+                                </label>
+                                <select
+                                    value={selectedEventId || ''}
+                                    onChange={(e) => handleEventSelect(Number(e.target.value))}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                                    <option value="">Choose an event...</option>
+                                    {events.map((event) => (
+                                        <option key={event.id} value={event.id}>
+                                            {event.title} - {new Date(event.start_date).toLocaleDateString()}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            {events.length === 0 && (
+                                <p className="text-sm text-gray-500">
+                                    No events available. Create events to see custom metrics.
+                                </p>
+                            )}
                         </div>
-                        {events.length === 0 && (
-                            <p className="text-sm text-gray-500">
-                                No events available. Create events to see custom metrics.
-                            </p>
-                        )}
                     </div>
-                </div>
+                )}
 
                 {/* Custom Metrics Panel */}
                 {selectedEventId && (
@@ -279,8 +375,6 @@ const EventDashboard: React.FC = () => {
                         />
                     </div>
                 )}
-
-
             </div>
         </div>
     );

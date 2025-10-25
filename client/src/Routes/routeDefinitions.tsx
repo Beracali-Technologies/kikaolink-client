@@ -58,6 +58,8 @@ export const routes: RouteObject[] = [
     { index: true, element: <Navigate to="home" replace /> },
 
     { path: 'home', element: <EventDashboard /> },
+    // Event-specific dashboard
+    { path: 'events/:eventId/dashboard', element: <EventDashboard /> },
     { path: 'events', element: <EventList /> },
     { path: 'events/create', element: <CreateEvent /> },
     { path: 'checkin', element: <CheckinPage /> },

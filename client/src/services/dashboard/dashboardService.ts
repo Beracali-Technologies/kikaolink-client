@@ -13,6 +13,12 @@ export class DashboardService {
     return response.data;
   }
 
+  async fetchEventDashboard(eventId: number): Promise<DashboardData> {
+        const response = await api.get<DashboardData>(`/api/events/${eventId}/dashboard`);
+        return response.data;
+    }
+
+
   async fetchComprehensiveAnalytics(timeframe: string = '30days'): Promise<ComprehensiveAnalytics> {
     const response = await api.get<ComprehensiveAnalytics>('/api/dashboard/analytics/comprehensive', {
       params: { timeframe }
