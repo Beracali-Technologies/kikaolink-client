@@ -1,25 +1,33 @@
 import React from 'react';
+import { FiRefreshCw } from 'react-icons/fi';
 
-const DashboardHeader: React.FC = () => {
+interface DashboardHeaderProps {
+    lastUpdated?: string;
+    onRefresh: () => void;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ lastUpdated, onRefresh }) => {
     return (
-        <header className="mb-12">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-4xl font-light text-gray-900 tracking-tight mb-2">
-                        Event Dashboard
-                    </h1>
-                    <p className="text-lg text-gray-600 font-light">
-                        Real-time insights and analytics for your events
+        <div className="flex justify-between items-center mb-8">
+            <div>
+                <h1 className="text-3xl font-bold text-gray-900">Event Dashboard</h1>
+                <p className="text-gray-600 mt-2">
+                    Real-time analytics and insights for your events
+                </p>
+                {lastUpdated && (
+                    <p className="text-sm text-gray-500 mt-1">
+                        Last updated: {new Date(lastUpdated).toLocaleString()}
                     </p>
-                </div>
-                <div className="hidden lg:block">
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <span>Last updated: Just now</span>
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    </div>
-                </div>
+                )}
             </div>
-        </header>
+            <button
+                onClick={onRefresh}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+                <FiRefreshCw className="w-4 h-4" />
+                Refresh
+            </button>
+        </div>
     );
 };
 

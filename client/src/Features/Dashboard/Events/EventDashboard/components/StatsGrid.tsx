@@ -1,6 +1,15 @@
 import React from 'react';
 import StatCard from './StatCard';
-import { FiUsers, FiClipboard, FiDollarSign, FiCheckCircle, FiClock, FiTrendingUp, FiPercent, FiCalendar } from 'react-icons/fi';
+import {
+  FiUsers,
+  FiClipboard,
+  FiDollarSign,
+  FiCheckCircle,
+  FiCalendar,
+  FiTrendingUp,
+  FiPercent,
+  FiMessageSquare
+} from 'react-icons/fi';
 import { DashboardStats } from '@/types';
 
 interface StatsGridProps {
@@ -10,74 +19,62 @@ interface StatsGridProps {
 const StatsGrid: React.FC<StatsGridProps> = ({ stats }) => {
     const hasData = stats.active_events > 0 || stats.total_registrations > 0;
 
-    const totalAttendees = stats.total_registrations;
-    const averageRevenuePerEvent = stats.active_events > 0 ? stats.total_revenue / stats.active_events : 0;
-    const checkInPercentage = stats.total_registrations > 0 ? (stats.checked_in_attendees / stats.total_registrations) * 100 : 0;
-
     const statCards = [
         {
             icon: FiClipboard,
             title: "Active Events",
-            value: hasData ? stats.active_events.toString() : "0",
+            value: stats.active_events.toString(),
             color: "blue" as const,
-            trend: hasData ? "+12%" : "0%",
-            description: hasData ? "Currently running events" : "No active events"
+            description: "Currently running events"
         },
         {
             icon: FiUsers,
             title: "Total Registrations",
-            value: hasData ? stats.total_registrations.toLocaleString() : "0",
+            value: stats.total_registrations.toLocaleString(),
             color: "green" as const,
-            trend: hasData ? "+8%" : "0%",
-            description: hasData ? "All-time registrations" : "No registrations yet"
+            description: "All-time registrations"
         },
         {
             icon: FiDollarSign,
             title: "Total Revenue",
-            value: hasData ? `$${stats.total_revenue.toLocaleString()}` : "$0",
+            value: `$${stats.total_revenue.toLocaleString()}`,
             color: "yellow" as const,
-            trend: hasData ? "+15%" : "0%",
-            description: hasData ? "Gross revenue" : "No revenue data"
+            description: "Gross revenue"
         },
         {
             icon: FiCheckCircle,
             title: "Checked-In",
-            value: hasData ? stats.checked_in_attendees.toLocaleString() : "0",
+            value: stats.checked_in_attendees.toLocaleString(),
             color: "purple" as const,
-            trend: hasData ? "+5%" : "0%",
-            description: hasData ? "Attendees checked in" : "No check-ins yet"
-        },
-        {
-            icon: FiCalendar,
-            title: "Total Attendees",
-            value: hasData ? totalAttendees.toLocaleString() : "0",
-            color: "teal" as const,
-            trend: hasData ? "+10%" : "0%",
-            description: hasData ? "All attendees" : "No attendees yet"
-        },
-        {
-            icon: FiClock,
-            title: "Avg. Duration",
-            value: hasData ? "2.5 days" : "--",
-            color: "indigo" as const,
-            trend: hasData ? "±0%" : "--",
-            description: hasData ? "Average event length" : "No duration data"
-        },
-        {
-            icon: FiTrendingUp,
-            title: "Avg. Revenue",
-            value: hasData ? `$${averageRevenuePerEvent.toFixed(0)}` : "$0",
-            color: "orange" as const,
-            trend: hasData ? "+7%" : "0%",
-            description: hasData ? "Per event" : "No revenue data"
+            description: "Attendees checked in"
         },
         {
             icon: FiPercent,
-            title: "Check-In Rate",
-            value: hasData ? `${checkInPercentage.toFixed(1)}%` : "0%",
+            title: "Attendance Rate",
+            value: `${stats.attendance_rate.toFixed(1)}%`,
+            color: "teal" as const,
+            description: "Check-in success rate"
+        },
+        {
+            icon: FiTrendingUp,
+            title: "Avg Revenue/Event",
+            value: `$${stats.average_revenue_per_event.toLocaleString()}`,
+            color: "orange" as const,
+            description: "Per event average"
+        },
+        {
+            icon: FiMessageSquare,
+            title: "SMS Sent",
+            value: stats.sms_sent.toLocaleString(),
+            color: "indigo" as const,
+            description: "Messages delivered"
+        },
+        {
+            icon: FiCalendar,
+            title: "SMS Pending",
+            value: stats.sms_pending.toString(),
             color: "red" as const,
-            trend: hasData ? "+3%" : "0%",
-            description: hasData ? "Registration conversion" : "No check-ins yet"
+            description: "Messages in queue"
         }
     ];
 
@@ -90,7 +87,6 @@ const StatsGrid: React.FC<StatsGridProps> = ({ stats }) => {
                     title={card.title}
                     value={card.value}
                     color={card.color}
-                    trend={card.trend}
                     description={card.description}
                 />
             ))}

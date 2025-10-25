@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { dashboardService } from '@/services/dashboardService';
+import { dashboardService } from '@/services/dashboard/dashboardService';
 
 interface CustomMetricsPanelProps {
     eventId: number;
