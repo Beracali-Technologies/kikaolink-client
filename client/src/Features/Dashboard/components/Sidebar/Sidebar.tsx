@@ -29,14 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
             // isActive is true only if the path is an EXACT match
             isActive: location.pathname === '/dashboard'
         },
-        {
-            name: 'Events',
-            path: '/dashboard/events',
-            icon: FiGrid,
-            // Active for event list page but not the individual event settings
-            isActive: location.pathname === '/dashboard/events' ||
-                       (location.pathname.startsWith('/dashboard/events') && !eventId)
-        },
+
         {
           name: 'Communications',
           path: `/dashboard/events/${eventId}/communications`,
