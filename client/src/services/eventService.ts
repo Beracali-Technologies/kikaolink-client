@@ -5,7 +5,7 @@ import { TEvent } from '@/types'; // Adjust path if needed
 
 export const getEvents = async (): Promise<{ data: TEvent[] }> => {
   try {
-    const response = await api.get('/events');
+    const response = await api.get('/api/events');
     console.log('📅 Events API Response:', response.data);
 
     // Filter for LIVE events only if needed, or let backend handle it

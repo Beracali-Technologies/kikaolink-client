@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StatCard from './components/StatCard';
-import RealCharts from './components/RealCharts';
+import RealCharts from './components/RealCharts/RealCharts';
 
 import CustomMetricsPanel from './components/CustomMetricsPanel';
 import {
