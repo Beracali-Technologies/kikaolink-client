@@ -13,7 +13,7 @@ const EventTopBar: React.FC<EventTopBarProps> = ({ onMenuClick }) => {
   const { currentEvent } = useEventStore();
   const [copied, setCopied] = useState(false);
 
-  const eventUrl = `${window.location.origin}/events/${currentEvent?.slug || eventId}`;
+  const eventUrl = `${window.location.origin}/events/${currentEvent?.id || eventId}`;
 
   const handleCopyUrl = async () => {
     try {

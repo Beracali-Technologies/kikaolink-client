@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 // Importing Icons
-import { FiGrid, FiSettings, FiCheckSquare, FiLayout, FiSend  } from 'react-icons/fi';
+import { FiSettings, FiLayout, FiSend  } from 'react-icons/fi';
 
 // Import the new Subcomponents
 import SidebarHeader from './components/SidebarHeader';

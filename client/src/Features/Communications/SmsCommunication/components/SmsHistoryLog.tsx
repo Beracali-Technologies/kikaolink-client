@@ -1,15 +1,23 @@
-// SmsHistoryLog.tsx
+// Features/Communications/SmsCommunication/components/SmsHistoryLog.tsx
 import React, { useState } from 'react';
 import { SmsLog } from '../SmsTypes';
 
-interface Props {
+interface SmsHistoryLogProps {
   logs: SmsLog[];
-  isLoading: boolean;
+  selectedLog?: SmsLog | null;
+  onLogSelect?: (log: SmsLog) => void;
+  isLoading?: boolean;
 }
 
-const getStatusBadge = (status: SmsLog['status']) => {
+// Helper function to safely get status with fallback
+const getLogStatus = (log: SmsLog): string => {
+  return (log as any).status || 'Pending'; // Use type assertion as fallback
+};
+
+const getStatusBadge = (status: string) => {
   switch (status) {
     case 'Sent':
+    case 'Delivered':
       return 'bg-green-100 text-green-800 border border-green-200';
     case 'Failed':
       return 'bg-red-100 text-red-800 border border-red-200';
@@ -20,7 +28,7 @@ const getStatusBadge = (status: SmsLog['status']) => {
   }
 };
 
-const getTimingBadge = (timing: SmsLog['timing']) => {
+const getTimingBadge = (timing: string) => {
   switch (timing) {
     case 'Pre-Event':
       return 'bg-blue-50 text-blue-700 border border-blue-200';
@@ -33,7 +41,7 @@ const getTimingBadge = (timing: SmsLog['timing']) => {
   }
 };
 
-const SmsHistoryLog: React.FC<Props> = ({ logs, isLoading }) => {
+const SmsHistoryLog: React.FC<SmsHistoryLogProps> = ({ logs, isLoading = false }) => {
   const [selectedLog, setSelectedLog] = useState<SmsLog | null>(null);
 
   if (isLoading) {
@@ -62,63 +70,66 @@ const SmsHistoryLog: React.FC<Props> = ({ logs, isLoading }) => {
   return (
     <>
       <div className="space-y-4">
-        {logs.map((log) => (
-          <div
-            key={log.id}
-            className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer transform hover:-translate-y-0.5"
-            onClick={() => setSelectedLog(log)}
-          >
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getTimingBadge(log.timing)}`}>
-                    {log.timing}
+        {logs.map((log) => {
+          const logStatus = getLogStatus(log);
+          return (
+            <div
+              key={log.id}
+              className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer transform hover:-translate-y-0.5"
+              onClick={() => setSelectedLog(log)}
+            >
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getTimingBadge(log.timing)}`}>
+                      {log.timing}
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(logStatus)}`}>
+                      {logStatus}
+                    </div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(log.status)}`}>
-                    {log.status}
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-blue-600">
+                      {log.recipient_count} {log.recipient_count === 1 ? 'recipient' : 'recipients'}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {new Date(log.sent_at).toLocaleDateString()} • {new Date(log.sent_at).toLocaleTimeString()}
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-blue-600">
-                    {log.recipient_count} {log.recipient_count === 1 ? 'recipient' : 'recipients'}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {new Date(log.sent_at).toLocaleDateString()} • {new Date(log.sent_at).toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
 
-              {/* Message Preview */}
-              <div className="mb-4">
-                <p className="text-gray-800 line-clamp-2 leading-relaxed">
-                  {log.message}
-                </p>
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <div className="flex items-center space-x-1">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{new Date(log.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
+                {/* Message Preview */}
+                <div className="mb-4">
+                  <p className="text-gray-800 line-clamp-2 leading-relaxed">
+                    {log.message}
+                  </p>
                 </div>
-                <button
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedLog(log);
-                  }}
-                >
-                  View Details
-                </button>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{new Date(log.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </div>
+                  <button
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedLog(log);
+                    }}
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Modal */}
@@ -151,8 +162,8 @@ const SmsHistoryLog: React.FC<Props> = ({ logs, isLoading }) => {
                 <div className={`px-4 py-2 rounded-full text-sm font-semibold bg-white bg-opacity-20 backdrop-blur-sm ${getTimingBadge(selectedLog.timing).replace('bg-', 'text-')}`}>
                   {selectedLog.timing}
                 </div>
-                <div className={`px-4 py-2 rounded-full text-sm font-semibold bg-white bg-opacity-20 backdrop-blur-sm ${getStatusBadge(selectedLog.status).replace('bg-', 'text-')}`}>
-                  {selectedLog.status}
+                <div className={`px-4 py-2 rounded-full text-sm font-semibold bg-white bg-opacity-20 backdrop-blur-sm ${getStatusBadge(getLogStatus(selectedLog)).replace('bg-', 'text-')}`}>
+                  {getLogStatus(selectedLog)}
                 </div>
                 <div className="text-white text-sm font-semibold bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full">
                   {selectedLog.recipient_count} {selectedLog.recipient_count === 1 ? 'Recipient' : 'Recipients'}
@@ -181,8 +192,8 @@ const SmsHistoryLog: React.FC<Props> = ({ logs, isLoading }) => {
                     </div>
                     <div className="flex justify-between">
                       <span>Status:</span>
-                      <span className={`font-medium ${selectedLog.status === 'Sent' ? 'text-green-600' : selectedLog.status === 'Failed' ? 'text-red-600' : 'text-yellow-600'}`}>
-                        {selectedLog.status}
+                      <span className={`font-medium ${getLogStatus(selectedLog) === 'Sent' ? 'text-green-600' : getLogStatus(selectedLog) === 'Failed' ? 'text-red-600' : 'text-yellow-600'}`}>
+                        {getLogStatus(selectedLog)}
                       </span>
                     </div>
                   </div>

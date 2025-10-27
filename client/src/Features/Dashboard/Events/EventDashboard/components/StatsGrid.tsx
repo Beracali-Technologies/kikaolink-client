@@ -10,14 +10,14 @@ import {
   FiPercent,
   FiMessageSquare
 } from 'react-icons/fi';
-import { DashboardStats } from '@/types';
+import { DashboardData } from '@/types';
 
 interface StatsGridProps {
-    stats: DashboardStats;
+    stats: DashboardData['stats'];
 }
 
 const StatsGrid: React.FC<StatsGridProps> = ({ stats }) => {
-    const hasData = stats.active_events > 0 || stats.total_registrations > 0;
+
 
     const statCards = [
         {

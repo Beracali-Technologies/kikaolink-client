@@ -14,7 +14,7 @@ const TopBarLeft: React.FC<TopBarLeftProps> = ({ onMenuClick }) => (
     </div>
 
     {/* Logo */}
-    <Logo size="lg" showIcon={false} />
+    <Logo size="lg" />
   </div>
 );
 

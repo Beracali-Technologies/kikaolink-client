@@ -1,11 +1,11 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { DashboardStats } from '@/types';
+import { DashboardData } from '@/types';
 
 const COLORS = ['#0E2344', '#FF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
 interface AnalyticsChartProps {
-    stats: DashboardStats;
+    stats: DashboardData['stats'];  //accessing stats from dashboard
 }
 
 const AnalyticsChart: React.FC<AnalyticsChartProps> = ({ stats }) => {
@@ -32,13 +32,7 @@ const AnalyticsChart: React.FC<AnalyticsChartProps> = ({ stats }) => {
         return null;
     };
 
-    // Sample data for empty state demonstration
-    const sampleData = [
-        { name: 'Active Events', value: 12 },
-        { name: 'Registrations', value: 845 },
-        { name: 'Revenue', value: 12500 },
-        { name: 'Checked-In', value: 623 },
-    ];
+  
 
     return (
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -61,7 +55,7 @@ const AnalyticsChart: React.FC<AnalyticsChartProps> = ({ stats }) => {
                             paddingAngle={2}
                             dataKey="value"
                         >
-                            {data.map((entry, index) => (
+                            {data.map((_, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={COLORS[index % COLORS.length]}

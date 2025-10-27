@@ -2,10 +2,10 @@ import React from 'react';
 import AnalyticsChart from './AnalyticsChart';
 import RevenueTrendChart from './RevenueTrendChart';
 import CustomMetricsPanel from './CustomMetricsPanel';
-import { DashboardStats } from '@/types';
+import { DashboardData } from '@/types';
 
 interface AnalyticsSectionProps {
-    stats: DashboardStats;
+    stats: DashboardData['stats'];
     selectedEventId: number | null;
     onCustomUpdate: () => void;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
-import { TimingLabel } from '../SmsTypes';
-import SmsRecipientSelector from './SmsRecipientSelector';
-import { Attendee } from '../SmsTypes';
+import { TimingLabel, Attendee } from '../SmsTypes';
+import RecipientSelector from './RecipientSelector'; 
 
 interface Props {
     timing: TimingLabel;
@@ -49,7 +48,11 @@ const SmsSendForm: React.FC<Props> = ({
                         <option value="Post-Event">Post-Event</option>
                     </select>
 
-                    <SmsRecipientSelector attendees={attendees} onChange={onRecipientChange} />
+                    <RecipientSelector
+                        attendees={attendees}
+                        selected={selectedRecipients}
+                        onChange={(ids) => onRecipientChange(ids, 'custom')}
+                    />
 
                     <label className="block text-sm font-medium text-gray-600 mb-1 flex justify-between">
                         Message

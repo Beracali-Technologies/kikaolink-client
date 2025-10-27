@@ -1,4 +1,3 @@
-// Features/Dashboard/components/Header/DynamicTopBar.tsx
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import TopBar from './TopBar';
@@ -12,12 +11,10 @@ const DynamicTopBar: React.FC<DynamicTopBarProps> = ({ onMenuClick }) => {
   const location = useLocation();
   const { eventId } = useParams<{ eventId: string }>();
 
-  // Check if we're on the main events list page (no eventId)
-  const isEventsListPage = location.pathname === '/dashboard/events' && !eventId;
 
-  // Check if we're on any page that should show EventTopBar:
-  // - /dashboard/home
-  // - /dashboard/events/:eventId (any event page with ID)
+  //const isEventsListPage = location.pathname === '/dashboard/events' && !eventId;
+
+
   const showEventTopBar =
     location.pathname === '/dashboard/home' ||
     (location.pathname.includes('/dashboard/events/') && eventId);

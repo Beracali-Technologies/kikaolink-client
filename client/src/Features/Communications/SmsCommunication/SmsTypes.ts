@@ -34,6 +34,7 @@ export interface SmsLog {
     message: string;
     timing: TimingLabel;
     sent_at: string;
+    status?: string;
 }
 
 export const SMS_TEMPLATES: Record<TimingLabel, string> = {

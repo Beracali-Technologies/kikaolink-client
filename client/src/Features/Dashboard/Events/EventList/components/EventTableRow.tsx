@@ -1,4 +1,3 @@
-// Features/Dashboard/Events/EventList/components/EventTableRow.tsx
 import React from 'react';
 import { TEvent } from '@/types';
 import { FiCalendar, FiUsers, FiBarChart2, FiSettings } from 'react-icons/fi';
@@ -36,6 +35,9 @@ const EventTableRow: React.FC<EventTableRowProps> = ({ event, onEventSelect, onE
         });
     };
 
+    // Convert event.id to number
+    const eventId = Number(event.id);
+
     return (
         <li className="p-6 hover:bg-gray-50 transition-colors">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -54,22 +56,16 @@ const EventTableRow: React.FC<EventTableRowProps> = ({ event, onEventSelect, onE
                         {event.location && (
                             <div className="flex items-center gap-2">
                                 <FiUsers className="w-4 h-4" />
-                                <span>{event.location}</span>
+                                <span>{typeof event.location === 'string' ? event.location : event.location?.name}</span>
                             </div>
                         )}
                     </div>
-
-                    {event.description && (
-                        <p className="text-gray-600 mt-2 text-sm line-clamp-2">
-                            {event.description}
-                        </p>
-                    )}
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-3 flex-shrink-0">
                     <button
-                        onClick={() => onEventSelect(event.id)}
+                        onClick={() => onEventSelect(eventId)}
                         className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                     >
                         <FiBarChart2 className="w-4 h-4" />
@@ -77,7 +73,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({ event, onEventSelect, onE
                     </button>
 
                     <button
-                        onClick={() => onEventManage(event.id)}
+                        onClick={() => onEventManage(eventId)}
                         className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                     >
                         <FiSettings className="w-4 h-4" />

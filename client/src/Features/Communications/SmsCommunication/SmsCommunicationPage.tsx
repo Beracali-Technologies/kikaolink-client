@@ -1,5 +1,4 @@
-// SmsCommunicationPage.tsx
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchAttendees, fetchSmsLogs, sendBulkSms } from '../../../services/eventSmsService';
 import { Attendee, SmsLog, SMS_TEMPLATES, TimingLabel } from './SmsTypes';
@@ -7,14 +6,6 @@ import RecipientSelector from './components/RecipientSelector';
 import SmsEditor from './components/SmsEditor';
 import SmsPreview from './components/SmsPreview';
 import SmsHistoryLog from './components/SmsHistoryLog';
-
-// Add this interface if it's missing
-interface AttendeeCounts {
-  all: number;
-  checkedIn: number;
-  absent: number;
-  with_phone: number;
-}
 
 const SmsCommunicationPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -24,19 +15,18 @@ const SmsCommunicationPage: React.FC = () => {
   const [timing, setTiming] = useState<TimingLabel>('Pre-Event');
   const [message, setMessage] = useState<string>(SMS_TEMPLATES['Pre-Event']);
   const [logs, setLogs] = useState<SmsLog[]>([]);
+  const [search] = useState(''); // Remove setSearch since it's not used
 
-  const [search, setSearch] = useState('');
   const [logsLoading, setLogsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
-  const [counts, setCounts] = useState<AttendeeCounts>({ all: 0, checkedIn: 0, absent: 0, with_phone: 0 });
 
   const loadAttendees = useCallback(async (searchTerm: string = '') => {
     if (!eventId) return;
     try {
       const data = await fetchAttendees(eventId, { search: searchTerm || undefined });
       setAttendees(data.attendees);
-      setCounts(data.counts);
+      // Removed setCounts since it doesn't exist
     } catch (err) {
       console.error(err);
     }
@@ -54,6 +44,11 @@ const SmsCommunicationPage: React.FC = () => {
       setLogsLoading(false);
     }
   }, [eventId]);
+
+  useEffect(() => {
+    loadAttendees();
+    loadLogs();
+  }, [loadAttendees, loadLogs]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

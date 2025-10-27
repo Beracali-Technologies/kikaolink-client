@@ -2,7 +2,7 @@ import React from 'react';
 import ChartContainer from './ChartContainer';
 import { SMSActivityProps } from './types';
 
-const SMSActivity: React.FC<SMSActivityProps> = ({ data }) => {
+const SmsActivity: React.FC<SMSActivityProps> = ({ data }) => {
   const hasData = Object.keys(data).length > 0;
 
   if (!hasData) {
@@ -33,4 +33,4 @@ const SMSActivity: React.FC<SMSActivityProps> = ({ data }) => {
   );
 };
 
-export default SMSActivity;
+export default SmsActivity;

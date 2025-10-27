@@ -172,7 +172,7 @@ const EventDashboard: React.FC = () => {
         sms_pending: 0
     };
 
-    const upcomingEvents = data?.upcoming_events || [];
+
     const trends = data?.trends || {
         revenue: [],
         registrations: [],

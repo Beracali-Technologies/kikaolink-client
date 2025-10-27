@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Outlet, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { FiMenu, FiX, FiMail, FiSend, FiMessageSquare } from 'react-icons/fi';
 import { SideBarGroup } from './components/SideBarGroup';
 import { SideBarLink } from './components/SideBarLink';
 
 const CommunicationsLayout: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
+
+
   const [isNavOpen, setIsNavOpen] = useState(true);
 
   // Sidebar navigation

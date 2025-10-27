@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../../Features/Dashboard/components/Sidebar/Sidebar';
-import TopBar from '../../Features/Dashboard/components/TopBar/TopBar';
 import DynamicTopBar from '@/Features/Dashboard/components/TopBar/DynamicTopBar';
 
 const DashboardLayout: React.FC = () => {

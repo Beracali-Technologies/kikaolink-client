@@ -1,6 +1,5 @@
-// Features/Dashboard/components/Header/Header.tsx
 import { FiMenu } from 'react-icons/fi';
-import Logo from '@/components/ui/Logo/Logo';
+
 
 const MobileNavBar: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
     return (

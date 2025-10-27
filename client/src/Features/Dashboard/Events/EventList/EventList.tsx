@@ -46,7 +46,9 @@ const EventList: React.FC = () => {
 
         const filtered = events.filter(event =>
             event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.location?.toLowerCase().includes(searchTerm.toLowerCase())
+            event.location &&
+              typeof event.location === 'string' &&
+                event.location.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredEvents(filtered);
     };
@@ -68,7 +70,6 @@ const EventList: React.FC = () => {
     if (loading) {
         return (
             <LoadingSpinner
-                type="fan"
                 size="lg"
                 text="Loading Events"
                 subText="Fetching your events..."

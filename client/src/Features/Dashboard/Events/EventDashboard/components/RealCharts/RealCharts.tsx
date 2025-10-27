@@ -1,7 +1,7 @@
 import React from 'react';
 import RevenueChart from './components/RevenueChart';
 import RegistrationChart from './components/RegistrationChart';
-import SMSActivity from './components/SMSActivity';
+import SmsActivity from './components/SmsActivity';
 import { RevenueTrend, RegistrationTrend } from '@/types';
 
 interface RealChartsProps {
@@ -24,7 +24,7 @@ const RealCharts: React.FC<RealChartsProps> = ({
                 <RegistrationChart data={registrationData} />
             </div>
 
-            <SMSActivity data={smsData} />
+            <SmsActivity data={smsData} />
         </div>
     );
 };
