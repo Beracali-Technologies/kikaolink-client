@@ -42,6 +42,7 @@ const EditEvent: React.FC = () => {
       {/* Status Bar at the very top */}
       <EventStatusBar event={currentEvent} isLoading={isLoading} />
 
+
       <div className="px-4 py-8">
         <BackButton />
         <EditEventHeader />

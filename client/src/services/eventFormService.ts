@@ -28,10 +28,15 @@ export const eventFormService = {
       return response.data;
   },
 
-    getPublicFormConfig: async (eventId: number) => {
-        const response = await api.get(`/api/events/${eventId}/public-form-config`);
-        return response.data;
-    },
+  getEventByCustomSlug: async (customSlug: string): Promise<{ id: number; title: string }> => {
+   const response = await api.get(`/api/public/events/custom/${customSlug}`);
+   return response.data;
+ },
+
+  getPublicFormConfig: async (eventId: number): Promise<{ fields: Field[] }> => {
+  const response = await api.get(`/api/public/events/${eventId}/form-config`);
+  return response.data;
+},
 
     getPublicFormConfigBySlug: async (eventSlug: string) => {
         const response = await api.get(`/api/events/slug/${eventSlug}/public-form-config`);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import StatCard from './components/StatCard';
 import RealCharts from './components/RealCharts/RealCharts';
-import CustomMetricsPanel from './components/CustomMetricsPanel';
+
 import { LoadingSpinner } from '@/components/ui/loading';
 import {
   FiUsers,
@@ -100,13 +100,7 @@ const EventDashboard: React.FC = () => {
         await loadEvents();
     };
 
-    const handleCustomUpdate = () => {
-        if (selectedEventId) {
-            loadEventDashboard(selectedEventId);
-        } else {
-            loadGlobalDashboard();
-        }
-    };
+  
 
     const handleEventSelect = (eventId: number) => {
         setSelectedEventId(eventId);
@@ -366,15 +360,7 @@ const EventDashboard: React.FC = () => {
                     </div>
                 )}
 
-                {/* Custom Metrics Panel */}
-                {selectedEventId && (
-                    <div className="mb-8">
-                        <CustomMetricsPanel
-                            eventId={selectedEventId}
-                            onUpdate={handleCustomUpdate}
-                        />
-                    </div>
-                )}
+
             </div>
         </div>
     );

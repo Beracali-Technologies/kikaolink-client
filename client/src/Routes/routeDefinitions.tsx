@@ -19,6 +19,7 @@ const CreateEvent = lazy(() => import('../Features/Dashboard/Events/CreateEvent/
 const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage'));
 const EditEvent = lazy(() => import('../Features/Dashboard/Events/EditEvent/EditEvent'));
 
+const EventUrlSettingsWrapper = lazy(() => import('../Features/Dashboard/Events/components/EventUrlSettings/EventUrlSettingsWrapper'));
 const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/EmailConfirmation/EmailConfirmation'))
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
@@ -40,9 +41,9 @@ export const routes: RouteObject[] = [
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
 
-            { path: '/events/:eventSlug', element: <EventWebsite /> },
-            { path: '/register-attendee/:eventSlug/:eventId', element: <AttendeeRegistrationPage /> },
-            { path: '/registration-success/:eventSlug', element: <RegistrationSuccessPage /> },
+            { path: '/e/:customSlug', element: <EventWebsite /> },
+            { path: '/r/:customSlug', element: <AttendeeRegistrationPage /> },
+            { path: '/registration-success/:customSlug', element: <RegistrationSuccessPage /> },
         ]
     },
 
@@ -83,6 +84,7 @@ export const routes: RouteObject[] = [
         { index: true, element: <Navigate to="info" replace /> },
         { path: 'info', element: <EditEvent /> },
         { path: 'registration-form', element: <RegistrationFormEditor /> },
+        { path: 'url-settings', element: <EventUrlSettingsWrapper /> },
         { path: 'tickets', element: <TicketsAndPricing /> },
         { path: 'email', element: <EmailConfirmation /> },
       ],

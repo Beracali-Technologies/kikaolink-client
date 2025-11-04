@@ -1,61 +1,77 @@
-import React from 'react';
+// Updated EventWebsite component
+import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { useEventStore } from '../../../../lib/stores/eventStore';
+import { publicEventService, PublicEvent } from '@/services/url/publicEventService';
 import Template1 from './EventWebsiteTemplates/Template1';
 import Template2 from './EventWebsiteTemplates/Template2';
 import Template3 from './EventWebsiteTemplates/Template3';
 
-
 const EventWebsite: React.FC = () => {
-  const { eventSlug } = useParams<{ eventSlug: string }>();
-  const { search } = useLocation();
-  const { events, fetchEvents } = useEventStore();
+    const { customSlug } = useParams<{ customSlug: string }>();
+    const { search } = useLocation();
+    const [event, setEvent] = useState<PublicEvent | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
+    const queryParams = new URLSearchParams(search);
+    const template = queryParams.get('template') || 'template1';
 
+    useEffect(() => {
+        const fetchEvent = async () => {
+            if (!customSlug) {
+                setError('Event URL is required');
+                setLoading(false);
+                return;
+            }
 
-  // Extract ?template= value
-  const queryParams = new URLSearchParams(search);
-  const template = queryParams.get('template') || 'template1';
+            try {
+                setLoading(true);
+                setError(null);
+                const eventData = await publicEventService.getEventByCustomSlug(customSlug);
+                setEvent(eventData);
+            } catch (err: any) {
+                console.error('Error fetching event:', err);
+                setError(err.response?.data?.message || 'Event not found');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  React.useEffect(() => {
-    if (events.length === 0) {
-      fetchEvents();
+        fetchEvent();
+    }, [customSlug]);
+
+    if (loading) {
+        return <div>Loading event...</div>;
     }
-  }, [events.length, fetchEvents]);
 
-  const event = events.find(e => {
-    const slug = e.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    return slug === eventSlug;
-  });
+    if (error || !event) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-800">Event Not Found</h1>
+                    <p className="text-gray-600">{error || 'The event you\'re looking for doesn\'t exist.'}</p>
+                </div>
+            </div>
+        );
+    }
 
+    const registrationLink = `/r/${customSlug}`;
 
+    const templateProps = {
+        event: event,
+        registrationLink: registrationLink
+    };
 
-  if (!event) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Event Not Found</h1>
-          <p className="text-gray-600">The event you're looking for doesn't exist.</p>
-        </div>
-      </div>
-    );
-  }
-
-
-  const registrationLink = `/register-attendee/${eventSlug}/${event.id}`;
-
-
-  // Choose template
-  switch (template) {
-    case 'template2':
-        return <Template2 event={event} registrationLink={registrationLink} />;
-    case 'template1':
-        return <Template1 event={event} registrationLink={registrationLink} />;
-    case 'template3':
-        return <Template3 event={event} registrationLink={registrationLink} />;
-    default:
-      return <Template1 event={event} registrationLink={registrationLink} />;
-  }
+    switch (template) {
+        case 'template2':
+            return <Template2 {...templateProps} />;
+        case 'template1':
+            return <Template1 {...templateProps} />;
+        case 'template3':
+            return <Template3 {...templateProps} />;
+        default:
+            return <Template1 {...templateProps} />;
+    }
 };
 
 export default EventWebsite;
