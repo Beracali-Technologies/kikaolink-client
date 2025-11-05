@@ -69,18 +69,40 @@ export const useEmailTemplate = (eventId: number) => {
     });
   };
 
-  const uploadBanner = async (file: File) => {
-    try {
-      setError(null);
-      const result = await emailTemplateService.uploadBanner(eventId, file);
-      updateTemplate({ banner_image: result.banner_url });
-      return result;
-    } catch (error) {
-      console.error('Failed to upload banner:', error);
-      setError('Failed to upload banner');
-      throw error;
+
+  const uploadBanner = async (formData: FormData) => {
+  try {
+    setError(null);
+    const result = await emailTemplateService.uploadBanner(eventId, formData);
+
+    // Handle both response formats
+    const bannerUrl = result.banner_url || result.data?.banner_url;
+
+    if (!bannerUrl) {
+      throw new Error('No banner URL returned from server');
     }
-  };
+
+    updateTemplate({ banner_image: bannerUrl });
+    return result;
+  } catch (error: any) {
+    console.error('Failed to upload banner:', error);
+
+    let errorMessage = 'Failed to upload banner';
+
+    if (error.response?.data?.errors) {
+      const errors = error.response.data.errors;
+      errorMessage = Object.values(errors).flat().join(', ');
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setError(errorMessage);
+    throw error;
+  }
+};
+
 
   const removeBanner = async () => {
     try {

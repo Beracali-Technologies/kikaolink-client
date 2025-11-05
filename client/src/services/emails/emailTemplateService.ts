@@ -17,22 +17,27 @@ export const emailTemplateService = {
     return response.data.data;
   },
 
-  // Upload banner image
-  uploadBanner: async (eventId: number, imageFile: File): Promise<{ banner_url: string }> => {
-    const formData = new FormData();
-    formData.append('banner_image', imageFile);
-
-    const response = await api.post<ApiResponse<{ banner_url: string }>>(
-      `/api/events/${eventId}/email-template/banner`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data.data;
-  },
+      // Upload banner image
+      uploadBanner: async (eventId: number, formData: FormData): Promise<{ banner_url: string }> => {
+          const response = await api.post(
+            `/api/events/${eventId}/email-template/banner`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+          
+          // Handle both response formats
+          if (response.data.data) {
+            // If response has data wrapper (ApiResponse format)
+            return response.data.data;
+          } else {
+            // If response is direct (like your current backend)
+            return response.data;
+          }
+    },
 
   // Remove banner image
   removeBanner: async (eventId: number): Promise<void> => {
