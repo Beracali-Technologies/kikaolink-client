@@ -39,12 +39,14 @@ export default function EmailTemplateEditor() {
   const {
     template,
     updateTemplate,
+    saveTemplate,
     updateSection,
     uploadBanner,
     removeBanner,
     previewEmail,
     isSaving,
     preview,
+    error,
   } = useEmailTemplate(eventIdNum);
 
   const [showMergeFields, setShowMergeFields] = useState(false);
@@ -52,7 +54,7 @@ export default function EmailTemplateEditor() {
 
   const handleSave = async () => {
     try {
-      await updateTemplate();
+      await saveTemplate();
     } catch (err) {
       console.error('Save failed:', err);
     }
@@ -60,11 +62,23 @@ export default function EmailTemplateEditor() {
 
   const handleInsertMergeField = (field: string) => {
     if (!template || !editingField) return;
-    const current = (template as any)[editingField];
-    const text = typeof current === 'string' ? current : '';
-    updateTemplate({ [editingField]: text + field });
+
+    const currentValue = (template as any)[editingField] || '';
+    const newValue = currentValue + field;
+
+    updateTemplate({ [editingField]: newValue });
     setShowMergeFields(false);
     setEditingField(null);
+  };
+
+  const handlePreview = async () => {
+    try {
+      // Save first to ensure preview uses latest data
+      await saveTemplate();
+      await previewEmail();
+    } catch (err) {
+      console.error('Preview failed:', err);
+    }
   };
 
   if (!template) {
@@ -90,14 +104,21 @@ export default function EmailTemplateEditor() {
           <Button variant="outline" onClick={() => setShowMergeFields(true)}>
             Insert Merge Field
           </Button>
-          <Button variant="outline" onClick={previewEmail}>
-            Preview
+          <Button variant="outline" onClick={handlePreview}>
+            Preview Email
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </header>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-700 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -123,9 +144,7 @@ export default function EmailTemplateEditor() {
             onFieldFocus={setEditingField}
           />
 
-          {preview && (
-            <EmailPreview preview={preview} />
-          )}
+          <EmailPreview preview={preview} />
         </main>
       </div>
 

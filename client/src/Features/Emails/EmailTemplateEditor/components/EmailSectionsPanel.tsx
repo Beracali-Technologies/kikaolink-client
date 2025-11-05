@@ -1,3 +1,4 @@
+// src/features/email-templates/components/EmailSectionsPanel.tsx
 import React from 'react';
 import { FiCheckSquare, FiUser, FiInfo, FiList, FiEye } from 'react-icons/fi';
 import { MdQrCode2 } from "react-icons/md";
@@ -61,11 +62,14 @@ export const EmailSectionsPanel: React.FC<EmailSectionsPanelProps> = ({
       <div className="space-y-4">
         {sectionConfig.map((section) => {
           const IconComponent = section.icon;
+          // Ensure boolean value with fallback
+          const isChecked = Boolean(sections[section.key]);
+
           return (
             <div key={section.key} className="flex items-start space-x-3">
               <input
                 type="checkbox"
-                checked={sections[section.key] || false}
+                checked={isChecked}
                 onChange={(e) => onSectionToggle(section.key, e.target.checked)}
                 className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1"
               />
