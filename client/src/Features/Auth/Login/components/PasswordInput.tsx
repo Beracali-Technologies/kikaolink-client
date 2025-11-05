@@ -1,9 +1,9 @@
 import React from 'react';
-import { UseFormRegister, FieldError } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 
 interface PasswordInputProps {
   register: UseFormRegister<any>;
-  error?: FieldError;
+  error?: any;
   showPassword: boolean;
   onTogglePassword: () => void;
 }

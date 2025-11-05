@@ -99,7 +99,15 @@ const AttendeeRegistrationPage: React.FC = () => {
       Object.entries(formData).forEach(([key, value]) => {
         if (!['First Name', 'Last Name', 'Email Address', 'Mobile Phone', 'Job Title', 'Company Name',
               'firstName', 'lastName', 'email', 'mobilePhone', 'jobTitle', 'companyName'].includes(key)) {
-          registrationData.custom_data[key] = value;
+
+          //registrationData.custom_data[key] = value;  checking first if the custom data exists
+
+              if (registrationData.custom_data) {
+                      registrationData.custom_data[key] = value;
+                } else {
+                      registrationData.custom_data = { [key]: value };
+                }
+
         }
       });
 

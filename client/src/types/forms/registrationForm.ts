@@ -1,6 +1,6 @@
 // src/types/forms/registrationForm.ts
 export type FieldType =
-  | 'text'
+  | 'text' | 'string'
   | 'textarea'
   | 'multichoice'
   | 'checkbox'
@@ -11,7 +11,7 @@ export type FieldType =
   | 'select';
 
 export interface Field {
-  id: number;
+  id: number | string;
   label: string;
   fieldType: FieldType;
   required: boolean;
@@ -19,7 +19,7 @@ export interface Field {
   editable: boolean;
   deletable: boolean;
   isFixed?: boolean;
-  options?: string[];
+  options?: any[];
   helpText?: string;
 }
 

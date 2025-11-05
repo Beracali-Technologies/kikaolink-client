@@ -1,19 +1,17 @@
 import React from 'react';
 import AnalyticsChart from './AnalyticsChart';
 import RevenueTrendChart from './RevenueTrendChart';
-import CustomMetricsPanel from './CustomMetricsPanel';
 import { DashboardData } from '@/types';
 
 interface AnalyticsSectionProps {
     stats: DashboardData['stats'];
-    selectedEventId: number | null;
-    onCustomUpdate: () => void;
+
+
 }
 
 const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
     stats,
-    selectedEventId,
-    onCustomUpdate
+
 }) => {
     const hasData = stats.active_events > 0 || stats.total_registrations > 0;
 
@@ -38,24 +36,7 @@ const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
                 </div>
 
                 <div className="space-y-6">
-                    {selectedEventId ? (
-                        <CustomMetricsPanel
-                            eventId={selectedEventId}
-                            onUpdate={onCustomUpdate}
-                        />
-                    ) : (
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                            <div className="text-center">
-                                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <span className="text-xl">🎯</span>
-                                </div>
-                                <h3 className="font-medium text-gray-900 mb-2">Select an Event</h3>
-                                <p className="text-sm text-gray-500">
-                                    Choose an event from the dropdown below to view custom metrics and detailed analytics.
-                                </p>
-                            </div>
-                        </div>
-                    )}
+
 
                     {/* Quick Stats Card */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">

@@ -58,7 +58,7 @@ const EventWebsite: React.FC = () => {
     const registrationLink = `/r/${customSlug}`;
 
     const templateProps = {
-        event: event,
+        event: event as any,
         registrationLink: registrationLink
     };
 

@@ -1,5 +1,6 @@
 import { lazy } from 'react';
-import { Navigate, RouteObject } from 'react-router-dom';
+import { Navigate, RouteObject, useLocation } from 'react-router-dom';
+
 
 // --- LAYOUTS (for route definitions) ---
 import PublicLayout from '../Layouts/PublicLayout/PublicLayout';
@@ -20,7 +21,7 @@ const CheckinPage = lazy(() => import('../Features/Dashboard/Checkin/CheckinPage
 const EditEvent = lazy(() => import('../Features/Dashboard/Events/EditEvent/EditEvent'));
 
 const EventUrlSettingsWrapper = lazy(() => import('../Features/Dashboard/Events/components/EventUrlSettings/EventUrlSettingsWrapper'));
-const EmailConfirmation = lazy(() => import('../Features/Dashboard/EventSettings/EmailConfirmation/EmailConfirmation'))
+const EmailTemplateEditor = lazy(() => import('../Features/Emails/EmailTemplateEditor/EmailTemplateEditor'));
 const TicketsAndPricing = lazy(() => import('../Features/Dashboard/TicketsAndPricing/TicketsAndPricing'));
 const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/RegistrationFormEditor/RegistrationFormEditor'));
 const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsite/EventWebsite'));
@@ -86,7 +87,7 @@ export const routes: RouteObject[] = [
         { path: 'registration-form', element: <RegistrationFormEditor /> },
         { path: 'url-settings', element: <EventUrlSettingsWrapper /> },
         { path: 'tickets', element: <TicketsAndPricing /> },
-        { path: 'email', element: <EmailConfirmation /> },
+        { path: 'email', element: <EmailTemplateEditor /> },
       ],
     },
   ],

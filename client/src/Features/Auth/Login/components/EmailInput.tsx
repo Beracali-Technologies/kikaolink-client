@@ -1,9 +1,9 @@
 import React from 'react';
-import { UseFormRegister, FieldError } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 
 interface EmailInputProps {
   register: UseFormRegister<any>;
-  error?: FieldError;
+  error?: any;
 }
 
 export const EmailInput: React.FC<EmailInputProps> = ({ register, error }) => (
