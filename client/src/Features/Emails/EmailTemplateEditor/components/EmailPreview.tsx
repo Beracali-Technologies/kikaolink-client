@@ -48,10 +48,18 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ preview }) => {
 
     return `
       <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        ${template.show_banner && template.banner_text ? `
-          <div class="bg-gray-800 text-white text-center py-4 font-bold text-lg">
-            ${template.banner_text}
-          </div>
+
+
+      ${template.show_banner ? `
+            ${template.banner_url ? `
+            <div class="w-full">
+              <img src="${template.banner_url}" alt="Event Banner" class="w-full h-auto max-h-48 object-cover" />
+            </div>
+            ` : template.banner_text ? `
+            <div class="bg-gray-800 text-white text-center py-4 font-bold text-lg">
+              ${template.banner_text}
+            </div>
+            ` : ''}
         ` : ''}
 
         <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center">
