@@ -130,7 +130,7 @@ export default function EmailTemplateEditor() {
             onUpdate={updateTemplate}
             eventId={eventIdNum}
             />
-            
+
           <EmailSectionsPanel
             sections={template.enabled_sections}
             onSectionToggle={updateSection}
