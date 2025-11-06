@@ -32,86 +32,92 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ preview }) => {
   }
 
   const generatePreviewHtml = (): string => {
-    const { template, dummy_data } = preview;
+  const { template, dummy_data } = preview;
 
-    const processMergeFields = (content: string): string => {
-      let processed = content;
-      Object.entries(dummy_data).forEach(([key, value]) => {
-        processed = processed.replace(new RegExp(`\\(\\(${key}\\)\\)`, 'g'), value);
-      });
-      return processed;
-    };
+  const processMergeFields = (content: string): string => {
+    let processed = content;
+    Object.entries(dummy_data).forEach(([key, value]) => {
+      processed = processed.replace(new RegExp(`\\(\\(${key}\\)\\)`, 'g'), value);
+    });
+    return processed;
+  };
 
-    const greeting = processMergeFields(template.greeting || '');
-    const message = processMergeFields(template.message || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    const closing = processMergeFields(template.closing || '').replace(/\n/g, '<br>');
+  const greeting = processMergeFields(template.greeting || '');
+  const message = processMergeFields(template.message || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  const closing = processMergeFields(template.closing || '').replace(/\n/g, '<br>');
 
-    return `
-      <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-
-
+  return `
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
       ${template.show_banner ? `
-            ${template.banner_url ? `
-            <div class="w-full">
-              <img src="${template.banner_url}" alt="Event Banner" class="w-full h-auto max-h-48 object-cover" />
+        ${template.banner_url ? `
+          <div class="w-full">
+            <img src="${template.banner_url}" alt="Event Banner" class="w-full h-auto max-h-48 object-cover" />
+          </div>
+        ` : template.banner_text ? `
+          <div class="bg-gray-800 text-white text-center py-4 font-bold text-lg">
+            ${template.banner_text}
+          </div>
+        ` : ''}
+      ` : ''}
+
+      <!-- ✅ UPDATED: Simple tick and clean header -->
+      <div class="p-6 text-center border-b border-gray-200">
+        <div class="flex justify-center mb-4">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Registration Confirmed</h1>
+        <p class="text-gray-600">Your ticket for <strong>${dummy_data.event_title}</strong> is ready</p>
+      </div>
+
+      <div class="p-6">
+        <div class="whitespace-pre-line mb-4">${greeting}</div>
+        <div class="whitespace-pre-line mb-6">${message}</div>
+
+        ${template.enabled_sections?.qrCode ? `
+          <div class="text-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-blue-300 mb-6">
+            <h3 class="text-lg font-semibold mb-3">Your Digital Ticket</h3>
+            <p class="text-gray-600 mb-4">Present this QR code at the event for check-in:</p>
+            <div class="bg-gray-200 w-48 h-48 mx-auto flex items-center justify-center rounded-lg mb-3">
+              <span class="text-gray-500">QR Code Preview</span>
             </div>
-            ` : template.banner_text ? `
-            <div class="bg-gray-800 text-white text-center py-4 font-bold text-lg">
-              ${template.banner_text}
-            </div>
-            ` : ''}
+            <p class="text-sm text-gray-500">Registration ID: <strong>${dummy_data.registration_id}</strong></p>
+          </div>
         ` : ''}
 
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center">
-          <h1 class="text-2xl font-bold">🎟 Your Event Ticket</h1>
-          <p class="text-blue-100">Registration Confirmed</p>
-        </div>
-
-        <div class="p-6">
-          <div class="whitespace-pre-line mb-4">${greeting}</div>
-          <div class="whitespace-pre-line mb-6">${message}</div>
-
-          ${template.enabled_sections?.qrCode ? `
-            <div class="text-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-blue-300 mb-6">
-              <h3 class="text-lg font-semibold mb-3">Your Digital Ticket</h3>
-              <p class="text-gray-600 mb-4">Present this QR code at the event for check-in:</p>
-              <div class="bg-gray-200 w-48 h-48 mx-auto flex items-center justify-center rounded-lg mb-3">
-                <span class="text-gray-500">QR Code Preview</span>
-              </div>
-              <p class="text-sm text-gray-500">Registration ID: <strong>${dummy_data.registration_id}</strong></p>
-            </div>
-          ` : ''}
-
-          ${template.enabled_sections?.attendeeInfo ? `
-            <div class="bg-blue-50 p-4 rounded-lg mb-4">
-              <h3 class="font-semibold text-blue-900 mb-2">Attendee Information</h3>
-              <div class="bg-white p-3 rounded border">
-                <p><strong>Name:</strong> ${dummy_data.attendee_full_name}</p>
-                <p><strong>Email:</strong> ${dummy_data.attendee_email}</p>
-                <p><strong>Company:</strong> ${dummy_data.attendee_company}</p>
-              </div>
-            </div>
-          ` : ''}
-
-          <div class="bg-gray-50 p-4 rounded-lg mb-4">
-            <h3 class="font-semibold text-gray-900 mb-2">Event Details</h3>
+        ${template.enabled_sections?.attendeeInfo ? `
+          <div class="bg-blue-50 p-4 rounded-lg mb-4">
+            <h3 class="font-semibold text-blue-900 mb-2">Attendee Information</h3>
             <div class="bg-white p-3 rounded border">
-              <p><strong>Event:</strong> ${dummy_data.event_title}</p>
-              <p><strong>Date:</strong> ${dummy_data.event_date}</p>
-              <p><strong>Location:</strong> ${dummy_data.event_location}</p>
+              <p><strong>Name:</strong> ${dummy_data.attendee_full_name}</p>
+              <p><strong>Email:</strong> ${dummy_data.attendee_email}</p>
+              <p><strong>Company:</strong> ${dummy_data.attendee_company}</p>
             </div>
           </div>
+        ` : ''}
 
-          <div class="whitespace-pre-line mt-6 pt-4 border-t border-gray-200">${closing}</div>
+        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+          <h3 class="font-semibold text-gray-900 mb-2">Event Details</h3>
+          <div class="bg-white p-3 rounded border">
+            <p><strong>Event:</strong> ${dummy_data.event_title}</p>
+            <p><strong>Date:</strong> ${dummy_data.event_date}</p>
+            <p><strong>Location:</strong> ${dummy_data.event_location}</p>
+          </div>
         </div>
 
-        <div class="bg-gray-800 text-white p-4 text-center text-sm">
-          <p>Powered by <strong>KikaoLink</strong> - Professional Event Management</p>
-          <p>Need help? Contact: ${template.reply_to}</p>
-        </div>
+        <div class="whitespace-pre-line mt-6 pt-4 border-t border-gray-200">${closing}</div>
       </div>
-    `;
-  };
+
+      <div class="bg-gray-800 text-white p-4 text-center text-sm">
+        <p>Powered by <strong>KikaoLink</strong> - Professional Event Management</p>
+        <p>Need help? Contact: ${template.reply_to}</p>
+      </div>
+    </div>
+  `;
+};
 
   if (isFullscreen) {
     return (
