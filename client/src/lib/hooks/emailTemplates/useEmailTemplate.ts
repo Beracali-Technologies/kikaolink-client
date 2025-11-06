@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EmailTemplate, EmailPreviewData } from '@/types';
 import { emailTemplateService } from '@/services/emails/emailTemplateService';
 
@@ -26,37 +26,16 @@ export const useEmailTemplate = (eventId: number) => {
     }
   };
 
-  // Update local state only - no auto-save
-  const updateTemplate = (updates: Partial<EmailTemplate>) => {
-    if (!template) return;
-    setTemplate(prev => prev ? { ...prev, ...updates } : null);
-  };
+  // FIXED: Remove template dependency and use functional update
+  const updateTemplate = useCallback((updates: Partial<EmailTemplate>) => {
+    setTemplate(prev => {
+      if (!prev) return prev;
+      return { ...prev, ...updates };
+    });
+  }, []); // Empty dependency array - stable function
 
-  // Explicit save to backend
-  const saveTemplate = async () => {
-    if (!template) return;
-
-    setIsSaving(true);
-    setError(null);
-    try {
-      const updatedTemplate = await emailTemplateService.updateTemplate(
-        eventId,
-        template
-      );
-      setTemplate(updatedTemplate);
-      return updatedTemplate;
-    } catch (error) {
-      console.error('Failed to save template:', error);
-      setError('Failed to save template');
-      throw error;
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const updateSection = (section: keyof EmailTemplate['enabled_sections'], value: boolean) => {
-    if (!template) return;
-
+  // Also fix updateSection to be stable
+  const updateSection = useCallback((section: keyof EmailTemplate['enabled_sections'], value: boolean) => {
     setTemplate(prev => {
       if (!prev) return prev;
       return {
@@ -67,52 +46,32 @@ export const useEmailTemplate = (eventId: number) => {
         },
       };
     });
-  };
+  }, []); // Empty dependency array - stable function
 
+  // Explicit save to backend
+  const saveTemplate = async () => {
+    if (!template) return;
 
-  const uploadBanner = async (formData: FormData) => {
-  try {
+    setIsSaving(true);
     setError(null);
-    const result = await emailTemplateService.uploadBanner(eventId, formData);
-
-    // Handle both response formats
-    const bannerUrl = result.banner_url || result.data?.banner_url;
-
-    if (!bannerUrl) {
-      throw new Error('No banner URL returned from server');
-    }
-
-    updateTemplate({ banner_image: bannerUrl });
-    return result;
-  } catch (error: any) {
-    console.error('Failed to upload banner:', error);
-
-    let errorMessage = 'Failed to upload banner';
-
-    if (error.response?.data?.errors) {
-      const errors = error.response.data.errors;
-      errorMessage = Object.values(errors).flat().join(', ');
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-
-    setError(errorMessage);
-    throw error;
-  }
-};
-
-
-  const removeBanner = async () => {
     try {
-      setError(null);
-      await emailTemplateService.removeBanner(eventId);
-      updateTemplate({ banner_image: undefined });
+      const templateData = {
+        ...template,
+        enabled_sections: template.enabled_sections
+      };
+
+      const updatedTemplate = await emailTemplateService.updateTemplate(
+        eventId,
+        templateData
+      );
+      setTemplate(updatedTemplate);
+      return updatedTemplate;
     } catch (error) {
-      console.error('Failed to remove banner:', error);
-      setError('Failed to remove banner');
+      console.error('Failed to save template:', error);
+      setError('Failed to save template');
       throw error;
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -138,8 +97,6 @@ export const useEmailTemplate = (eventId: number) => {
     updateTemplate,
     saveTemplate,
     updateSection,
-    uploadBanner,
-    removeBanner,
     previewEmail,
   };
 };

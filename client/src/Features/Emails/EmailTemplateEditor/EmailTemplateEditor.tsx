@@ -124,12 +124,13 @@ export default function EmailTemplateEditor() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar */}
         <aside className="space-y-6">
-          <EmailSettingsPanel
+
+        <EmailSettingsPanel
             template={template}
             onUpdate={updateTemplate}
-            onBannerUpload={uploadBanner}
-            onBannerRemove={removeBanner}
-          />
+            eventId={eventIdNum}
+            />
+            
           <EmailSectionsPanel
             sections={template.enabled_sections}
             onSectionToggle={updateSection}
