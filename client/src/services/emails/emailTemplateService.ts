@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { EmailTemplate, ApiResponse } from '/types';
+import { EmailTemplate, ApiResponse } from '@/types';
 
 export const emailTemplateService = {
   // Get email template for event

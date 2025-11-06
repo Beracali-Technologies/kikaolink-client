@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { EmailTemplate } from '@/types';
 import { Input } from '@/components/ui/Input';
@@ -25,19 +25,22 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
 }) => {
   const [editingField, setEditingField] = useState<EditableField | null>(null);
   const [editValue, setEditValue] = useState('');
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  // Use useEffect to focus the input when editing starts
+  useEffect(() => {
+    if (editingField) {
+      // Find the input/textarea element and focus it
+      const element = document.querySelector(`[data-editing-field="${editingField}"]`) as HTMLElement;
+      if (element) {
+        element.focus();
+      }
+    }
+  }, [editingField]);
 
   const startEditing = (field: EditableField) => {
     setEditingField(field);
     setEditValue(template[field] || '');
     onFieldFocus(field);
-
-    // Focus the input after a small delay
-    setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, 100);
   };
 
   const saveEdit = () => {
@@ -121,7 +124,7 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
           </div>
         ) : isTextarea ? (
           <Textarea
-            ref={inputRef as React.Ref<HTMLTextAreaElement>}
+            data-editing-field={field} // Add data attribute for targeting
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -131,7 +134,7 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
           />
         ) : (
           <Input
-            ref={inputRef as React.Ref<HTMLInputElement>}
+            data-editing-field={field} // Add data attribute for targeting
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -191,32 +194,6 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
         'Reply To Email',
         'support@yourevent.com'
       )}
-
-      {/* Merge Fields Helper */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-blue-900 mb-2">
-          Available Merge Fields
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-          {[
-            '((event_title))',
-            '((event_date))',
-            '((event_location))',
-            '((attendee_first_name))',
-            '((attendee_last_name))',
-            '((attendee_email))',
-            '((attendee_company))',
-            '((registration_id))',
-          ].map((field) => (
-            <code key={field} className="bg-white px-2 py-1 rounded border text-blue-700">
-              {field}
-            </code>
-          ))}
-        </div>
-        <p className="text-xs text-blue-600 mt-2">
-          Use <strong>**text**</strong> for bold formatting in the message field.
-        </p>
-      </div>
     </div>
   );
 };

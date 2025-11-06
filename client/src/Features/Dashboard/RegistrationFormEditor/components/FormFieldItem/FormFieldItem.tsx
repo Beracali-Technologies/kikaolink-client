@@ -133,7 +133,7 @@ const FormFieldItem: React.FC<FormFieldItemProps> = ({
             {/* Edit - Blue */}
             {field.editable && (
               <button
-                onClick={() => onEdit(isEditing ? null : field.id)}
+                onClick={() => onEdit(isEditing ? null : Number(field.id))}
                 className="p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 hover:shadow-sm"
                 title={isEditing ? "Save changes" : "Edit field"}
               >
@@ -144,7 +144,7 @@ const FormFieldItem: React.FC<FormFieldItemProps> = ({
             {/* Delete - Red */}
             {field.deletable && (
               <button
-                onClick={() => onDelete(field.id)}
+                onClick={() => onDelete(Number(field.id))}
                 className="p-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 hover:shadow-sm"
                 title="Delete field"
               >

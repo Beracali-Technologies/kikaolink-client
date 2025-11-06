@@ -1,5 +1,5 @@
 // src/Features/Emails/EmailTemplateEditor/EmailTemplateEditor.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useEmailTemplate } from '@/lib/hooks/emailTemplates/useEmailTemplate';
@@ -41,8 +41,6 @@ export default function EmailTemplateEditor() {
     updateTemplate,
     saveTemplate,
     updateSection,
-    uploadBanner,
-    removeBanner,
     previewEmail,
     isSaving,
     preview,
@@ -142,7 +140,7 @@ export default function EmailTemplateEditor() {
           <EmailContentEditor
             template={template}
             onUpdate={updateTemplate}
-            onFieldFocus={setEditingField}
+            onFieldFocus={(field) => setEditingField(field as EmailTextField | null)}
           />
 
           <EmailPreview preview={preview} />

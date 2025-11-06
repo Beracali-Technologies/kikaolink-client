@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { FiUpload, FiTrash2, FiImage, FiAlertCircle, FiCheck } from 'react-icons/fi';
+import { FiTrash2, FiImage, FiAlertCircle, FiCheck } from 'react-icons/fi';
 import { useEmailBanner } from '@/lib/hooks/emailTemplates/useEmailBanner';
 import { Button } from '@/components/ui/Button';
 
@@ -148,7 +148,7 @@ export const EmailBannerUpload: React.FC<EmailBannerUploadProps> = ({
               src={banner.url}
               alt="Banner preview"
               className="w-full h-32 object-cover"
-              onError={(e) => {
+              onError={() => {
                 console.error('Failed to load banner image:', banner.url);
               }}
             />

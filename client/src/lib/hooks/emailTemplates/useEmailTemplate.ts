@@ -26,15 +26,13 @@ export const useEmailTemplate = (eventId: number) => {
     }
   };
 
-  // FIXED: Remove template dependency and use functional update
   const updateTemplate = useCallback((updates: Partial<EmailTemplate>) => {
     setTemplate(prev => {
       if (!prev) return prev;
       return { ...prev, ...updates };
     });
-  }, []); // Empty dependency array - stable function
+  }, []);
 
-  // Also fix updateSection to be stable
   const updateSection = useCallback((section: keyof EmailTemplate['enabled_sections'], value: boolean) => {
     setTemplate(prev => {
       if (!prev) return prev;
@@ -46,9 +44,8 @@ export const useEmailTemplate = (eventId: number) => {
         },
       };
     });
-  }, []); // Empty dependency array - stable function
+  }, []);
 
-  // Explicit save to backend
   const saveTemplate = async () => {
     if (!template) return;
 
@@ -79,7 +76,8 @@ export const useEmailTemplate = (eventId: number) => {
     try {
       setError(null);
       const previewData = await emailTemplateService.previewEmail(eventId);
-      setPreview(previewData);
+
+      setPreview(previewData as EmailPreviewData);
       return previewData;
     } catch (error) {
       console.error('Failed to generate preview:', error);
