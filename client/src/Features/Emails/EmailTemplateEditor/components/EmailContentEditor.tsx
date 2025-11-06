@@ -1,134 +1,221 @@
-// src/features/email-templates/components/EmailContentEditor.tsx
 import React, { useState, useRef } from 'react';
-import { FiType, FiEdit, FiPlus } from 'react-icons/fi';
+import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { EmailTemplate } from '@/types';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface EmailContentEditorProps {
   template: EmailTemplate;
   onUpdate: (updates: Partial<EmailTemplate>) => void;
-  onFieldFocus: (field: string) => void;
+  onFieldFocus: (field: string | null) => void;
 }
+
+type EditableField =
+  | 'subject'
+  | 'greeting'
+  | 'message'
+  | 'closing'
+  | 'from_name'
+  | 'reply_to';
 
 export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
   template,
   onUpdate,
   onFieldFocus,
 }) => {
-  const [activeField, setActiveField] = useState<string | null>(null);
+  const [editingField, setEditingField] = useState<EditableField | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  const EditableField: React.FC<{
-    label: string;
-    value: string;
-    field: keyof EmailTemplate;
-    multiline?: boolean;
-    placeholder?: string;
-  }> = ({ label, value, field, multiline = false, placeholder }) => {
-    const handleFocus = () => {
-      setActiveField(field as string);
-      onFieldFocus(field as string);
-    };
+  const startEditing = (field: EditableField) => {
+    setEditingField(field);
+    setEditValue(template[field] || '');
+    onFieldFocus(field);
 
-    const handleBlur = () => {
-      setActiveField(null);
-    };
+    // Focus the input after a small delay
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const saveEdit = () => {
+    if (editingField && editValue !== template[editingField]) {
+      onUpdate({ [editingField]: editValue });
+    }
+    cancelEdit();
+  };
+
+  const cancelEdit = () => {
+    setEditingField(null);
+    setEditValue('');
+    onFieldFocus(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      saveEdit();
+    } else if (e.key === 'Escape') {
+      cancelEdit();
+    }
+  };
+
+  const renderEditableField = (
+    field: EditableField,
+    label: string,
+    placeholder: string,
+    isTextarea: boolean = false
+  ) => {
+    const isEditing = editingField === field;
+    const value = template[field] || '';
 
     return (
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-3">
           <label className="block text-sm font-medium text-gray-700">
             {label}
           </label>
-          {activeField === field && (
+          {!isEditing ? (
             <button
               type="button"
-              className="text-xs text-blue-600 hover:text-blue-700 flex items-center"
-              onClick={() => onFieldFocus(field as string)}
+              onClick={() => startEditing(field)}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label={`Edit ${label.toLowerCase()}`}
             >
-              <FiPlus className="h-3 w-3 mr-1" />
-              Add Merge Field
+              <FiEdit2 className="h-4 w-4" />
             </button>
-          )}
-        </div>
-        <div className="relative">
-          {multiline ? (
-            <textarea
-              value={value || ''}
-              onChange={(e) => onUpdate({ [field]: e.target.value })}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none min-h-[100px]"
-              placeholder={placeholder}
-              rows={4}
-            />
           ) : (
-            <input
-              type="text"
-              value={value || ''}
-              onChange={(e) => onUpdate({ [field]: e.target.value })}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder={placeholder}
-            />
+            <div className="flex gap-1">
+              <button
+                type="button"
+                onClick={saveEdit}
+                className="p-1 text-green-600 hover:text-green-700 transition-colors"
+                aria-label="Save"
+              >
+                <FiCheck className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="p-1 text-red-600 hover:text-red-700 transition-colors"
+                aria-label="Cancel"
+              >
+                <FiX className="h-4 w-4" />
+              </button>
+            </div>
           )}
-          <FiEdit className="absolute right-3 top-3 text-gray-400" />
         </div>
+
+        {!isEditing ? (
+          <div
+            className="min-h-[40px] p-2 border border-transparent rounded-md hover:bg-gray-50 cursor-text"
+            onClick={() => startEditing(field)}
+          >
+            {value ? (
+              <p className="text-gray-900 whitespace-pre-wrap">{value}</p>
+            ) : (
+              <p className="text-gray-400 italic">{placeholder}</p>
+            )}
+          </div>
+        ) : isTextarea ? (
+          <Textarea
+            ref={inputRef as React.Ref<HTMLTextAreaElement>}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            rows={field === 'message' ? 6 : 3}
+            className="w-full resize-none"
+          />
+        ) : (
+          <Input
+            ref={inputRef as React.Ref<HTMLInputElement>}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="w-full"
+          />
+        )}
       </div>
     );
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <div className="flex items-center mb-6">
-        <FiType className="h-5 w-5 text-gray-600 mr-2" />
-        <h2 className="text-lg font-semibold">Email Content</h2>
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Email Content
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Customize the content of your confirmation email. Click on any field or the edit icon to make changes.
+        </p>
       </div>
 
-      <div className="space-y-6">
-        <EditableField
-          label="Email Subject"
-          value={template.subject || ''}
-          field="subject"
-          placeholder="Your Ticket for [Event Name]"
-        />
+      {renderEditableField(
+        'subject',
+        'Subject Line',
+        'Your Ticket for ((event_title))'
+      )}
 
-        <EditableField
-          label="Greeting"
-          value={template.greeting || ''}
-          field="greeting"
-          multiline
-          placeholder="Dear ((attendee_first_name)) ((attendee_last_name)),"
-        />
+      {renderEditableField(
+        'greeting',
+        'Greeting',
+        'Dear ((attendee_first_name)) ((attendee_last_name)),'
+      )}
 
-        <EditableField
-          label="Message"
-          value={template.message || ''}
-          field="message"
-          multiline
-          placeholder="Thank you for registering for **((event_title))**! We're excited to have you join us."
-        />
+      {renderEditableField(
+        'message',
+        'Message',
+        'Thank you for registering for **((event_title))**! We are excited to have you join us.',
+        true
+      )}
 
-        <EditableField
-          label="Closing"
-          value={template.closing || ''}
-          field="closing"
-          multiline
-          placeholder="Best regards,\nThe Event Team"
-        />
+      {renderEditableField(
+        'closing',
+        'Closing',
+        'Best regards,\\nThe ((event_title)) Team',
+        true
+      )}
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Available Merge Fields</h4>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <code className="bg-white px-2 py-1 rounded border">((event_title))</code>
-            <code className="bg-white px-2 py-1 rounded border">((event_date))</code>
-            <code className="bg-white px-2 py-1 rounded border">((event_location))</code>
-            <code className="bg-white px-2 py-1 rounded border">((attendee_first_name))</code>
-            <code className="bg-white px-2 py-1 rounded border">((attendee_last_name))</code>
-            <code className="bg-white px-2 py-1 rounded border">((attendee_full_name))</code>
-            <code className="bg-white px-2 py-1 rounded border">((attendee_email))</code>
-            <code className="bg-white px-2 py-1 rounded border">((registration_id))</code>
-          </div>
+      {renderEditableField(
+        'from_name',
+        'From Name',
+        'Event Team'
+      )}
+
+      {renderEditableField(
+        'reply_to',
+        'Reply To Email',
+        'support@yourevent.com'
+      )}
+
+      {/* Merge Fields Helper */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="text-sm font-medium text-blue-900 mb-2">
+          Available Merge Fields
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+          {[
+            '((event_title))',
+            '((event_date))',
+            '((event_location))',
+            '((attendee_first_name))',
+            '((attendee_last_name))',
+            '((attendee_email))',
+            '((attendee_company))',
+            '((registration_id))',
+          ].map((field) => (
+            <code key={field} className="bg-white px-2 py-1 rounded border text-blue-700">
+              {field}
+            </code>
+          ))}
         </div>
+        <p className="text-xs text-blue-600 mt-2">
+          Use <strong>**text**</strong> for bold formatting in the message field.
+        </p>
       </div>
     </div>
   );
