@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 // Importing Icons
-import { FiSettings, FiLayout, FiSend  } from 'react-icons/fi';
+import { FiSettings, FiLayout, FiSend, FiUsers  } from 'react-icons/fi';
 
 // Import the new Subcomponents
 import SidebarHeader from './components/SidebarHeader';
@@ -29,9 +29,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
             // isActive is true only if the path is an EXACT match
             isActive: location.pathname === '/dashboard'
         },
+        {
+            name: 'Attendees',
+            path: eventId ? `/dashboard/events/${eventId}/attendees` : '/dashboard/attendees',
+            icon: FiUsers,
+            isActive: location.pathname.includes('/attendees')
+        },
 
         {
-          name: 'Communications',
+          name: 'Messaging',
           path: `/dashboard/events/${eventId}/communications`,
           icon: FiSend,
           isActive: location.pathname === `/dashboard/events/${eventId}/sms`

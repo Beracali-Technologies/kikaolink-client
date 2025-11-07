@@ -3,6 +3,7 @@ import { ID } from '../common';
 
 export interface Attendee {
   id?: ID;
+  uuid: string;
   event_id: number;
   name: string;  // for the fullname purpose
   first_name?: string;
@@ -14,6 +15,9 @@ export interface Attendee {
   email: string;
   phone?: string;
   company?: string;
+  status: 'checkedIn' | 'absent';
+  has_phone: boolean;
+  checked_in_at?: string;
   job_title?: string;
   custom_fields?: Record<string, any>;
   created_at?: string;

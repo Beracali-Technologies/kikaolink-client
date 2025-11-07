@@ -28,6 +28,7 @@ const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsit
 const AttendeeRegistrationPage = lazy(() => import('../Features/Registration/pages/AttendeeRegistrationPage/AttendeeRegistrationPage'));
 const RegistrationSuccessPage = lazy(() => import('../Features/Registration/pages/RegistrationSuccessPage/RegistrationSuccessPage')) ;
 
+const AttendeesPage = lazy(() => import('../Features/Attendees/pages/AttendeesPage'));
 const CommunicationsLayout = lazy(() => import('../Layouts/CommunicationsLayout/CommunicationsLayout'));
 const CommunicationsOverviewPage = lazy(() => import('../Features/Communications/CommunicationsOverviewPage'))
 const SmsCommunicationPage = lazy(() => import('../Features/Communications/SmsCommunication/SmsCommunicationPage'));
@@ -65,6 +66,7 @@ export const routes: RouteObject[] = [
     { path: 'events', element: <EventList /> },
     { path: 'events/create', element: <CreateEvent /> },
     { path: 'checkin', element: <CheckinPage /> },
+    { path: '/dashboard/events/:eventId/attendees', element: <AttendeesPage /> },
 
     // Communications routes (not inside EventSettingsLayout)
     {
