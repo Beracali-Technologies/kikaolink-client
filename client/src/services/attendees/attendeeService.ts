@@ -21,7 +21,7 @@ export interface SMSRequest {
 class AttendeeService {
   private baseURL = '/api';
 
-  // 🧾 Get all attendees for a specific event
+  //  Get all attendees for a specific event
   async getAttendees(eventId: string): Promise<AttendeesResponse> {
     try {
       const { data } = await api.get<AttendeesResponse>(
@@ -34,7 +34,7 @@ class AttendeeService {
     }
   }
 
-  // 📊 Get attendee counts for an event
+  // Get attendee counts for an event
   async getAttendeeCounts(eventId: string) {
     try {
       const { data } = await api.get(
@@ -47,7 +47,7 @@ class AttendeeService {
     }
   }
 
-  // 💬 Send bulk SMS to attendees
+  //  Send bulk SMS to attendees
   async sendBulkSMS(eventId: string, data: SMSRequest) {
     try {
       const response = await api.post(
@@ -61,7 +61,7 @@ class AttendeeService {
     }
   }
 
-  // 🔁 Resend QR code to a specific attendee
+  // Resend QR code to a specific attendee
   async resendQR(attendeeId: number) {
     try {
       const response = await api.post(
@@ -74,7 +74,7 @@ class AttendeeService {
     }
   }
 
-  // 🖨️ Print badges for multiple attendees
+  // Print badges for multiple attendees
   async printBadges(attendeeIds: number[]) {
     try {
       const response = await api.post(
@@ -88,7 +88,7 @@ class AttendeeService {
     }
   }
 
-  // 👤 Get a single attendee’s details
+  // Get a single attendee’s details
   async getAttendee(eventId: string, attendeeId: number) {
     try {
       const { data } = await api.get(
