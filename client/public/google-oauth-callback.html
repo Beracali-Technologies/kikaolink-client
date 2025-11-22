@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google OAuth Callback</title>
+</head>
+<body>
+  <script>
+    // Extract token from URL hash
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+    const error = params.get('error');
+
+    if (accessToken) {
+      // Send success message to opener
+      window.opener.postMessage({
+        type: 'GOOGLE_OAUTH_SUCCESS',
+        code: accessToken
+      }, window.location.origin);
+    } else if (error) {
+      window.opener.postMessage({
+        type: 'GOOGLE_OAUTH_ERROR',
+        error: error
+      }, window.location.origin);
+    }
+
+    window.close();
+  </script>
+</body>
+</html>

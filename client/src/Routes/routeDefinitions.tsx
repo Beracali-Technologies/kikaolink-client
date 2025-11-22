@@ -27,6 +27,7 @@ const RegistrationFormEditor = lazy(() => import('../Features/Dashboard/Registra
 const EventWebsite = lazy(() => import('../Features/Dashboard/Events/EventWebsite/EventWebsite'));
 const AttendeeRegistrationPage = lazy(() => import('../Features/Registration/pages/AttendeeRegistrationPage/AttendeeRegistrationPage'));
 const RegistrationSuccessPage = lazy(() => import('../Features/Registration/pages/RegistrationSuccessPage/RegistrationSuccessPage')) ;
+const ExternalDataSources = lazy(() => import('../Features/ExternalData/pages/ExternalDataSources/ExternalDataSources'));
 
 const AttendeesPage = lazy(() => import('../Features/Attendees/pages/AttendeesPage'));
 const CommunicationsLayout = lazy(() => import('../Layouts/CommunicationsLayout/CommunicationsLayout'));
@@ -92,6 +93,13 @@ export const routes: RouteObject[] = [
         { path: 'email', element: <EmailTemplateEditor /> },
       ],
     },
+    {
+      path: 'events/:eventId/external-data',
+      children: [
+        { index: true, element: <ExternalDataSources /> },
+        
+      ],
+    }
   ],
 
     },

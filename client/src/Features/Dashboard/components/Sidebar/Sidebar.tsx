@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
 
         {
           name: 'External Data',
-          path: `/dashboard/events/${eventId}/communications`,
+          path: `events/${eventId}/external-data`,
           icon: FiDownloadCloud,
           isActive: location.pathname === `/dashboard/events/${eventId}/sms`
         },

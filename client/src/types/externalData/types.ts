@@ -1,2 +1,2 @@
-export * from './externalData';
-export * from './googleSheets';
+export * from './externalDataSource';
+export * from './externalDataSyncLog';

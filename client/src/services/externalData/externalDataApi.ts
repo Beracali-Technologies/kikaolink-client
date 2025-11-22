@@ -1,33 +1,43 @@
-import api from "@/lib/axios";
-import { ExternalDataSource, ExternalDataSyncLog, GoogleSheet, SheetPreview } from '@/types';
+
+import api from '@/lib/axios';
+import { ExternalDataSource, ExternalDataSyncLog } from '@/types';
 
 export const externalDataApi = {
   // Data Sources
-  getDataSources: (eventId?: number) =>
-    api.get<{ data: ExternalDataSource[] }>('/external-data-sources', { params: { event_id: eventId } }),
-
-  createDataSource: (data: Partial<ExternalDataSource>) =>
-    api.post<{ data: ExternalDataSource }>('/external-data-sources', data),
-
-  updateDataSource: (id: number, data: Partial<ExternalDataSource>) =>
-    api.put<{ data: ExternalDataSource }>(`/external-data-sources/${id}`, data),
-
-  deleteDataSource: (id: number) =>
-    api.delete(`/external-data-sources/${id}`),
-
-  // Google Forms
-  getGoogleSheets: (accessToken: string) =>
-    api.get<{ data: GoogleSheet[] }>('/google-forms/sheets', { params: { access_token: accessToken } }),
-
-  getSheetPreview: (accessToken: string, spreadsheetId: string, range?: string) =>
-    api.get<SheetPreview>('/google-forms/sheet-preview', {
-      params: { access_token: accessToken, spreadsheet_id: spreadsheetId, range }
+  getDataSources: (eventId: number) => 
+    api.get<{ success: boolean; data: ExternalDataSource[] }>('/api/external-data-sources', {
+      params: { event_id: eventId }
     }),
+  
+  createDataSource: (data: {
+    event_id: number;
+    name: string;
+    type: 'google_forms';
+    config: any;
+    field_mapping: Record<string, string>;
+    sync_method: 'forms_api' | 'spreadsheet';
+    sync_schedule: 'realtime' | '5min' | '15min' | '30min' | '1hour' | 'manual';
+  }) => 
+    api.post<{ success: boolean; data: ExternalDataSource }>('/api/external-data-sources', data),
+  
+  updateDataSource: (id: number, data: Partial<ExternalDataSource>) => 
+    api.put<{ success: boolean; data: ExternalDataSource }>(`/api/external-data-sources/${id}`, data),
+  
+  deleteDataSource: (id: number) => 
+    api.delete<{ success: boolean; message: string }>(`/api/external-data-sources/${id}`),
+
+  getDataSource: (id: number) => 
+    api.get<{ success: boolean; data: ExternalDataSource }>(`/api/external-data-sources/${id}`),
 
   // Sync
-  syncDataSource: (id: number) =>
-    api.post<{ data: ExternalDataSyncLog }>(`/external-data-sources/${id}/sync`),
-
-  getSyncLogs: (id: number) =>
-    api.get<{ data: ExternalDataSyncLog[] }>(`/external-data-sources/${id}/sync-logs`),
+  syncDataSource: (id: number) => 
+    api.post<{ success: boolean; data: ExternalDataSyncLog; message: string }>(
+      `/api/external-data-sources/${id}/sync`
+    ),
+  
+  getSyncLogs: (id: number, page = 1) => 
+    api.get<{ success: boolean; data: ExternalDataSyncLog[] }>(
+      `/api/external-data-sources/${id}/sync-logs`,
+      { params: { page } }
+    ),
 };
