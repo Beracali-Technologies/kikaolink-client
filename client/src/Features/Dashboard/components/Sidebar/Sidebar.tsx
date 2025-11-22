@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { FiCloud, FiDownloadCloud } from "react-icons/fi";
+
 
 // Importing Icons
 import { FiSettings, FiLayout, FiSend, FiUsers  } from 'react-icons/fi';
@@ -40,6 +42,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, setIsOpen }) => {
           name: 'Messaging',
           path: `/dashboard/events/${eventId}/communications`,
           icon: FiSend,
+          isActive: location.pathname === `/dashboard/events/${eventId}/sms`
+        },
+
+        {
+          name: 'External Data',
+          path: `/dashboard/events/${eventId}/communications`,
+          icon: FiDownloadCloud,
           isActive: location.pathname === `/dashboard/events/${eventId}/sms`
         },
 

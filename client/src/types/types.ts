@@ -9,3 +9,4 @@ export * from './attendee/types';
 export * from './registration/types';
 export * from './dashboard/types';
 export * from './emails/types';
+export * from './externalData/types';
