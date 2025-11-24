@@ -34,6 +34,12 @@ const CommunicationsLayout = lazy(() => import('../Layouts/CommunicationsLayout/
 const CommunicationsOverviewPage = lazy(() => import('../Features/Communications/CommunicationsOverviewPage'))
 const SmsCommunicationPage = lazy(() => import('../Features/Communications/SmsCommunication/SmsCommunicationPage'));
 const EmailCommunicationPage = lazy(() => import('../Features/Communications/EmailCommunication/EmailCommunicationPage'));
+
+//legal
+const PrivacyPolicy = lazy(() => import('../Features/Landing/Legal/PrivacyPolicy/PrivacyPolicyPage'));
+const TermsOfService = lazy(() => import('../Features/Landing/Legal/TermsOfService/TermsOfServicePage'));
+
+
 // --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
 export const routes: RouteObject[] = [
     // --- Public Routes ---
@@ -44,9 +50,14 @@ export const routes: RouteObject[] = [
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
 
+                //public event pages
             { path: '/e/:customSlug', element: <EventWebsite /> },
             { path: '/r/:customSlug', element: <AttendeeRegistrationPage /> },
             { path: '/registration-success/:customSlug', element: <RegistrationSuccessPage /> },
+
+              //legal pages - public
+            { path: `/privacy-policy`, element: <PrivacyPolicy />},
+            { path: `/terms-of-service`, element: <TermsOfService /> },
         ]
     },
 
@@ -114,6 +125,7 @@ export const routes: RouteObject[] = [
      ),
      children: [
          { index: true, element: <LandingPage /> },
+
      ],
  },
     // Add a catch-all 404 at the top level if desired

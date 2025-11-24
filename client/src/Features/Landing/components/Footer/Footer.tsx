@@ -47,8 +47,8 @@ const Footer: React.FC = () => {
                          <div>
                              <h3 className="font-semibold text-dark-text">Legal</h3>
                              <nav className="mt-4 space-y-2 text-sm">
-                                <NavLink to="/privacy" className="block text-light-text hover:text-primary-blue">Privacy Policy</NavLink>
-                                <NavLink to="/terms" className="block text-light-text hover:text-primary-blue">Terms of Service</NavLink>
+                                <NavLink to="/privacy-policy" className="block text-light-text hover:text-primary-blue">Privacy Policy</NavLink>
+                                <NavLink to="/terms-of-service" className="block text-light-text hover:text-primary-blue">Terms of Service</NavLink>
                             </nav>
                         </div>
                     </div>

@@ -6,7 +6,7 @@ const HeroHeader: React.FC = () => (
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <div className="text-2xl font-bold">
                 <NavLink to="/">
-                    <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Connect</span>
+                    <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Link</span>
                 </NavLink>
             </div>
             <div className="flex items-center space-x-4">

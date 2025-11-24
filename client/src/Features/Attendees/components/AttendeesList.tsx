@@ -1,17 +1,12 @@
-// Features/Attendees/components/AttendeesList.tsx
 import React, { useState, useEffect } from 'react';
 import {
   FiSearch,
-  FiFilter,
-  FiMail,
-  FiPhone,
   FiCheck,
   FiX,
   FiDownload,
   FiPrinter,
   FiUser,
   FiEye,
-  FiMoreVertical,
   FiRefreshCw
 } from 'react-icons/fi';
 import { Attendee } from '@/types';
@@ -40,9 +35,8 @@ const AttendeesList: React.FC<AttendeesListProps> = ({ eventId, onViewAttendee }
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'checkedIn' | 'absent'>('all');
   const [selectedAttendees, setSelectedAttendees] = useState<number[]>([]);
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [smsMessage, setSmsMessage] = useState('Hello! This is a reminder for our event.');
+  const [smsMessage] = useState('Hello! This is a reminder for our event.');
 
   useEffect(() => {
     let filtered = attendees;
@@ -72,12 +66,12 @@ const AttendeesList: React.FC<AttendeesListProps> = ({ eventId, onViewAttendee }
     if (selectedAttendees.length === filteredAttendees.length) {
       setSelectedAttendees([]);
     } else {
-      setSelectedAttendees(filteredAttendees.map(a => a.id));
+      // Filter out any undefined IDs
+      const validIds = filteredAttendees
+        .map(a => a.id)
+        .filter((id): id is number => id !== undefined);
+      setSelectedAttendees(validIds);
     }
-  };
-
-  const toggleDropdown = (id: number) => {
-    setActiveDropdown(activeDropdown === id ? null : id);
   };
 
   const handlePrintBadges = async () => {
@@ -253,8 +247,8 @@ const AttendeesList: React.FC<AttendeesListProps> = ({ eventId, onViewAttendee }
                   <div className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={selectedAttendees.includes(attendee.id)}
-                      onChange={() => handleSelectAttendee(attendee.id)}
+                      checked={attendee.id ? selectedAttendees.includes(attendee.id) : false}
+                      onChange={() => attendee.id && handleSelectAttendee(attendee.id)}
                       className="rounded border-gray-300 text-gray-600 focus:ring-gray-500"
                     />
                     <div className="ml-4">

@@ -1,7 +1,6 @@
-// Features/Attendees/components/AttendeeDetail.tsx
 import React from 'react';
 import { FiX, FiMail, FiPhone, FiCalendar, FiMapPin, FiBriefcase } from 'react-icons/fi';
-import { Attendee } from '../../../../common/interfaces';
+import { Attendee } from '@/types';
 
 interface AttendeeDetailProps {
   attendee: Attendee;

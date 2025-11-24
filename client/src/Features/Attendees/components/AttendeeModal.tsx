@@ -1,4 +1,3 @@
-// Features/Attendees/components/AttendeeModal.tsx
 import React from 'react';
 import { FiX, FiMail, FiPhone, FiCalendar, FiMapPin, FiBriefcase, FiPrinter, FiCheck, FiClock } from 'react-icons/fi';
 import { Attendee } from '@/types';
@@ -18,6 +17,11 @@ const AttendeeModal: React.FC<AttendeeModalProps> = ({ attendee, isOpen, onClose
 
   const handleResendQR = async () => {
     try {
+      // Add null check for attendee.id
+      if (!attendee.id) {
+        console.error('Attendee ID is undefined');
+        return;
+      }
       await resendQR(attendee.id);
       // Show success message
     } catch (error) {
@@ -27,6 +31,11 @@ const AttendeeModal: React.FC<AttendeeModalProps> = ({ attendee, isOpen, onClose
 
   const handlePrintBadge = async () => {
     try {
+      // Add null check for attendee.id
+      if (!attendee.id) {
+        console.error('Attendee ID is undefined');
+        return;
+      }
       await printBadges([attendee.id]);
     } catch (error) {
       console.error('Failed to print badge:', error);
