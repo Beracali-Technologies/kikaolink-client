@@ -1,5 +1,6 @@
+import { ExternalDataSyncLog } from './externalDataSyncLog';
+import { GoogleOAuthTokens } from '@/types';
 
-import { GoogleOAuthTokens } from '../google';
 
 export interface ExternalDataSource {
   id: number;
@@ -22,4 +23,4 @@ export interface ExternalDataSource {
   latest_sync_log?: ExternalDataSyncLog;
 }
 
-import { ExternalDataSyncLog } from './externalDataSyncLog.types';
+

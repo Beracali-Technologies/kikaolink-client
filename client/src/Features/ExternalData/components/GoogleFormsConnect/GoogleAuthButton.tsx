@@ -1,10 +1,8 @@
 import React from 'react';
 
-interface Props {
-  onAuthSuccess: (accessToken: string) => void;
-}
 
-export const GoogleAuthButton: React.FC<Props> = ({ onAuthSuccess }) => {
+
+export const GoogleAuthButton: React.FC = () => {
   const handleGoogleAuth = () => {
     // Implement Google OAuth flow
     // This would typically open a popup or redirect to Google OAuth

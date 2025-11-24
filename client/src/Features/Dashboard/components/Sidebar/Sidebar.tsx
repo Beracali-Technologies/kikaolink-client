@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { FiCloud, FiDownloadCloud } from "react-icons/fi";
+import { FiDownloadCloud } from "react-icons/fi";
 
 
 // Importing Icons

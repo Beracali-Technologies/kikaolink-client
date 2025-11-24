@@ -1,5 +1,5 @@
 import api from '@/lib/axios';
-import { GoogleOAuthTokens } from '@/types';
+
 
 export const googleOAuthApi = {
   getAuthUrl: () => 

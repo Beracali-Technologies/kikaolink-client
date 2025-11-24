@@ -1,6 +1,6 @@
 // components/external-data/GoogleFormsConnect/GoogleFormsConnect.tsx
 import React, { useState } from 'react';
-import { GoogleOAuthTokens, GoogleForm, GoogleFormDetails, SyncPreviewData } from '../../../types/externalData';
+import { GoogleOAuthTokens, GoogleForm, GoogleFormDetails, SyncPreviewData } from '@/types';
 import { externalDataApi } from '@/services/externalData/externalDataApi';
 import { GoogleOAuthFlow } from './GoogleOAuthFlow';
 import { FormSelector } from './FormSelector';

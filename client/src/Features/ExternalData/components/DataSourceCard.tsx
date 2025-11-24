@@ -4,15 +4,14 @@ import { SyncLogsModal } from './SyncLogsModal';
 
 interface Props {
   dataSource: ExternalDataSource;
-  onUpdate: () => void;
   onSync: () => void;
   onDelete: () => void;
   isSyncing?: boolean;
+  onUpdate?: () => void;
 }
 
 export const DataSourceCard: React.FC<Props> = ({
   dataSource,
-  onUpdate,
   onSync,
   onDelete,
   isSyncing = false

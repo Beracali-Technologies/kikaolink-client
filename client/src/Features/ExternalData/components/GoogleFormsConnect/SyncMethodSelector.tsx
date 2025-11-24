@@ -1,4 +1,3 @@
-// components/external-data/GoogleFormsConnect/SyncMethodSelector.tsx
 import React, { useState } from 'react';
 import { GoogleFormDetails, SyncPreviewData } from '@/types';
 import { googleFormsApi } from '@/services/google/googleFormsApi';
@@ -207,7 +206,8 @@ export const SyncMethodSelector: React.FC<Props> = ({
               <tbody>
                 {previewData.sampleData.slice(0, 3).map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {row.slice(0, 4).map((cell, cellIndex) => (
+                        {row.slice(0, 4).map((cell: string | number, cellIndex: number) => (
+
                       <td key={cellIndex} className="p-2 border-b bg-white">
                         {String(cell).substring(0, 30)}{String(cell).length > 30 ? '...' : ''}
                       </td>

@@ -22,7 +22,7 @@ const AttendeeModal: React.FC<AttendeeModalProps> = ({ attendee, isOpen, onClose
         console.error('Attendee ID is undefined');
         return;
       }
-      await resendQR(attendee.id);
+      await resendQR(Number(attendee.id));
       // Show success message
     } catch (error) {
       console.error('Failed to resend QR:', error);
@@ -36,7 +36,7 @@ const AttendeeModal: React.FC<AttendeeModalProps> = ({ attendee, isOpen, onClose
         console.error('Attendee ID is undefined');
         return;
       }
-      await printBadges([attendee.id]);
+      await printBadges([Number(attendee.id)]);
     } catch (error) {
       console.error('Failed to print badge:', error);
     }

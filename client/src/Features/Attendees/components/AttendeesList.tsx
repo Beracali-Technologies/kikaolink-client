@@ -7,7 +7,7 @@ import {
   FiPrinter,
   FiUser,
   FiEye,
-  FiRefreshCw
+  FiRefreshCw, FiPhone
 } from 'react-icons/fi';
 import { Attendee } from '@/types';
 import { useAttendees } from '@/lib/hooks/attendees/useAttendees';
@@ -247,8 +247,8 @@ const AttendeesList: React.FC<AttendeesListProps> = ({ eventId, onViewAttendee }
                   <div className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={attendee.id ? selectedAttendees.includes(attendee.id) : false}
-                      onChange={() => attendee.id && handleSelectAttendee(attendee.id)}
+                      checked={attendee.id ? selectedAttendees.includes(Number(attendee.id)) : false}
+                      onChange={() => Number(attendee.id) && handleSelectAttendee(Number(attendee.id))}
                       className="rounded border-gray-300 text-gray-600 focus:ring-gray-500"
                     />
                     <div className="ml-4">

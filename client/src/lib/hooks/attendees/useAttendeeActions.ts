@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Attendee } from '@/types';
 import { attendeeService } from '@/services/attendees/attendeeService';
 
 export const useAttendeeActions = (eventId: string) => {
