@@ -160,7 +160,7 @@ const FloatingBoxesRain: React.FC<FloatingBoxRainProps> = ({
             '--rotation': `${box.rotation}deg`,
             '--sway': `${box.sway}px`,
             ...box.sizeStyles
-          } as React.CSSProperties}
+          } as any}
         />
       ))}
     </div>

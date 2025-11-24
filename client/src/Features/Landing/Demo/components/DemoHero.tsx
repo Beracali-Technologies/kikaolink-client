@@ -1,9 +1,7 @@
 import React from 'react';
 
 const DemoHero: React.FC = () => {
-  const handleSignUp = () => {
-    console.log('Sign up clicked');
-  };
+ 
 
   // Floating feature boxes data - spread across the page
   const featureBoxes = [
@@ -86,7 +84,7 @@ const DemoHero: React.FC = () => {
       </div>
 
       {/* Custom animations for floating boxes */}
-      <style jsx>{`
+      <style>{`
         @keyframes float-slow {
           0%, 100% { 
             transform: translateY(0px) translateX(0px) rotate(0deg); 
