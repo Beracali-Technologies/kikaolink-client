@@ -35,6 +35,8 @@ const CommunicationsOverviewPage = lazy(() => import('../Features/Communications
 const SmsCommunicationPage = lazy(() => import('../Features/Communications/SmsCommunication/SmsCommunicationPage'));
 const EmailCommunicationPage = lazy(() => import('../Features/Communications/EmailCommunication/EmailCommunicationPage'));
 
+ const Demo = lazy(() => import('../Features/Landing/Demo/Demo'));
+
 //legal
 const PrivacyPolicy = lazy(() => import('../Features/Landing/Legal/PrivacyPolicy/PrivacyPolicyPage'));
 const TermsOfService = lazy(() => import('../Features/Landing/Legal/TermsOfService/TermsOfServicePage'));
@@ -55,6 +57,7 @@ export const routes: RouteObject[] = [
             { path: '/r/:customSlug', element: <AttendeeRegistrationPage /> },
             { path: '/registration-success/:customSlug', element: <RegistrationSuccessPage /> },
 
+            { path: `/demo`, element: <Demo />},
               //legal pages - public
             { path: `/privacy-policy`, element: <PrivacyPolicy />},
             { path: `/terms-of-service`, element: <TermsOfService /> },

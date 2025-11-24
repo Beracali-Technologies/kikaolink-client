@@ -1,35 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import HeroHeader from '../components/HeroHeader/HeroHeader';
 import FeaturesSection from '../components/FeaturesSection/FeaturesSection';
 
 
 
-const AnimatedScrollArrow = () => (
-    <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div className="w-8 h-12 border-2 border-slate-400 rounded-full flex justify-center pt-2 animate-bounce">
-             <div className="w-1 h-3 bg-slate-400 rounded-full"></div>
-        </div>
-    </div>
-);
 
 
-const HeroHeader: React.FC = () => (
-    <header className="absolute top-0 left-0 w-full z-30">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div className="text-2xl font-bold">
-                <NavLink to="/">
-                    <span className="text-primary-blue">Kikao</span><span className="text-dark-text">Link</span>
-                </NavLink>
-            </div>
-            <div className="flex items-center space-x-4">
-                <NavLink to="/login" className="font-semibold text-gray-600 hover:text-primary-blue">Login</NavLink>
-                <NavLink to="/signup" className="bg-primary-blue hover:bg-primary-blue-hover text-white font-bold py-2 px-5 rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl">
-                    Get Started
-                </NavLink>
-            </div>
-        </div>
-    </header>
-);
+
 
 
 const HeroPage: React.FC = () => {
@@ -53,7 +31,7 @@ const HeroPage: React.FC = () => {
 
 
                     <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
-                          <NavLink to="/contact" className="bg-primary-blue text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-primary-blue-hover transition-all duration-300">
+                          <NavLink to="/demo" className="bg-primary-blue text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-primary-blue-hover transition-all duration-300">
                               Book a Demo
                           </NavLink>
 
@@ -64,8 +42,7 @@ const HeroPage: React.FC = () => {
 
                 </main>
 
-                  {/* --- Animated Scroll Indicator --- */}
-                      <AnimatedScrollArrow />
+             
             </div>
 
             {/*  Features Section on Advantages of the Platform*/}

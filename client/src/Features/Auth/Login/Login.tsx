@@ -4,11 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../lib/stores/authStore';
 import { getAuthToken } from '../../../lib/utils/tokenUtils';
-import { CloudBackground } from './components/CloudBackground';
-import { EmailInput } from './components/EmailInput';
-import { PasswordInput } from './components/PasswordInput';
-import { SubmitButton } from './components/SubmitButton';
-import { ErrorAlert } from './components/ErrorAlert';
+import FloatingBoxes from '../animations/FloatingBoxes';
 
 
 const Login: React.FC = () => {
@@ -42,51 +38,102 @@ const Login: React.FC = () => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-cloud-sky flex items-center justify-center p-4 relative overflow-hidden">
-            {/* Cloud Background with blue clouds */}
-            <CloudBackground />
+    // Eye Icons
+    const EyeOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
+    const EyeClosedIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
 
+    return (
+        <div className="min-h-screen bg-light-bg flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Floating Boxes Background */}
+            <FloatingBoxes count={15} className="z-0" />
+            
             {/* Main Content */}
-            <div className="w-full max-w-md relative z-10 animate-fade-in-up">
+            <div className="w-full max-w-md relative z-10">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="mb-6 transform hover:scale-105 transition-transform duration-300">
-                        <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-blue-500 rounded-2xl shadow-lg mx-auto flex items-center justify-center backdrop-blur-sm border border-white/30">
-                            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <h1 className="text-4xl font-bold text-gray-800 drop-shadow-sm">
-                        Welcome Back!
-                    </h1>
-                    <p className="mt-3 text-gray-600 text-lg">Log in to manage your events</p>
+                    <h1 className="text-3xl font-bold text-dark-text">Welcome Back</h1>
+                    <p className="mt-2 text-light-text">Log in to manage your events</p>
                 </div>
 
                 {/* Form Container */}
-                <div className="bg-white/95 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/50 w-full transform transition-all duration-500 hover:shadow-2xl">
-                    {apiError && <ErrorAlert message={apiError} />}
+                <div className="bg-white p-8 rounded-xl shadow-lg w-full backdrop-blur-sm bg-opacity-95">
+                    {apiError && (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert">
+                            <p>{apiError}</p>
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <EmailInput register={register} error={errors.email} />
-                        <PasswordInput
-                            register={register}
-                            error={errors.password}
-                            showPassword={showPassword}
-                            onTogglePassword={() => setShowPassword(!showPassword)}
-                        />
+                        {/* Email Address */}
+                        <div>
+                            <label className="text-sm font-medium text-dark-text block mb-2">
+                                Email
+                            </label>
+                            <input 
+                                {...register("email", { 
+                                    required: "Email is required", 
+                                    pattern: { 
+                                        value: /^\S+@\S+$/i, 
+                                        message: "Invalid email address" 
+                                    } 
+                                })}
+                                type="email"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                                placeholder="Enter your email"
+                            />
+                            {errors.email && (
+                                <p className="text-accent-red text-sm mt-1">
+                                    {errors.email.message as string}
+                                </p>
+                            )}
+                        </div>
 
-                        <SubmitButton isLoading={isLoading} />
+                        {/* Password */}
+                        <div>
+                            <label className="text-sm font-medium text-dark-text block mb-2">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <input 
+                                    {...register("password", { 
+                                        required: "Password is required" 
+                                    })}
+                                    type={showPassword ? 'text' : 'password'}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                                    placeholder="Enter your password"
+                                />
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowPassword(!showPassword)} 
+                                    className="absolute inset-y-0 right-0 px-3 flex items-center text-light-text"
+                                >
+                                    {showPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
+                                </button>
+                            </div>
+                            {errors.password && (
+                                <p className="text-accent-red text-sm mt-1">
+                                    {errors.password.message as string}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Submit Button */}
+                        <button 
+                            type="submit" 
+                            disabled={isLoading}
+                            className="w-full py-2.5 bg-primary-blue text-white font-semibold rounded-lg hover:bg-primary-blue-hover transition-colors shadow hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? 'Logging in...' : 'Log In'}
+                        </button>
                     </form>
                 </div>
 
                 {/* Footer Link */}
-                <p className="text-center mt-8 text-sm text-gray-600 font-medium">
+                <p className="text-center mt-6 text-sm text-light-text relative z-10">
                     Don't have an account?{' '}
-                    <NavLink
-                        to="/signup"
-                        className="font-semibold text-blue-500 hover:text-blue-600 transition-colors duration-300 hover:underline"
+                    <NavLink 
+                        to="/signup" 
+                        className="font-medium text-primary-blue hover:underline"
                     >
                         Sign up for free
                     </NavLink>
