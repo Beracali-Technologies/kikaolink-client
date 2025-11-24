@@ -177,7 +177,7 @@ export default function TermsOfService() {
               If you have any questions about these Terms:<br /><br />
               Email:{' '}
               <a href="mailto:kelvinmullar5@gmail.com" className="text-blue-600 font-medium hover:underline">
-                kelvinmullar5@gmail.com
+                kikaolink@beracalitechnologies.co.tz
               </a>
               <br />
               Company: Beracali Technologies (Tanzania)
