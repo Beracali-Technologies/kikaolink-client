@@ -54,7 +54,7 @@ const DemoHero: React.FC = () => {
         <p className="text-xl text-navy-200 mb-12 max-w-2xl mx-auto">
           Discover how our solutions can transform your workflow with a personalized demonstration
         </p> */}
-        
+                
         {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
                         {/* <button
