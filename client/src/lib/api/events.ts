@@ -11,9 +11,13 @@ export const eventsApi = {
     return response.data.data || response.data;
   },
 
-  /** Fetch a single event by ID */
+  /** Fetch a single event by ID with all details including custom_slug */
   getEvent: async (eventId: string): Promise<TEvent> => {
-    const response = await api.get(`/api/events/${eventId}`);
+    const response = await api.get(`/api/events/${eventId}`, {
+      params: {
+        include: 'urls,custom_slug' // Request URLs and custom slug
+      }
+    });
     return response.data.data || response.data;
   },
 

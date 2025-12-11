@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useEventStore } from '../../../../lib/stores/eventStore';
 import EventForm from '../components/EventForm';
 import EventStatusBar from '../components/EventStatusBar/EventStatusBar';
+import { eventsApi } from '@/lib/api/events'
 import BackButton from './components/BackButton';
 import EditEventHeader from './components/EditEventHeader';
 
@@ -11,6 +12,7 @@ import EditEventHeader from './components/EditEventHeader';
 
 const EditEvent: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
+  const [event, setEvent] = useState(null);
   const { currentEvent, fetchEventById, updateEvent, error, isLoading } = useEventStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,6 +28,11 @@ const EditEvent: React.FC = () => {
     setIsSubmitting(true);
     try {
       await updateEvent(parseInt(eventId).toString(), data);
+
+      const eventData = await eventsApi.getEvent(eventId);
+        console.log('✅ Parent received event:', eventData);
+        setEvent(eventData);
+      
       toast.success('Event Updated Successfully!', { icon: '✅' });
     } catch (err) {
       toast.error(error || 'Failed to update event.');
@@ -40,7 +47,7 @@ const EditEvent: React.FC = () => {
       <Toaster position="top-right" />
 
       {/* Status Bar at the very top */}
-      <EventStatusBar event={currentEvent} isLoading={isLoading} />
+      <EventStatusBar eventId={eventId} eventData={event} />
 
 
       <div className="px-4 py-8">
