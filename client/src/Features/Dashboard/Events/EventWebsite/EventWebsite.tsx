@@ -1,10 +1,12 @@
-// EventWebsite.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { publicEventService, PublicEvent } from '@/services/url/publicEventService';
-import Template1 from './EventWebsiteTemplates/Template1';
-import Template2 from './EventWebsiteTemplates/Template2';
-import Template3 from './EventWebsiteTemplates/Template3';
+import Template1 from './EventWebsiteTemplates/Templates/Template1';
+import Template2 from './EventWebsiteTemplates/Templates/Template2';
+import Template3 from './EventWebsiteTemplates/Templates/Template3';
+import Template4 from './EventWebsiteTemplates/Templates/Template4';
+
+
 
 const EventWebsite: React.FC = () => {
     const { customSlug } = useParams<{ customSlug: string }>();
@@ -87,7 +89,10 @@ const EventWebsite: React.FC = () => {
             return <Template2 {...templateProps} />;
         case 'template3':
             return <Template3 {...templateProps} />;
+        case 'template4':
+            return <Template4 {...templateProps} />;
         case 'template1':
+            return <Template1 {...templateProps} />;
         default:
             return <Template1 {...templateProps} />;
     }

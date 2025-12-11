@@ -34,6 +34,7 @@ const CommunicationsLayout = lazy(() => import('../Layouts/CommunicationsLayout/
 const CommunicationsOverviewPage = lazy(() => import('../Features/Communications/CommunicationsOverviewPage'))
 const SmsCommunicationPage = lazy(() => import('../Features/Communications/SmsCommunication/SmsCommunicationPage'));
 const EmailCommunicationPage = lazy(() => import('../Features/Communications/EmailCommunication/EmailCommunicationPage'));
+const EventWebsiteTemplatesPage  = lazy(() => import('../Features/Dashboard/Events/EventWebsite/EventWebsiteTemplates/EventWebsiteTemplatesPage'));
 
  const Demo = lazy(() => import('../Features/Landing/Demo/Demo'));
 
@@ -103,8 +104,9 @@ export const routes: RouteObject[] = [
         { path: 'info', element: <EditEvent /> },
         { path: 'registration-form', element: <RegistrationFormEditor /> },
         { path: 'url-settings', element: <EventUrlSettingsWrapper /> },
-        { path: 'tickets', element: <TicketsAndPricing /> },
         { path: 'email', element: <EmailTemplateEditor /> },
+        { path: 'tickets', element: <TicketsAndPricing /> }, 
+        { path: 'website', element: <EventWebsiteTemplatesPage /> },
       ],
     },
     {

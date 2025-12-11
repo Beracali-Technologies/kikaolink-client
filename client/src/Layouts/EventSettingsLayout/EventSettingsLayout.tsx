@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useEventStore } from '../../lib/stores/eventStore';
 import BrandedLoader from '../../components/ui/BrandedLoader/BrandedLoader';
-import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo, FiCreditCard, FiLink } from 'react-icons/fi';
+import { FiMenu, FiX, FiSettings, FiFileText, FiMail, FiPrinter, FiCheckSquare, FiInfo, FiCreditCard, FiLink, FiGlobe } from 'react-icons/fi';
 import { SideBarGroup } from './components/SideBarGroup';
 import { SideBarLink } from './components/SideBarLink';
 import NavigationButtons from './components/NavigationButtons';
@@ -39,6 +39,7 @@ const EventSettingsLayout: React.FC = () => {
     if (pathname.includes('/registration-form')) return 1;
     if (pathname.includes('/email')) return 2;
     if (pathname.includes('/tickets')) return 3;
+    if (pathname.includes('/website')) return 4;
     return 0; // Event Information
   }, [pathname]);
 
@@ -47,6 +48,7 @@ const EventSettingsLayout: React.FC = () => {
     { path: 'registration-form', label: 'Registration' },
     { path: 'email', label: 'Email' },
     { path: 'tickets', label: 'Tickets' },
+    { path: 'website', label: 'Website' },
   ];
 
   // Navigation data
@@ -85,21 +87,15 @@ const EventSettingsLayout: React.FC = () => {
           icon: FiCreditCard,
           disabled: false,
         },
+        
       ],
     },
     {
-      title: 'BADGE PRINTING',
-      icon: FiPrinter,
-      links: [{ name: 'Badge Designer', to: '#', icon: FiPrinter, disabled: true }],
+      title: 'Website Templates',
+      icon: FiGlobe,
+      links: [{ name: 'Event Website', to: `/dashboard/events/${eventId}/website`, icon: FiGlobe, disabled: false }],
     },
-    {
-      title: 'CHECK-IN',
-      icon: FiCheckSquare,
-      links: [
-        { name: 'Multi-Session', to: '#', icon: FiCheckSquare, disabled: true },
-        { name: 'App Login QR', to: '#', icon: FiCheckSquare, disabled: true },
-      ],
-    },
+    
   ];
 
   if (isLoading && !currentEvent) {
