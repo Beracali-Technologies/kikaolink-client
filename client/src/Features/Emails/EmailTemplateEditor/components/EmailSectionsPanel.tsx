@@ -1,99 +1,111 @@
-// src/features/email-templates/components/EmailSectionsPanel.tsx
 import React from 'react';
-import { FiCheckSquare, FiUser, FiInfo, FiList, FiEye } from 'react-icons/fi';
-import { MdQrCode2 } from "react-icons/md";
-import { EmailSections } from '@/types';
+import { FiCheckSquare, FiUser, FiCalendar, FiList, FiEye } from 'react-icons/fi';
+import { QrCode } from 'lucide-react';
+import { ToggleSection } from './ToggleSection';
+
 
 interface EmailSectionsPanelProps {
-  sections: EmailSections;
-  onSectionToggle: (section: keyof EmailSections, value: boolean) => void;
+  sections?: {
+    qrCode: boolean;
+    attendeeInfo: boolean;
+    eventInfo: boolean;
+    registrationSummary?: boolean;
+    viewRegistration?: boolean;
+  };
+  onSectionToggle: (sectionKey: string, enabled: boolean) => void;
+  compact?: boolean;
 }
 
 export const EmailSectionsPanel: React.FC<EmailSectionsPanelProps> = ({
-  sections,
+  sections = { 
+    qrCode: true, 
+    attendeeInfo: true, 
+    eventInfo: true,
+    registrationSummary: true,
+    viewRegistration: true
+  },
   onSectionToggle,
+  compact = false,
 }) => {
-  const sectionConfig = [
+  const sectionOptions = [
     {
-      key: 'qrCode' as keyof EmailSections,
-      label: 'QR Code Ticket',
-      description: 'Include the QR code for event check-in',
-      icon: MdQrCode2,
+      key: 'qrCode',
+      label: 'QR Code',
+      description: 'Digital ticket QR code',
+      icon: <QrCode className="h-3 w-3" />,
     },
     {
-      key: 'attendeeInfo' as keyof EmailSections,
-      label: 'Attendee Information',
-      description: 'Show attendee name, email, and company',
-      icon: FiUser,
+      key: 'attendeeInfo',
+      label: 'Attendee Info',
+      description: 'Attendee details',
+      icon: <FiUser className="h-3 w-3" />,
     },
     {
-      key: 'aboutEvent' as keyof EmailSections,
-      label: 'About Event',
-      description: 'Include event description and details',
-      icon: FiInfo,
+      key: 'eventInfo',
+      label: 'Event Info',
+      description: 'Event details',
+      icon: <FiCalendar className="h-3 w-3" />,
     },
     {
-      key: 'registrationSummary' as keyof EmailSections,
-      label: 'Registration Summary',
-      description: 'Show registration date and confirmation number',
-      icon: FiList,
+      key: 'registrationSummary',
+      label: 'Registration',
+      description: 'Registration summary',
+      icon: <FiList className="h-3 w-3" />,
     },
     {
-      key: 'attendeeDetails' as keyof EmailSections,
-      label: 'Attendee Details',
-      description: 'Include custom attendee fields',
-      icon: FiUser,
-    },
-    {
-      key: 'viewRegistration' as keyof EmailSections,
-      label: 'View Registration',
-      description: 'Add link to view registration details',
-      icon: FiEye,
+      key: 'viewRegistration',
+      label: 'View Link',
+      description: 'View registration link',
+      icon: <FiEye className="h-3 w-3" />,
     },
   ];
 
+  if (compact) {
+    return (
+      <div className="bg-white rounded-lg border p-3">
+        <div className="flex items-center mb-2">
+          <FiCheckSquare className="h-3 w-3 text-gray-600 mr-1" />
+          <h2 className="text-xs font-semibold">Email Sections</h2>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-1">
+          {sectionOptions.map((section) => (
+            <ToggleSection
+              key={section.key}
+              sectionKey={section.key}
+              label={section.label}
+              description={section.description}
+              icon={section.icon}
+              isEnabled={sections[section.key as keyof typeof sections] !== false}
+              onChange={onSectionToggle}
+              compact={true}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <div className="flex items-center mb-6">
-        <FiCheckSquare className="h-5 w-5 text-gray-600 mr-2" />
-        <h2 className="text-lg font-semibold">Email Sections</h2>
+    <div className="bg-white rounded-lg border p-4">
+      <div className="flex items-center mb-3">
+        <FiCheckSquare className="h-4 w-4 text-gray-600 mr-2" />
+        <h2 className="text-sm font-semibold">Email Sections</h2>
       </div>
+      <p className="text-xs text-gray-500 mb-3">Toggle sections to include in email</p>
 
-      <div className="space-y-4">
-        {sectionConfig.map((section) => {
-          const IconComponent = section.icon;
-          // Ensure boolean value with fallback
-          const isChecked = Boolean(sections[section.key]);
-
-          return (
-            <div key={section.key} className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={(e) => onSectionToggle(section.key, e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <IconComponent className="h-4 w-4 text-gray-500" />
-                  <label className="text-sm font-medium text-gray-700 cursor-pointer">
-                    {section.label}
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {section.description}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-6 p-3 bg-gray-50 rounded-lg">
-        <p className="text-xs text-gray-600">
-          Toggle sections to include or exclude from the confirmation email.
-          All sections will be automatically formatted.
-        </p>
+      <div className="space-y-2">
+        {sectionOptions.map((section) => (
+          <ToggleSection
+            key={section.key}
+            sectionKey={section.key}
+            label={section.label}
+            description={section.description}
+            icon={section.icon}
+            isEnabled={sections[section.key as keyof typeof sections] !== false}
+            onChange={onSectionToggle}
+          />
+        ))}
       </div>
     </div>
   );

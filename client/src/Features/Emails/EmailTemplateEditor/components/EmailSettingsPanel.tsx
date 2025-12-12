@@ -1,8 +1,7 @@
-// src/features/email-templates/components/EmailSettingsPanel.tsx
+// src/Features/Emails/EmailTemplateEditor/components/EmailSettingsPanel.tsx
 import React, { useCallback } from 'react';
 import { FiSettings } from 'react-icons/fi';
 import { EmailTemplate } from '@/types';
-import { Input } from '@/components/ui/Input';
 import { EmailBannerUpload } from './EmailBannerUpload';
 
 interface EmailSettingsPanelProps {
@@ -16,71 +15,49 @@ export const EmailSettingsPanel: React.FC<EmailSettingsPanelProps> = ({
   onUpdate,
   eventId,
 }) => {
-  // Stable callback for banner changes
+  // Safe callback for banner changes
   const handleBannerChange = useCallback((bannerUrl: string | null) => {
-    onUpdate({
-      banner_image: bannerUrl,
-      show_banner: !!bannerUrl
-    });
+    if (typeof onUpdate === 'function') {
+      onUpdate({
+        banner_image: bannerUrl || undefined,
+        show_banner: !!bannerUrl
+      });
+    } else {
+      console.error('onUpdate is not a function');
+    }
   }, [onUpdate]);
 
-  // Stable callbacks for input changes
-  const handleFromNameChange = useCallback((value: string) => {
-    onUpdate({ from_name: value });
-  }, [onUpdate]);
-
-  const handleReplyToChange = useCallback((value: string) => {
-    onUpdate({ reply_to: value });
-  }, [onUpdate]);
-
-  const handleBannerTextChange = useCallback((value: string) => {
-    onUpdate({ banner_text: value });
-  }, [onUpdate]);
-
+  // Safe callback for show banner toggle
   const handleShowBannerChange = useCallback((checked: boolean) => {
-    onUpdate({ show_banner: checked });
+    if (typeof onUpdate === 'function') {
+      onUpdate({ show_banner: checked });
+    } else {
+      console.error('onUpdate is not a function');
+    }
   }, [onUpdate]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <div className="flex items-center mb-6">
-        <FiSettings className="h-5 w-5 text-gray-600 mr-2" />
-        <h2 className="text-lg font-semibold">Email Settings</h2>
+    <div className="bg-white rounded-lg border p-4">
+      <div className="flex items-center mb-4">
+        <FiSettings className="h-4 w-4 text-gray-600 mr-2" />
+        <h2 className="text-sm font-semibold">Email Settings</h2>
       </div>
 
-      <div className="space-y-6">
-        {/* Basic Settings */}
-        <div className="space-y-4">
-          <Input
-            label="From Name"
-            value={template.from_name || ''}
-            onChange={(e) => handleFromNameChange(e.target.value)}
-            placeholder="Event Organizer"
-          />
-
-          <Input
-            label="Reply To Email"
-            type="email"
-            value={template.reply_to || ''}
-            onChange={(e) => handleReplyToChange(e.target.value)}
-            placeholder="noreply@yourevent.com"
-          />
-        </div>
-
-        {/* Banner Settings */}
-        <div className="border-t pt-6">
-          <div className="flex items-center justify-between mb-4">
+      <div className="space-y-4">
+        {/* Banner Upload */}
+        <div className="border-t pt-4">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="font-medium text-gray-900">Email Banner</h3>
-              <p className="text-sm text-gray-500">Add a banner image to your email template</p>
+              <h3 className="text-xs font-medium text-gray-900">Email Banner</h3>
+              <p className="text-xs text-gray-500">Add banner image to emails</p>
             </div>
-            <div className="flex items-center space-x-2">
-              <label className="text-sm text-gray-700">Show Banner</label>
+            <div className="flex items-center space-x-1">
+              <label className="text-xs text-gray-700">Show</label>
               <input
                 type="checkbox"
-                checked={template.show_banner || false}
+                checked={!!template.show_banner}
                 onChange={(e) => handleShowBannerChange(e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                className="h-3 w-3 text-blue-600 rounded border-gray-300"
                 disabled={!template.banner_image}
               />
             </div>
@@ -90,17 +67,64 @@ export const EmailSettingsPanel: React.FC<EmailSettingsPanelProps> = ({
             eventId={eventId}
             onBannerChange={handleBannerChange}
           />
-
-          {template.show_banner && template.banner_image && (
-            <Input
-              label="Banner Text"
-              value={template.banner_text || ''}
-              onChange={(e) => handleBannerTextChange(e.target.value)}
-              placeholder="THANK YOU FOR REGISTERING"
-              className="mt-4"
-            />
-          )}
         </div>
+
+        {/* From Settings */}
+        <div className="space-y-2">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              From Name
+            </label>
+            <input
+              type="text"
+              value={template.from_name || ''}
+              onChange={(e) => {
+                if (typeof onUpdate === 'function') {
+                  onUpdate({ from_name: e.target.value })
+                }
+              }}
+              placeholder="Event Team"
+              className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Reply To Email
+            </label>
+            <input
+              type="email"
+              value={template.reply_to || ''}
+              onChange={(e) => {
+                if (typeof onUpdate === 'function') {
+                  onUpdate({ reply_to: e.target.value })
+                }
+              }}
+              placeholder="support@event.com"
+              className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Banner Text (if banner is enabled) */}
+        {template.show_banner && (
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Banner Text
+            </label>
+            <input
+              type="text"
+              value={template.banner_text || ''}
+              onChange={(e) => {
+                if (typeof onUpdate === 'function') {
+                  onUpdate({ banner_text: e.target.value })
+                }
+              }}
+              placeholder="THANK YOU FOR REGISTERING"
+              className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

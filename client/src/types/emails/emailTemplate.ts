@@ -12,9 +12,18 @@ export interface EmailTemplate {
   reply_to: string;
   show_banner: boolean;
   banner_text?: string;
-  banner_image?: string | null; 
-  enabled_sections: EmailSections;
+  banner_image?: string;
+  banner_url?: string;
+  enabled_sections: {
+        qrCode: boolean;
+        attendeeInfo: boolean;
+        eventInfo: boolean;
+        registrationSummary?: boolean;
+        viewRegistration?: boolean;
+  };
   is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface EmailBanner {

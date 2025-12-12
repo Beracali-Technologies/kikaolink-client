@@ -41,17 +41,7 @@ const TabbedFeatures: React.FC<TabbedFeaturesProps> = ({ features }) => {
                     ))}
                 </Tab.List>
 
-                <Tab.Panels className="lg:col-span-8">
-                    {features.map((feature: TabFeature) => (
-                        <Tab.Panel as="div" className="p-4 transition-all duration-500" key={feature.id}>
-                            <h3 className="text-3xl font-bold text-dark-text tracking-tight">{feature.title}</h3>
-                            <p className="mt-4 text-xl text-light-text">{feature.description}</p>
-                            <div className="mt-8 rounded-xl overflow-hidden shadow-2xl transform transition-transform duration-500 hover:scale-105">
-                                 <img src={feature.imageUrl} alt={feature.imageAlt} className="w-full h-full object-cover"/>
-                            </div>
-                        </Tab.Panel>
-                    ))}
-                </Tab.Panels>
+                
             </div>
         </Tab.Group>
     );

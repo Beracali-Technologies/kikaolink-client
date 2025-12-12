@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { EmailTemplate } from '@/types';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
 
 interface EmailContentEditorProps {
   template: EmailTemplate;
@@ -29,7 +27,6 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
   // Use useEffect to focus the input when editing starts
   useEffect(() => {
     if (editingField) {
-      // Find the input/textarea element and focus it
       const element = document.querySelector(`[data-editing-field="${editingField}"]`) as HTMLElement;
       if (element) {
         element.focus();
@@ -75,8 +72,8 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
     const value = template[field] || '';
 
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-3">
+        <div className="flex items-center justify-between mb-2">
           <label className="block text-sm font-medium text-gray-700">
             {label}
           </label>
@@ -87,7 +84,7 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
               className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label={`Edit ${label.toLowerCase()}`}
             >
-              <FiEdit2 className="h-4 w-4" />
+              <FiEdit2 className="h-3 w-3" />
             </button>
           ) : (
             <div className="flex gap-1">
@@ -97,7 +94,7 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
                 className="p-1 text-green-600 hover:text-green-700 transition-colors"
                 aria-label="Save"
               >
-                <FiCheck className="h-4 w-4" />
+                <FiCheck className="h-3 w-3" />
               </button>
               <button
                 type="button"
@@ -105,7 +102,7 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
                 className="p-1 text-red-600 hover:text-red-700 transition-colors"
                 aria-label="Cancel"
               >
-                <FiX className="h-4 w-4" />
+                <FiX className="h-3 w-3" />
               </button>
             </div>
           )}
@@ -113,33 +110,33 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
 
         {!isEditing ? (
           <div
-            className="min-h-[40px] p-2 border border-transparent rounded-md hover:bg-gray-50 cursor-text"
+            className="min-h-[30px] p-2 border border-transparent rounded-md hover:bg-gray-50 cursor-text text-sm"
             onClick={() => startEditing(field)}
           >
             {value ? (
               <p className="text-gray-900 whitespace-pre-wrap">{value}</p>
             ) : (
-              <p className="text-gray-400 italic">{placeholder}</p>
+              <p className="text-gray-400 italic text-xs">{placeholder}</p>
             )}
           </div>
         ) : isTextarea ? (
-          <Textarea
-            data-editing-field={field} // Add data attribute for targeting
+          <textarea
+            data-editing-field={field}
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            rows={field === 'message' ? 6 : 3}
-            className="w-full resize-none"
+            rows={field === 'message' ? 4 : 2}
+            className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
           />
         ) : (
-          <Input
-            data-editing-field={field} // Add data attribute for targeting
+          <input
+            data-editing-field={field}
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="w-full"
+            className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         )}
       </div>
@@ -147,52 +144,54 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+    <div className="space-y-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">
           Email Content
         </h2>
-        <p className="text-gray-600 mb-6">
-          Customize the content of your confirmation email. Click on any field or the edit icon to make changes.
+        <p className="text-sm text-gray-600">
+          Customize your confirmation email. Click on any field to edit.
         </p>
       </div>
 
-      {renderEditableField(
-        'subject',
-        'Subject Line',
-        'Your Ticket for ((event_title))'
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {renderEditableField(
+          'subject',
+          'Subject Line',
+          'Your Ticket for ((event_title))'
+        )}
 
-      {renderEditableField(
-        'greeting',
-        'Greeting',
-        'Dear ((attendee_first_name)) ((attendee_last_name)),'
-      )}
+        {renderEditableField(
+          'greeting',
+          'Greeting',
+          'Dear ((attendee_first_name)),'
+        )}
+
+        {renderEditableField(
+          'from_name',
+          'From Name',
+          'Event Team'
+        )}
+
+        {renderEditableField(
+          'reply_to',
+          'Reply To Email',
+          'support@yourevent.com'
+        )}
+      </div>
 
       {renderEditableField(
         'message',
         'Message',
-        'Thank you for registering for **((event_title))**! We are excited to have you join us.',
+        'Thank you for registering for ((event_title))...',
         true
       )}
 
       {renderEditableField(
         'closing',
         'Closing',
-        'Best regards,\\nThe ((event_title)) Team',
+        'Best regards,\\nThe Event Team',
         true
-      )}
-
-      {renderEditableField(
-        'from_name',
-        'From Name',
-        'Event Team'
-      )}
-
-      {renderEditableField(
-        'reply_to',
-        'Reply To Email',
-        'support@yourevent.com'
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { EmailTemplate, ApiResponse } from '@/types';
+import { EmailTemplate, ApiResponse, EmailPreviewData } from '@/types';
 
 export const emailTemplateService = {
   // Get email template for event
@@ -17,11 +17,9 @@ export const emailTemplateService = {
     return response.data.data;
   },
 
-
-
-  // Preview email
-  previewEmail: async (eventId: number): Promise<{ subject: string; content: string }> => {
-    const response = await api.get<ApiResponse<{ subject: string; content: string }>>(
+  // Preview email - returns EmailPreviewData with template and dummy data
+  previewEmail: async (eventId: number): Promise<EmailPreviewData> => {
+    const response = await api.get<ApiResponse<EmailPreviewData>>(
       `/api/events/${eventId}/email-template/preview`
     );
     return response.data.data;
