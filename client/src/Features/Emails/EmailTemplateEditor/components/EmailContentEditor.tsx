@@ -41,8 +41,13 @@ export const EmailContentEditor: React.FC<EmailContentEditorProps> = ({
   };
 
   const saveEdit = () => {
-    if (editingField && editValue !== template[editingField]) {
-      onUpdate({ [editingField]: editValue });
+    // Check if onUpdate is a function before calling it
+    if (typeof onUpdate === 'function') {
+      if (editingField && editValue !== template[editingField]) {
+        onUpdate({ [editingField]: editValue });
+      }
+    } else {
+      console.error('onUpdate is not a function in EmailContentEditor');
     }
     cancelEdit();
   };

@@ -145,11 +145,11 @@ export default function EmailTemplateEditor() {
 
         {/* Center Column - Email Content */}
         <div className="lg:col-span-2">
-          <EmailContentEditor
-            template={template}
-            onUpdate={updateTemplate}
-            onFieldFocus={(field) => setEditingField(field as EmailTextField | null)}
-          />
+              <EmailContentEditor
+                    template={template}
+                    onUpdate={typeof updateTemplate === 'function' ? updateTemplate : () => console.error('updateTemplate not available')}
+                    onFieldFocus={(field) => setEditingField(field as EmailTextField | null)}
+                  />
         </div>
       </div>
 

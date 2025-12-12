@@ -201,7 +201,6 @@ export const useEmailTemplate = (eventId: number) => {
     saveTemplate,
     updateSection,
     previewEmail,
-    // Removed: updateTemplate (not defined)
-    // If you need it, implement it properly
+    updateTemplate,
   };
 };
