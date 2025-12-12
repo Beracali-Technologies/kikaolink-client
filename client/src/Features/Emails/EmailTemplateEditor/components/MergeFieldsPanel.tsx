@@ -30,21 +30,23 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
       label: 'Event Title', 
       category: 'Event', 
       description: 'Real event title from database',
-      badgeColor: 'bg-green-100 text-green-800'
+      icon: '📅',
+      isRealData: true
     },
     { 
       value: '((event_date))', 
       label: 'Event Date', 
       category: 'Event', 
       description: 'Real event date from database',
-      badgeColor: 'bg-green-100 text-green-800'
+      icon: '📅',
+      isRealData: true
     },
     { 
       value: '((event_location))', 
       label: 'Event Location', 
       category: 'Event', 
-      description: 'Real event location from database',
-      badgeColor: 'bg-green-100 text-green-800'
+      icon: '📍',
+      isRealData: true
     },
     
     // Attendee Fields - Show with blue badge
@@ -52,8 +54,8 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
       value: '((attendee_first_name))', 
       label: 'First Name', 
       category: 'Attendee', 
-      description: 'Attendee\'s first name (per-person)',
-      badgeColor: 'bg-blue-100 text-blue-800'
+      icon: '👤',
+      isRealData: false
     },
     { 
       value: '((attendee_last_name))', 

@@ -1,206 +1,225 @@
-import { useState, useEffect, useCallback } from 'react';
-import { EmailTemplate, EmailPreviewData } from '@/types';
-import { emailTemplateService } from '@/services/emails/emailTemplateService';
+import { useState, useEffect, useCallback } from "react";
+import { EmailTemplate, EmailPreviewData } from "@/types";
+import { emailTemplateService } from "@/services/emails/emailTemplateService";
+import { eventService } from "@/services/events/eventService";
 
 export const useEmailTemplate = (eventId: number) => {
   const [template, setTemplate] = useState<EmailTemplate | null>(null);
+  const [event, setEvent] = useState<Event | null>(null);
+  const [preview, setPreview] = useState<EmailPreviewData | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [preview, setPreview] = useState<EmailPreviewData | null>(null);
-  const [error, setError] = useState<null | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-
-    //Helper function for parse sections
-    const parseSections = (sections: any) => {
-      if (!sections) {
-        return {
-          qrCode: true,
-          attendeeInfo: true,
-          eventInfo: true,
-          registrationSummary: true,
-          viewRegistration: true
-        };
-      }
-
-
-  if (typeof sections === 'string') {
-      try {
-        const parsed = JSON.parse(sections);
-        return {
-          qrCode: parsed.qrCode !== false,
-          attendeeInfo: parsed.attendeeInfo !== false,
-          eventInfo: parsed.eventInfo !== false,
-          registrationSummary: parsed.registrationSummary !== false,
-          viewRegistration: parsed.viewRegistration !== false
-        };
-      } catch (e) {
-        console.error('Failed to parse sections:', e);
-        return {
-          qrCode: true,
-          attendeeInfo: true,
-          eventInfo: true,
-          registrationSummary: true,
-          viewRegistration: true
-        };
-      }
-    }
-
-    // If sections is already an object
-    return {
-      qrCode: sections.qrCode !== false,
-      attendeeInfo: sections.attendeeInfo !== false,
-      eventInfo: sections.eventInfo !== false,
-      registrationSummary: sections.registrationSummary !== false,
-      viewRegistration: sections.viewRegistration !== false
+  /* --------------------------------------------------------
+   * SECTION PARSER (Handles: null, object, string, fallback)
+   * ------------------------------------------------------ */
+  const parseSections = useCallback((sections: any) => {
+    const defaults = {
+      qrCode: true,
+      attendeeInfo: true,
+      eventInfo: true,
+      registrationSummary: true,
+      viewRegistration: true,
     };
-  };
 
-  useEffect(() => {
-    loadTemplate();
-  }, [eventId]);
+    if (!sections) return defaults;
+    if (typeof sections === "object") return { ...defaults, ...sections };
 
-  const loadTemplate = async () => {
     try {
+      const parsed = JSON.parse(sections);
+      return { ...defaults, ...parsed };
+    } catch (e) {
+      console.error("Failed to parse sections:", e);
+      return defaults;
+    }
+  }, []);
+
+  /* --------------------------------------------------------
+   * LOAD EVERYTHING (event + template) IN PARALLEL
+   * ------------------------------------------------------ */
+  const loadEverything = useCallback(async () => {
+    try {
+      setIsLoading(true);
       setError(null);
-      const templateData = await emailTemplateService.getTemplate(eventId);
-      
-      // Parse sections correctly
+
+      const [eventData, templateData] = await Promise.all([
+        eventService.getEvent(eventId),
+        emailTemplateService.getTemplate(eventId),
+      ]);
+
       const parsedTemplate = {
         ...templateData,
-        enabled_sections: parseSections(templateData.enabled_sections)
+        enabled_sections: parseSections(templateData.enabled_sections),
       };
-      
-      console.log('Loaded template with parsed sections:', parsedTemplate);
+
+      setEvent(eventData);
       setTemplate(parsedTemplate);
-    } catch (error) {
-      console.error('Failed to load template:', error);
-      setError('Failed to load template');
+
+      // Build preview stub
+      setPreview({
+        subject: parsedTemplate.subject || "",
+        content: "",
+        template: parsedTemplate,
+        event: eventData,
+        dummy_data: {
+          event_title: eventData.title || "Event Title",
+          event_date: eventData.start_date
+            ? new Date(eventData.start_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : "Date to be announced",
+          event_location: eventData.location || "Location to be announced",
+          attendee_first_name: "John",
+          attendee_last_name: "Doe",
+          attendee_full_name: "John Doe",
+          attendee_email: "attendee@example.com",
+          attendee_company: "Demo Company",
+          registration_id:
+            "REG-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        },
+      });
+    } catch (err) {
+      console.error("Failed to load:", err);
+      setError("Failed to load data");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [eventId, parseSections]);
 
+  // Initial load
+  useEffect(() => {
+    loadEverything();
+  }, [loadEverything]);
 
-
-
+  /* --------------------------------------------------------
+   * UPDATE TEMPLATE FIELDS
+   * ------------------------------------------------------ */
   const updateTemplate = useCallback((updates: Partial<EmailTemplate>) => {
-    setTemplate(prev => {
+    setTemplate((prev) => {
       if (!prev) return prev;
-      
-      const updated = { ...prev, ...updates };
-      
-      // If updating sections, parse them
+
+      let updated = { ...prev, ...updates };
+
+      // Only parse sections if they changed
       if (updates.enabled_sections) {
         updated.enabled_sections = parseSections(updates.enabled_sections);
       }
-      
+
+      return updated;
+    });
+  }, [parseSections]);
+
+  /* --------------------------------------------------------
+   * UPDATE INDIVIDUAL SECTION
+   * ------------------------------------------------------ */
+  const updateSection = useCallback((sectionKey: string, enabled: boolean) => {
+    setTemplate((prev) => {
+      if (!prev) return prev;
+
+      const updated = {
+        ...prev,
+        enabled_sections: {
+          ...prev.enabled_sections,
+          [sectionKey]: enabled,
+        },
+      };
+
       return updated;
     });
   }, []);
 
-  const updateSection = useCallback((sectionKey: string, enabled: boolean) => {
-    console.log('Updating section:', sectionKey, 'to', enabled);
-    
-    setTemplate(prev => {
-      if (!prev) return prev;
-      
-      const updatedSections = {
-        ...prev.enabled_sections,
-        [sectionKey]: enabled
-      };
-      
-      console.log('Updated sections:', updatedSections);
-      
-      return {
-        ...prev,
-        enabled_sections: updatedSections
-      };
-    });
-  }, []);
-
-
-
-  
-  const saveTemplate = async () => {
+  /* --------------------------------------------------------
+   * SAVE TEMPLATE
+   * ------------------------------------------------------ */
+  const saveTemplate = useCallback(async () => {
     if (!template) return;
 
     setIsSaving(true);
     setError(null);
+
     try {
-      // Prepare sections for backend (stringify if needed)
-      const templateData = {
+      const payload = {
         ...template,
-        enabled_sections: JSON.stringify(template.enabled_sections)
+        enabled_sections: JSON.stringify(template.enabled_sections),
       };
 
-      const updatedTemplate = await emailTemplateService.updateTemplate(
-        eventId,
-        templateData
-      );
-      
-      // Parse the response
+      const saved = await emailTemplateService.updateTemplate(eventId, payload);
+
+      // Parse returned template
       const parsedTemplate = {
-        ...updatedTemplate,
-        enabled_sections: parseSections(updatedTemplate.enabled_sections)
+        ...saved,
+        enabled_sections: parseSections(saved.enabled_sections),
       };
-      
+
       setTemplate(parsedTemplate);
       return parsedTemplate;
-    } catch (error) {
-      console.error('Failed to save template:', error);
-      setError('Failed to save template');
-      throw error;
+    } catch (err) {
+      console.error("Failed to save template:", err);
+      setError("Failed to save template");
+      throw err;
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [template, eventId, parseSections]);
 
-  const previewEmail = async () => {
+  /* --------------------------------------------------------
+   * GENERATE EMAIL PREVIEW
+   * ------------------------------------------------------ */
+  const previewEmail = useCallback(async () => {
     try {
       setError(null);
-      
-      // First, save any unsaved changes
-      if (template) {
-        await saveTemplate();
-      }
-      
+
+      if (template) await saveTemplate();
+
       const previewData = await emailTemplateService.previewEmail(eventId);
-      
+
       const enhancedPreview: EmailPreviewData = {
         ...previewData,
         template: template!,
-        dummy_data: previewData.dummy_data || {
-          event_title: 'Event Title',
-          event_date: new Date().toLocaleDateString(),
-          event_location: 'Event Location',
-          attendee_first_name: 'First Name',
-          attendee_last_name: 'Last Name',
-          attendee_full_name: 'First Last Name',
-          attendee_email: 'attendee@example.com',
-          attendee_company: 'Company',
-          registration_id: 'REG-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-        }
+        dummy_data: {
+          event_title: previewData.event?.title ?? "Event Title",
+          event_date:
+            previewData.event?.start_date ??
+            new Date().toLocaleDateString(),
+          event_location: previewData.event?.location ?? "Event Location",
+          attendee_first_name: "First",
+          attendee_last_name: "Last",
+          attendee_full_name: "First Last",
+          attendee_email: "attendee@example.com",
+          attendee_company: "Company",
+          registration_id:
+            "REG-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        },
       };
-      
+
       setPreview(enhancedPreview);
       return enhancedPreview;
-    } catch (error) {
-      console.error('Failed to generate preview:', error);
-      setError('Failed to generate preview');
-      throw error;
+    } catch (err) {
+      console.error("Failed to generate preview:", err);
+      setError("Failed to generate preview");
+      throw err;
     }
-  };
+  }, [eventId, template, saveTemplate]);
 
-  // Note: updateTemplate was referenced in return but never defined — removing it unless you add it later
+  /* --------------------------------------------------------
+   * RETURN API
+   * ------------------------------------------------------ */
   return {
     template,
+    event,
+    preview,
     isLoading,
     isSaving,
-    preview,
     error,
-    saveTemplate,
-    updateSection,
-    previewEmail,
+
     updateTemplate,
+    updateSection,
+    saveTemplate,
+    previewEmail,
+    reload: loadEverything,
   };
 };

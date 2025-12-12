@@ -9,7 +9,7 @@ interface EmailPreviewModalProps {
   onClose: () => void;
   preview: EmailPreviewData;
   template: EmailTemplate;
-  eventId: number;
+  eventId: Event | null;
 }
 
 export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
@@ -18,6 +18,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
   preview,
   template,
   eventId,
+  event,
 }) => {
   const [realEvent, setRealEvent] = useState<Event | null>(null);
   const [isLoadingEvent, setIsLoadingEvent] = useState(false);
@@ -43,16 +44,16 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Get REAL event data (prioritize realEvent > preview > fallback)
-  const getEventTitle = () => {
-    if (realEvent?.title) return realEvent.title;
+   // Use REAL event data from props
+   const getEventTitle = () => {
+    if (event?.title) return event.title;
     if (preview.event?.title) return preview.event.title;
-    return '((event_title))';
+    return 'Event Title';
   };
 
   const getEventDate = () => {
-    if (realEvent?.start_date) {
-      return new Date(realEvent.start_date).toLocaleDateString('en-US', {
+    if (event?.start_date) {
+      return new Date(event.start_date).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -65,23 +66,29 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
         day: 'numeric'
       });
     }
-    return '((event_date))';
+    return 'Date to be announced';
   };
 
   const getEventLocation = () => {
-    if (realEvent?.location) return realEvent.location;
+    if (event?.location) return event.location;
     if (preview.event?.location) return preview.event.location;
-    return '((event_location))';
+    return 'Location to be announced';
   };
 
   // Process merge fields: replace event fields with real data, keep attendee fields
   const processMergeFields = (content: string): string => {
     let processed = content || '';
     
+    // Get real values
+    const eventTitle = getEventTitle();
+    const eventDate = getEventDate();
+    const eventLocation = getEventLocation();
+    
+    // Replace ONLY event merge fields with REAL data
     const eventReplacements: Record<string, string> = {
-      'event_title': getEventTitle(),
-      'event_date': getEventDate(),
-      'event_location': getEventLocation(),
+      'event_title': eventTitle,
+      'event_date': eventDate,
+      'event_location': eventLocation,
     };
 
     Object.entries(eventReplacements).forEach(([key, value]) => {
@@ -89,8 +96,13 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
       processed = processed.replace(pattern, value);
     });
 
-    // Convert **bold** and \n
+    // KEEP attendee fields as merge fields (don't replace them)
+    // These remain: ((attendee_first_name)), ((attendee_last_name)), etc.
+    
+    // Convert markdown bold to HTML
     processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert line breaks
     processed = processed.replace(/\\n/g, '<br>');
     
     return processed;
@@ -100,7 +112,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
     const greeting = template.greeting || 'Dear ((attendee_first_name)),';
     const message = template.message || '';
     const closing = template.closing || 'Best regards,\\nThe Event Team';
-    const fromName = template.from_name || (realEvent?.title ? `${realEvent.title} Team` : '((event_title)) Team');
+    const fromName = template.from_name || (event?.title ? `${event.title} Team` : 'Event Team');
     const replyTo = template.reply_to || 'noreply@event.com';
     const subject = template.subject || `Your Ticket for ${getEventTitle()}`;
     const bannerText = template.banner_text;
@@ -116,7 +128,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
       greeting: processMergeFields(greeting),
       message: processMergeFields(message),
       closing: processMergeFields(closing),
-      fromName: processMergeFields(fromName),
+      fromName,
       replyTo,
       subject: processMergeFields(subject),
       bannerText: bannerText ? processMergeFields(bannerText) : undefined,
@@ -127,6 +139,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
   };
 
   const processedData = getTemplateValues();
+
 
   // Blue badge for attendee merge fields
   const renderAttendeeField = (field: string) => (
@@ -173,13 +186,18 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
         {/* Email Preview */}
         <div className="p-8 bg-gray-50 flex-1">
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border">
+            
             {/* Banner */}
             {processedData.showBanner && (
-              <div className="bg-gradient-to-r from-blue-700 to-purple-700 text-white text-center py-10">
+              <div className="bg-gradient-to-r from-blue-700 to-purple-700 text-white text-center py-4">
                 {processedData.bannerImage ? (
-                  <img src={processedData.bannerImage} alt="Event banner" className="w-full h-56 object-cover" />
+                  <img 
+                    src={processedData.bannerImage} 
+                    alt="Banner" 
+                    className="w-full h-32 object-cover"
+                  />
                 ) : (
-                  <h3 className="text-3xl font-bold">
+                  <h3 className="text-xl font-bold">
                     {processedData.bannerText || 'THANK YOU FOR REGISTERING'}
                   </h3>
                 )}

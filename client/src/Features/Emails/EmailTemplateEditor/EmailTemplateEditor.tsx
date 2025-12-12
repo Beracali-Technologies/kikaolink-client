@@ -35,6 +35,7 @@ export default function EmailTemplateEditor() {
 
   const {
     template,
+    event,
     updateTemplate,
     saveTemplate,
     updateSection,
@@ -171,7 +172,8 @@ export default function EmailTemplateEditor() {
           isOpen={showPreviewModal}
           onClose={() => setShowPreviewModal(false)}
           preview={preview}
-          template={template} // Pass the actual template data
+          template={template} 
+          event={event}
         />
       )}
     </div>
