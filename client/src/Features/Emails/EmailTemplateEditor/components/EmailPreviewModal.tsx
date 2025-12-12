@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiMail, FiUser, FiCalendar, FiMapPin, FiAlertCircle } from 'react-icons/fi';
-import { MdQrCode } from 'react-icons/md'; // Proper QR code icon
-import { EmailPreviewData, EmailTemplate, Event } from '@/types';
+import { MdQrCode } from 'react-icons/md';
+import { EmailPreviewData, EmailTemplate, Event, EmailBanner } from '@/types';
 import { eventService } from '@/services/events/eventService';
+import { emailBannerService } from '@/services/emails/emailBannerService';
 
 interface EmailPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   preview: EmailPreviewData;
   template: EmailTemplate;
-  eventId: Event | null;
+  event: Event | null;
 }
 
 export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
@@ -17,35 +18,48 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
   onClose,
   preview,
   template,
-  eventId,
   event,
 }) => {
   const [realEvent, setRealEvent] = useState<Event | null>(null);
-  const [isLoadingEvent, setIsLoadingEvent] = useState(false);
+  const [activeBanner, setActiveBanner] = useState<EmailBanner | null>(null); // Add banner state
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch real event data when modal opens
+  // Fetch event data AND banner when modal opens
   useEffect(() => {
-    if (isOpen && eventId) {
-      fetchRealEventData();
+    if (isOpen && event?.id) {
+      fetchData();
     }
-  }, [isOpen, eventId]);
+  }, [isOpen, event]);
 
-  const fetchRealEventData = async () => {
+  const fetchData = async () => {
     try {
-      setIsLoadingEvent(true);
-      const eventData = await eventService.getEvent(eventId);
+      setIsLoading(true);
+      
+      // Fetch event data
+      const eventData = await eventService.getEvent(event.id);
       setRealEvent(eventData);
+      
+      // Fetch active banner for this event
+      try {
+        const banner = await emailBannerService.getActiveBanner(event.id);
+        setActiveBanner(banner);
+        console.log('Active banner fetched:', banner);
+      } catch (bannerError) {
+        console.log('No active banner found or error fetching:', bannerError);
+        setActiveBanner(null);
+      }
+      
     } catch (error) {
-      console.error('Failed to fetch event data:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
-      setIsLoadingEvent(false);
+      setIsLoading(false);
     }
   };
 
   if (!isOpen) return null;
 
-   // Use REAL event data from props
-   const getEventTitle = () => {
+  // Use REAL event data from props
+  const getEventTitle = () => {
     if (event?.title) return event.title;
     if (preview.event?.title) return preview.event.title;
     return 'Event Title';
@@ -75,7 +89,34 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
     return 'Location to be announced';
   };
 
-  // Process merge fields: replace event fields with real data, keep attendee fields
+  // Get banner URL - check multiple sources
+  const getBannerImage = () => {
+    console.log('Checking banner sources:', {
+      activeBanner: activeBanner?.url,
+      preview_banner_url: preview.template?.banner_url,
+      template_banner_image: template.banner_image,
+      template_banner_url: template.banner_url,
+      show_banner: template.show_banner
+    });
+    
+    // Check in order of priority:
+    // 1. Active banner from banner service (most reliable)
+    if (activeBanner?.url) return activeBanner.url;
+    
+    // 2. Banner from preview data
+    if (preview.template?.banner_url) return preview.template.banner_url;
+    
+    // 3. Banner from template
+    if (template.banner_image) return template.banner_image;
+    if (template.banner_url) return template.banner_url;
+    
+    return null;
+  };
+
+  const bannerImage = getBannerImage();
+  console.log('Selected banner image for preview:', bannerImage);
+
+  // Process merge fields
   const processMergeFields = (content: string): string => {
     let processed = content || '';
     
@@ -96,9 +137,6 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
       processed = processed.replace(pattern, value);
     });
 
-    // KEEP attendee fields as merge fields (don't replace them)
-    // These remain: ((attendee_first_name)), ((attendee_last_name)), etc.
-    
     // Convert markdown bold to HTML
     processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
@@ -116,8 +154,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
     const replyTo = template.reply_to || 'noreply@event.com';
     const subject = template.subject || `Your Ticket for ${getEventTitle()}`;
     const bannerText = template.banner_text;
-    const showBanner = template.show_banner || false;
-    const bannerImage = preview.template?.banner_url || template.banner_image;
+    const showBanner = template.show_banner !== false; // Default to true if not specified
     const enabledSections = template.enabled_sections || { 
       qrCode: true, 
       attendeeInfo: true, 
@@ -133,13 +170,11 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
       subject: processMergeFields(subject),
       bannerText: bannerText ? processMergeFields(bannerText) : undefined,
       showBanner,
-      bannerImage,
       enabledSections
     };
   };
 
   const processedData = getTemplateValues();
-
 
   // Blue badge for attendee merge fields
   const renderAttendeeField = (field: string) => (
@@ -151,7 +186,7 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto flex flex-col">
-        {/* Header */}
+        {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="flex items-center gap-3">
             <FiMail className="h-7 w-7" />
@@ -159,7 +194,8 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
               <h2 className="text-2xl font-bold">Email Preview</h2>
               <p className="text-sm opacity-90 mt-1">
                 Event: <strong>{getEventTitle()}</strong>
-                {isLoadingEvent && ' • Loading real event data...'}
+                {isLoading && ' • Loading...'}
+                {bannerImage && ' • Banner loaded'}
               </p>
             </div>
           </div>
@@ -170,6 +206,15 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
             <FiX className="h-6 w-6" />
           </button>
         </div>
+
+        {/* Debug info - remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="p-2 bg-yellow-50 text-xs text-yellow-800 border-b">
+            <div>Banner URL: {bannerImage || 'No banner found'}</div>
+            <div>Show banner setting: {processedData.showBanner.toString()}</div>
+            <div>Active banner from API: {activeBanner ? 'Yes' : 'No'}</div>
+          </div>
+        )}
 
         {/* Simple explanatory note */}
         <div className="p-4 bg-blue-50 border-b">
@@ -187,19 +232,32 @@ export const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
         <div className="p-8 bg-gray-50 flex-1">
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border">
             
-            {/* Banner */}
-            {processedData.showBanner && (
-              <div className="bg-gradient-to-r from-blue-700 to-purple-700 text-white text-center py-4">
-                {processedData.bannerImage ? (
-                  <img 
-                    src={processedData.bannerImage} 
-                    alt="Banner" 
-                    className="w-full h-32 object-cover"
-                  />
-                ) : (
-                  <h3 className="text-xl font-bold">
-                    {processedData.bannerText || 'THANK YOU FOR REGISTERING'}
-                  </h3>
+            {/* BANNER INSIDE EMAIL - At the top of the email content */}
+            {processedData.showBanner && bannerImage && (
+              <div className="w-full h-48 overflow-hidden border-b relative">
+                <img 
+                  src={bannerImage} 
+                  alt="Event Banner" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Failed to load banner image in preview:', bannerImage);
+                    e.currentTarget.style.display = 'none';
+                    // Show fallback
+                    const fallback = document.createElement('div');
+                    fallback.className = 'w-full h-48 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center';
+                    fallback.innerHTML = `<h3 class="text-white text-xl font-bold">${processedData.bannerText || 'EVENT BANNER'}</h3>`;
+                    e.currentTarget.parentNode?.appendChild(fallback);
+                  }}
+                />
+                {/* Banner Text Overlay (if exists) */}
+                {processedData.bannerText && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/40 px-6 py-3 rounded-lg">
+                      <h3 className="text-2xl font-bold text-white text-center">
+                        {processedData.bannerText}
+                      </h3>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
