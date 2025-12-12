@@ -133,7 +133,7 @@ export const useEmailTemplate = (eventId: number) => {
   }, []);
 
   /* --------------------------------------------------------
-   * SAVE TEMPLATE
+   * SAVE TEMPLATE - FIXED VERSION
    * ------------------------------------------------------ */
   const saveTemplate = useCallback(async () => {
     if (!template) return;
@@ -149,10 +149,13 @@ export const useEmailTemplate = (eventId: number) => {
 
       const saved = await emailTemplateService.updateTemplate(eventId, payload);
 
+      // FIX: Get enabled_sections from the saved response
+      const enabledSectionsFromSaved = saved?.enabled_sections || template.enabled_sections;
+
       // Parse returned template
       const parsedTemplate = {
         ...saved,
-        enabled_sections: parseSections(saved.enabled_sections),
+        enabled_sections: parseSections(enabledSectionsFromSaved),
       };
 
       setTemplate(parsedTemplate);
@@ -173,26 +176,29 @@ export const useEmailTemplate = (eventId: number) => {
     try {
       setError(null);
 
-      if (template) await saveTemplate();
+      if (template) {
+        try {
+          await saveTemplate();
+        } catch (saveErr) {
+          console.warn('Save before preview failed, continuing anyway:', saveErr);
+        }
+      }
 
       const previewData = await emailTemplateService.previewEmail(eventId);
 
       const enhancedPreview: EmailPreviewData = {
         ...previewData,
-        template: template!,
+        template: template || previewData.template,
         dummy_data: {
           event_title: previewData.event?.title ?? "Event Title",
-          event_date:
-            previewData.event?.start_date ??
-            new Date().toLocaleDateString(),
+          event_date: previewData.event?.start_date ?? new Date().toLocaleDateString(),
           event_location: previewData.event?.location ?? "Event Location",
           attendee_first_name: "First",
           attendee_last_name: "Last",
           attendee_full_name: "First Last",
           attendee_email: "attendee@example.com",
           attendee_company: "Company",
-          registration_id:
-            "REG-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+          registration_id: "REG-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
         },
       };
 
