@@ -23,17 +23,32 @@ const api = axios.create({
 
 // Add interceptor for authenticated requests
 api.interceptors.request.use((config) => {
-
-    const isPublicEndpoint = config.url?.startsWith('/attendees/') || config.url?.startsWith('/events/');
+    // Define public endpoints that don't need auth tokens
+    const publicEndpoints = [
+        '/api/attendees/', // For QR codes
+        '/api/events/public/', // Public event info
+        '/api/login',
+        '/api/register',
+        '/api/test',
+    ];
     
+    // Check if the current URL matches any public endpoint
+    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+        config.url?.startsWith(endpoint)
+    );
+    
+    // Add auth token for all NON-public endpoints
     if (!isPublicEndpoint) {
         const token = getAuthToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
     }
+    
     return config;
 });
+
+
 
 api.interceptors.response.use(
     (response) => response,
