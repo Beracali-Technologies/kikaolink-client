@@ -64,12 +64,58 @@ export const useAttendeeActions = (eventId: string) => {
     }
   };
 
+  const createAttendee = async (data: any) => {
+    try {
+      const response = await attendeeService.createAttendee(eventId, data);
+      return response;
+    } catch (error) {
+      console.error('Failed to create attendee:', error);
+      throw error;
+    }
+  };
+
+  const updateAttendee = async (attendeeId: number, data: any) => {
+    try {
+      const response = await attendeeService.updateAttendee(eventId, attendeeId, data);
+      return response;
+    } catch (error) {
+      console.error('Failed to update attendee:', error);
+      throw error;
+    }
+  };
+
+  const deleteAttendee = async (attendeeId: number) => {
+    try {
+      const response = await attendeeService.deleteAttendee(eventId, attendeeId);
+      return response;
+    } catch (error) {
+      console.error('Failed to delete attendee:', error);
+      throw error;
+    }
+  };
+
+  const importAttendees = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await attendeeService.importAttendees(eventId, formData);
+      return response;
+    } catch (error) {
+      console.error('Failed to import attendees:', error);
+      throw error;
+    }
+  };
+
   return {
     loading,
     error,
     sendBulkSMS,
     resendQR,
     printBadges,
-    getAttendee
+    getAttendee,
+    createAttendee,
+    updateAttendee,
+    deleteAttendee,
+    importAttendees,
   };
 };

@@ -100,6 +100,65 @@ class AttendeeService {
       throw error;
     }
   }
+
+
+  async createAttendee(eventId: string, data: any) {
+    try {
+      const response = await api.post(
+        `${this.baseURL}/events/${eventId}/attendees`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create attendee:', error);
+      throw error;
+    }
+  }
+
+  async updateAttendee(eventId: string, attendeeId: number, data: any) {
+    try {
+      const response = await api.put(
+        `${this.baseURL}/events/${eventId}/attendees/${attendeeId}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to update attendee:', error);
+      throw error;
+    }
+  }
+
+  async deleteAttendee(eventId: string, attendeeId: number) {
+    try {
+      const response = await api.delete(
+        `${this.baseURL}/events/${eventId}/attendees/${attendeeId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to delete attendee:', error);
+      throw error;
+    }
+  }
+
+  async importAttendees(eventId: string, formData: FormData) {
+    try {
+      const response = await api.post(
+        `${this.baseURL}/events/${eventId}/attendees/import`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to import attendees:', error);
+      throw error;
+    }
+  }
+
+  
 }
 
 export const attendeeService = new AttendeeService();

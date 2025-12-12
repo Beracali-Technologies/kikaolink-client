@@ -1,24 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { FiUsers, FiCheckCircle, FiClock, FiPhone } from 'react-icons/fi';
-import AttendeesList from '../components/AttendeesList';
-import AttendeeModal from '../components/AttendeeModal';
-import { Attendee } from '@/types';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { FiUsers, FiCheckCircle, FiClock, FiPhone, FiPlus, FiRefreshCw } from 'react-icons/fi';
 import { useAttendees } from '@/lib/hooks/attendees/useAttendees';
+import StatsGrid from '../components/StatsGrid';
+import AttendeesTable from '../components/AttendeesTable';
+import ActionBar from '../components/ActionBar';
+import ImportModal from '../components/ImportModal';
+import AddAttendeeModal from '../components/AddAttendeeModal';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const AttendeesPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
-  const location = useLocation();
-  const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [attendeeToDelete, setAttendeeToDelete] = useState<number | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0); // Key to force refresh
 
-  // Debug to see what eventId we're getting
-  useEffect(() => {
-    console.log('Current eventId:', eventId);
-    console.log('Current pathname:', location.pathname);
-  }, [eventId, location.pathname]);
+  const { 
+    counts, 
+    loading: countsLoading,
+    refreshCounts,
+    refetch: refetchAttendees
+  } = useAttendees(eventId!, refreshKey); // Pass refreshKey to trigger refetch
 
-  const { counts, loading: countsLoading } = useAttendees(eventId!);
+  const handleRefresh = () => {
+    // Increment refreshKey to force re-render of all components
+    setRefreshKey(prev => prev + 1);
+    refreshCounts();
+    refetchAttendees();
+  };
+
+  const handleSuccess = () => {
+    // Refresh after successful operation
+    handleRefresh();
+  };
 
   const stats = [
     {
@@ -51,74 +66,86 @@ const AttendeesPage: React.FC = () => {
     }
   ];
 
-  const handleViewAttendee = (attendee: Attendee) => {
-    setSelectedAttendee(attendee);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedAttendee(null);
-  };
-
-  // Show loading if eventId is not available yet
-  if (!eventId) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-              <div className="text-gray-600">Loading event data...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Attendee Management</h1>
-          <p className="text-gray-600 mt-2">
-            Manage attendees, check-ins, and communications for event: {eventId}
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Attendee Management</h1>
+            <p className="text-gray-600 mt-2">
+              Manage attendees, check-ins, and communications
+            </p>
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={countsLoading}
+              className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              <FiRefreshCw size={16} className={countsLoading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Import Excel
+            </button>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <FiPlus size={16} />
+              Add Attendee
+            </button>
+          </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                  <p className="text-2xl font-semibold text-gray-900 mt-1">{stat.value}</p>
-                </div>
-                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={stat.color} size={24} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <StatsGrid stats={stats} />
 
         {/* Main Content */}
-        <AttendeesList
-          eventId={eventId}
-          onViewAttendee={handleViewAttendee}
-        />
-
-        {/* Attendee Modal */}
-        <AttendeeModal
-          attendee={selectedAttendee}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          eventId={eventId}
-        />
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <ActionBar 
+            eventId={eventId!} 
+            onRefresh={handleRefresh}
+            onImportClick={() => setShowImportModal(true)}
+            onAddClick={() => setShowAddModal(true)}
+          />
+          
+          <AttendeesTable 
+            key={refreshKey} // Force re-render on refresh
+            eventId={eventId!}
+            onDeleteClick={setAttendeeToDelete}
+            onRefresh={handleRefresh}
+          />
+        </div>
       </div>
+
+      {/* Modals */}
+      <ImportModal 
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        eventId={eventId!}
+        onSuccess={handleSuccess}
+      />
+
+      <AddAttendeeModal 
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        eventId={eventId!}
+        onSuccess={handleSuccess}
+      />
+
+      <DeleteConfirmationModal 
+        attendeeId={attendeeToDelete}
+        isOpen={attendeeToDelete !== null}
+        onClose={() => setAttendeeToDelete(null)}
+        onSuccess={handleSuccess}
+        eventId={eventId!}
+      />
     </div>
   );
 };
