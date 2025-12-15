@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { EmailTemplate, EmailPreviewData } from "@/types";
+import { EmailTemplate, EmailPreviewData, TEvent, EmailSections, EventLocation } from "@/types";
 import { emailTemplateService } from "@/services/emails/emailTemplateService";
 import { eventService } from "@/services/events/eventService";
 
 export const useEmailTemplate = (eventId: number) => {
   const [template, setTemplate] = useState<EmailTemplate | null>(null);
-  const [event, setEvent] = useState<Event | null>(null);
+  const [event, setEvent] = useState<TEvent | null>(null); 
   const [preview, setPreview] = useState<EmailPreviewData | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -15,13 +15,15 @@ export const useEmailTemplate = (eventId: number) => {
   /* --------------------------------------------------------
    * SECTION PARSER (Handles: null, object, string, fallback)
    * ------------------------------------------------------ */
-  const parseSections = useCallback((sections: any) => {
-    const defaults = {
+  const parseSections = useCallback((sections: any): EmailSections => {
+    const defaults: EmailSections = {
       qrCode: true,
       attendeeInfo: true,
+      aboutEvent: true,
       eventInfo: true,
       registrationSummary: true,
       viewRegistration: true,
+      attendeeDetails: false
     };
 
     if (!sections) return defaults;
@@ -34,6 +36,14 @@ export const useEmailTemplate = (eventId: number) => {
       console.error("Failed to parse sections:", e);
       return defaults;
     }
+  }, []);
+
+  // Helper to extract location string from EventLocation object
+  const getLocationString = useCallback((location: string | EventLocation | null | undefined): string => {
+    if (!location) return "Location to be announced";
+    if (typeof location === 'string') return location;
+    // If it's an EventLocation object, get the name or address
+    return (location as any).name || (location as any).address || "Location to be announced";
   }, []);
 
   /* --------------------------------------------------------
@@ -62,7 +72,6 @@ export const useEmailTemplate = (eventId: number) => {
         subject: parsedTemplate.subject || "",
         content: "",
         template: parsedTemplate,
-        event: eventData,
         dummy_data: {
           event_title: eventData.title || "Event Title",
           event_date: eventData.start_date
@@ -72,7 +81,7 @@ export const useEmailTemplate = (eventId: number) => {
                 day: "numeric",
               })
             : "Date to be announced",
-          event_location: eventData.location || "Location to be announced",
+          event_location: getLocationString(eventData.location), // Fixed: use helper
           attendee_first_name: "John",
           attendee_last_name: "Doe",
           attendee_full_name: "John Doe",
@@ -88,7 +97,7 @@ export const useEmailTemplate = (eventId: number) => {
     } finally {
       setIsLoading(false);
     }
-  }, [eventId, parseSections]);
+  }, [eventId, parseSections, getLocationString]);
 
   // Initial load
   useEffect(() => {
@@ -142,20 +151,19 @@ export const useEmailTemplate = (eventId: number) => {
     setError(null);
 
     try {
-      const payload = {
+      // Create payload with proper types
+      const payload: Partial<EmailTemplate> = {
         ...template,
-        enabled_sections: JSON.stringify(template.enabled_sections),
+        // Don't stringify enabled_sections - let the service handle it if needed
+        enabled_sections: template.enabled_sections,
       };
 
       const saved = await emailTemplateService.updateTemplate(eventId, payload);
 
-      // FIX: Get enabled_sections from the saved response
-      const enabledSectionsFromSaved = saved?.enabled_sections || template.enabled_sections;
-
       // Parse returned template
       const parsedTemplate = {
         ...saved,
-        enabled_sections: parseSections(enabledSectionsFromSaved),
+        enabled_sections: parseSections(saved.enabled_sections),
       };
 
       setTemplate(parsedTemplate);
@@ -190,9 +198,15 @@ export const useEmailTemplate = (eventId: number) => {
         ...previewData,
         template: template || previewData.template,
         dummy_data: {
-          event_title: previewData.event?.title ?? "Event Title",
-          event_date: previewData.event?.start_date ?? new Date().toLocaleDateString(),
-          event_location: previewData.event?.location ?? "Event Location",
+          event_title: event?.title ?? "Event Title",
+          event_date: event?.start_date 
+            ? new Date(event.start_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : new Date().toLocaleDateString(),
+          event_location: getLocationString(event?.location), // Fixed: use helper
           attendee_first_name: "First",
           attendee_last_name: "Last",
           attendee_full_name: "First Last",
@@ -209,7 +223,7 @@ export const useEmailTemplate = (eventId: number) => {
       setError("Failed to generate preview");
       throw err;
     }
-  }, [eventId, template, saveTemplate]);
+  }, [eventId, template, saveTemplate, event, getLocationString]);
 
   /* --------------------------------------------------------
    * RETURN API

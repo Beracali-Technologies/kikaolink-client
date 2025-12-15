@@ -88,7 +88,7 @@ const EditAttendeeModal: React.FC<EditAttendeeModalProps> = ({
           : null
       };
 
-      await updateAttendee(attendee.id, updateData);
+      await updateAttendee(Number(attendee.id), updateData);
       onSuccess();
       onClose();
     } catch (error) {

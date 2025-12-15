@@ -12,14 +12,17 @@ interface AttendeesTableProps {
 }
 
 const AttendeesTable: React.FC<AttendeesTableProps> = ({ eventId, onDeleteClick }) => {
-  const { attendees, filteredAttendees, loading } = useAttendees(eventId);
+
+  const { attendees: _, filteredAttendees, loading } = useAttendees(eventId);
   const { updateAttendee } = useAttendeeActions(eventId);
   const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
   const [editAttendee, setEditAttendee] = useState<Attendee | null>(null);
 
   const handleToggleCheckIn = async (attendee: Attendee) => {
     try {
-      await updateAttendee(attendee.id!, {
+      // FIX 2: Convert ID to number
+      const attendeeId = Number(attendee.id);
+      await updateAttendee(attendeeId, {
         ...attendee,
         status: attendee.status === 'checkedIn' ? 'absent' : 'checkedIn'
       });
@@ -123,7 +126,8 @@ const AttendeesTable: React.FC<AttendeesTableProps> = ({ eventId, onDeleteClick 
                       <FiEdit2 size={16} />
                     </button>
                     <button
-                      onClick={() => onDeleteClick(attendee.id!)}
+                      // FIX 3: Convert ID to number
+                      onClick={() => onDeleteClick(Number(attendee.id))}
                       className="p-1.5 hover:bg-red-50 rounded transition-colors text-red-600"
                       title="Delete"
                     >

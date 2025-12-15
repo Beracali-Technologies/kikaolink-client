@@ -1,22 +1,20 @@
-// src/Features/Emails/EmailTemplateEditor/components/EmailPreview.tsx
-import React, { useState } from 'react';
+import React from 'react'; 
 import { FiEye, FiAlertTriangle } from 'react-icons/fi';
-import { EmailPreviewData, EmailTemplate, Event } from '@/types';
+import { EmailPreviewData, EmailTemplate, TEvent } from '@/types'; 
 
 interface EmailPreviewProps {
   preview?: EmailPreviewData | null;
   template?: EmailTemplate | null;
-  event?: Event | null;
+  event?: TEvent | null; 
   onOpenPreview?: () => void;
 }
 
 export const EmailPreview: React.FC<EmailPreviewProps> = ({ 
   preview, 
   template, 
-  event,
   onOpenPreview 
 }) => {
-  // Handle case where preview is undefined or null
+  // Handling case where preview is undefined or null
   if (!preview || !template) {
     return (
       <div className="bg-white rounded-lg border p-3">
@@ -40,10 +38,13 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
     
     const processMergeFields = (content: string): string => {
       let processed = content;
-      Object.entries(dummy_data).forEach(([key, value]) => {
-        const stringValue = String(value);
-        processed = processed.replace(new RegExp(`\\(\\(${key}\\)\\)`, 'g'), stringValue);
-      });
+      // Check if dummy_data exists before using it
+      if (dummy_data) {
+        Object.entries(dummy_data).forEach(([key, value]) => {
+          const stringValue = String(value);
+          processed = processed.replace(new RegExp(`\\(\\(${key}\\)\\)`, 'g'), stringValue);
+        });
+      }
       return processed;
     };
 

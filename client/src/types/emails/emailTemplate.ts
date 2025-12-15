@@ -14,13 +14,7 @@ export interface EmailTemplate {
   banner_text?: string;
   banner_image?: string;
   banner_url?: string;
-  enabled_sections: {
-        qrCode: boolean;
-        attendeeInfo: boolean;
-        eventInfo: boolean;
-        registrationSummary?: boolean;
-        viewRegistration?: boolean;
-  };
+  enabled_sections: EmailSections;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;

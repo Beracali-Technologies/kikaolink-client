@@ -8,11 +8,15 @@ interface MergeFieldsPanelProps {
   onInsert: (field: string) => void;
 }
 
+// Update the interface to include all properties you're using
 interface MergeField {
   value: string;
   label: string;
   category: string;
-  description: string;
+  description?: string; // Make optional
+  icon?: string; // Add icon property
+  badgeColor?: string; // Add badgeColor property
+  isRealData?: boolean; // Add isRealData property
 }
 
 export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
@@ -45,6 +49,7 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
       value: '((event_location))', 
       label: 'Event Location', 
       category: 'Event', 
+      description: 'Real event location from database', // Added description
       icon: '📍',
       isRealData: true
     },
@@ -54,6 +59,7 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
       value: '((attendee_first_name))', 
       label: 'First Name', 
       category: 'Attendee', 
+      description: 'Attendee\'s first name (per-person)',
       icon: '👤',
       isRealData: false
     },
@@ -155,15 +161,24 @@ export const MergeFieldsPanel: React.FC<MergeFieldsPanelProps> = ({
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-1">
+                        {field.icon && (
+                          <span className="text-xs">{field.icon}</span>
+                        )}
                         <span className="text-xs font-medium text-gray-800">{field.label}</span>
-                        <span className="text-xs px-1 py-0.5 bg-blue-100 text-blue-700 rounded">
+                        <span 
+                          className={`text-xs px-1 py-0.5 rounded ${
+                            field.badgeColor || 'bg-blue-100 text-blue-700'
+                          }`}
+                        >
                           {field.category}
                         </span>
                       </div>
                       <p className="text-xs font-mono text-blue-600 mt-1 truncate">
                         {field.value}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">{field.description}</p>
+                      {field.description && (
+                        <p className="text-xs text-gray-500 mt-1">{field.description}</p>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <button

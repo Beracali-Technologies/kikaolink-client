@@ -1,4 +1,3 @@
-// src/Features/Emails/EmailTemplateEditor/EmailTemplateEditor.tsx
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useEmailTemplate } from '@/lib/hooks/emailTemplates/useEmailTemplate';
@@ -7,7 +6,6 @@ import { EmailContentEditor } from './components/EmailContentEditor';
 import { EmailSectionsPanel } from './components/EmailSectionsPanel';
 import { EmailPreviewModal } from './components/EmailPreviewModal';
 import { MergeFieldsPanel } from './components/MergeFieldsPanel';
-import { EmailTemplate } from '@/types';
 
 type EmailTextField =
   | 'name'
@@ -73,6 +71,25 @@ export default function EmailTemplateEditor() {
       console.error('Preview failed:', err);
     }
   }, [saveTemplate, previewEmail]);
+
+
+          //helper f(x)
+  const handleFieldFocus = useCallback((field: string | null) => {
+    // Map string field names to EmailTextField type
+    if (field === null) {
+      setEditingField(null);
+      return;
+    }
+    
+    // List of valid EmailTextField values
+    const validFields: EmailTextField[] = ['subject', 'greeting', 'message', 'closing', 'from_name', 'reply_to'];
+    
+    if (validFields.includes(field as EmailTextField)) {
+      setEditingField(field as EmailTextField);
+    } else {
+      setEditingField(null);
+    }
+  }, []);
 
   if (!eventId || isNaN(eventIdNum) || eventIdNum <= 0) {
     return (
@@ -166,7 +183,7 @@ export default function EmailTemplateEditor() {
           <EmailContentEditor
             template={template}
             onUpdate={updateTemplate}
-            onFieldFocus={setEditingField}
+            onFieldFocus={handleFieldFocus}
           />
         </div>
       </div>

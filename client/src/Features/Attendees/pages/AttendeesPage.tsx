@@ -14,14 +14,14 @@ const AttendeesPage: React.FC = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [attendeeToDelete, setAttendeeToDelete] = useState<number | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0); // Key to force refresh
+  const [refreshKey, setRefreshKey] = useState(0); 
 
   const { 
     counts, 
     loading: countsLoading,
     refreshCounts,
     refetch: refetchAttendees
-  } = useAttendees(eventId!, refreshKey); // Pass refreshKey to trigger refetch
+  } = useAttendees(eventId!); // Only pass eventId
 
   const handleRefresh = () => {
     // Increment refreshKey to force re-render of all components
@@ -119,7 +119,7 @@ const AttendeesPage: React.FC = () => {
             key={refreshKey} // Force re-render on refresh
             eventId={eventId!}
             onDeleteClick={setAttendeeToDelete}
-            onRefresh={handleRefresh}
+            // FIXED: Remove onRefresh prop
           />
         </div>
       </div>

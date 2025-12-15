@@ -1,4 +1,3 @@
-// EventStatusBar.tsx - COMPLETELY REWRITTEN
 import React, { useState, useEffect } from 'react';
 import EventStatusBadge from './components/EventStatusBadge';
 import EventUrlCopy from './components/EventUrlCopy';

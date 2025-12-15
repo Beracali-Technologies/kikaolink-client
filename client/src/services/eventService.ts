@@ -1,5 +1,5 @@
-import api from '../lib/axios'; // Import the shared instance
-import { TEvent } from '@/types'; // Adjust path if needed
+import api from '../lib/axios'; 
+import { TEvent } from '@/types'; 
 
 
 

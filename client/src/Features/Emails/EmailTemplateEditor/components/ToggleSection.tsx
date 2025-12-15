@@ -1,6 +1,4 @@
-// src/Features/Emails/EmailTemplateEditor/components/ToggleSection.tsx
 import React from 'react';
-import { FiQrCode, FiUser, FiCalendar, FiList, FiEye } from 'react-icons/fi';
 
 interface ToggleSectionProps {
   sectionKey: string;

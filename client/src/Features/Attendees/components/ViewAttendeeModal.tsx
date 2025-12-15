@@ -22,11 +22,13 @@ const ViewAttendeeModal: React.FC<ViewAttendeeModalProps> = ({ attendee, isOpen,
     setResendMessage(null);
 
     try {
-      await resendQR(attendee.id);
-      setResendMessage({
-        type: 'success',
-        text: 'QR code email has been sent successfully!'
-      });
+          //converting attendee.id to no
+          const attendeeId = Number(attendee.id);
+          await resendQR(attendeeId);
+          setResendMessage({
+                type: 'success',
+                text: 'QR code email has been sent successfully!'
+          });
     } catch (error) {
       console.error('Failed to resend email:', error);
       setResendMessage({

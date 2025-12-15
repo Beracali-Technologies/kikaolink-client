@@ -1,4 +1,3 @@
-// basic shared event types
 import { ID } from '../common';
 import { EventLocation } from './location';
 
@@ -24,7 +23,7 @@ export type TEvent = {
   updated_at?: string;
   location?: string | EventLocation | null;
   status: EventStatus;
-  template?: 'template1' | 'template2';
+  template?: 'template1' | 'template2' | 'template3' | 'template4';
 };
 
 // Create / edit payload shape used in forms

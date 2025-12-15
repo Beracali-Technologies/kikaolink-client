@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { toast } from 'react-toastify'; 
 
 interface OpenEventButtonProps {
   url: string;
@@ -28,8 +27,8 @@ const OpenEventButton: React.FC<OpenEventButtonProps> = ({ url, eventId, isLive,
   };
 
   
-  const handleTemplateClick = (template: string) => {
-    onTemplateSelect(template);
+  const handleTemplateClick = (templateId: string, templateName: string) => {
+    onTemplateSelect(templateId);
     
     // Extract the customSlug from the current URL or props
     let customSlug = url;
@@ -45,9 +44,9 @@ const OpenEventButton: React.FC<OpenEventButtonProps> = ({ url, eventId, isLive,
     customSlug = customSlug.split('?')[0];
     
     // Construct the correct event website URL with ONLY ONE template parameter
-    const websiteUrl = `${window.location.origin}/e/${customSlug}?template=${template}`;
+    const websiteUrl = `${window.location.origin}/e/${customSlug}?template=${templateId}`;
     
-    console.log('Opening event website:', websiteUrl); // Debug
+    console.log('Opening event website:', websiteUrl, 'with template:', templateName); // Debug
     
     window.open(websiteUrl, '_blank', 'noopener,noreferrer');
     setOpen(false);

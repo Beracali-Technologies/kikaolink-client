@@ -8,14 +8,11 @@ export const emailTemplateService = {
     return response.data.data; // Returns EmailTemplate
   },
 
-  // Update email template - FIX THIS!
-  updateTemplate: async (eventId: number, templateData: Partial<EmailTemplate>): Promise<EmailTemplate> => {
-    const response = await api.put<ApiResponse<EmailTemplate>>(
-      `/api/events/${eventId}/email-template`,
-      templateData
-    );
-    // FIX: Return response.data.data instead of response.data
-    return response.data.data; // Changed from response.data
+  // Update email template
+  updateTemplate: async (eventId: number, templateData: Partial<EmailTemplate>) => {
+
+    const response = await api.put(`/api/email-templates/${eventId}`, templateData);
+    return response.data;
   },
 
   // Preview email - returns EmailPreviewData with template and dummy data

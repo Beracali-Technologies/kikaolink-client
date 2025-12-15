@@ -1,7 +1,7 @@
-f 
+
 class TemplatePreviewService {
     private static instance: TemplatePreviewService;
-    private previewCache = new Map<string, string>();
+   
   
     static getInstance(): TemplatePreviewService {
       if (!TemplatePreviewService.instance) {

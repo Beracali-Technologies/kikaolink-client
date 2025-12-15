@@ -19,7 +19,6 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
   templateId,
   eventTitle,
   eventSlug,
-  eventData,
   onClose,
   onSelectTemplate,
 }) => {
@@ -62,16 +61,16 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
     }
   };
 
-  const handleOpenLivePreview = () => {
-    if (eventSlug) {
-      const url = `${window.location.origin}/e/${eventSlug}?template=${templateId}&preview=true`;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  };
 
   const handleStartLiveDemo = () => {
     setShowLiveDemo(true);
     setIsInteractive(true);
+  };
+
+  const handleOpenLiveWebsite = () => {
+    if (eventSlug) {
+      window.open(`/event/${eventSlug}`, '_blank');
+    }
   };
 
   return (

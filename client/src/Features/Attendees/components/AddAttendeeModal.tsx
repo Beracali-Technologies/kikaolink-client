@@ -79,11 +79,12 @@ const AddAttendeeModal: React.FC<AddAttendeeModalProps> = ({
     if (!validateForm()) return;
 
     try {
-      if (isEditMode && attendee?.id) {
-        await updateAttendee(attendee.id, formData);
-      } else {
-        await createAttendee(formData);
-      }
+          if (isEditMode && attendee?.id) {
+                  //expecting no on id
+              await updateAttendee(Number(attendee.id), formData);
+          } else {
+            await createAttendee(formData);
+          }
       
       onSuccess();
       onClose();

@@ -9,16 +9,8 @@ interface ImportModalProps {
   onSuccess: () => void;
 }
 
-interface ExcelRow {
-  'First Name'?: string;
-  'Last Name'?: string;
-  'Email'?: string;
-  'Phone'?: string;
-  'Company'?: string;
-  'Job Title'?: string;
-}
 
-const ImportModal: React.FC<ImportModalProps> = ({ isOpen, onClose, eventId, onSuccess }) => {
+const ImportModal: React.FC<ImportModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -65,23 +57,10 @@ const ImportModal: React.FC<ImportModalProps> = ({ isOpen, onClose, eventId, onS
 
     try {
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: 'binary' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      reader.onload = async () => {
 
-        // Format data for API
-        const attendees = jsonData.map((row: any) => ({
-          first_name: row['First Name'] || row['first_name'] || '',
-          last_name: row['Last Name'] || row['last_name'] || '',
-          email: row['Email'] || row['email'] || '',
-          mobile_phone: row['Phone'] || row['phone'] || '',
-          company_name: row['Company'] || row['company'] || '',
-          job_title: row['Job Title'] || row['job_title'] || '',
-        }));
-
-        // Send to API - you'll need to implement this
+    
+        
         // await attendeeService.importAttendees(eventId, attendees);
 
         onSuccess();
