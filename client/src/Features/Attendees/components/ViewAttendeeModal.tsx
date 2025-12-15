@@ -1,6 +1,7 @@
-import React from 'react';
-import { FiX, FiMail, FiPhone, FiBriefcase, FiCalendar, FiCheck, FiClock } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiX, FiMail, FiPhone, FiBriefcase, FiCalendar, FiCheck, FiClock, FiRefreshCw } from 'react-icons/fi';
 import { Attendee } from '@/types';
+import { useAttendeeActions } from '@/lib/hooks/attendees/useAttendeeActions';
 
 interface ViewAttendeeModalProps {
   attendee: Attendee | null;
@@ -10,11 +11,39 @@ interface ViewAttendeeModalProps {
 }
 
 const ViewAttendeeModal: React.FC<ViewAttendeeModalProps> = ({ attendee, isOpen, onClose, eventId }) => {
+  const { resendQR, loading } = useAttendeeActions(eventId);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  const handleResendEmail = async () => {
+    if (!attendee?.id) return;
+
+    setResendLoading(true);
+    setResendMessage(null);
+
+    try {
+      await resendQR(attendee.id);
+      setResendMessage({
+        type: 'success',
+        text: 'QR code email has been sent successfully!'
+      });
+    } catch (error) {
+      console.error('Failed to resend email:', error);
+      setResendMessage({
+        type: 'error',
+        text: 'Failed to send email. Please try again.'
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   if (!isOpen || !attendee) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">{attendee.name}</h2>
@@ -51,6 +80,13 @@ const ViewAttendeeModal: React.FC<ViewAttendeeModalProps> = ({ attendee, isOpen,
               )}
             </span>
           </div>
+
+          {/* Resend Message */}
+          {resendMessage && (
+            <div className={`p-3 rounded-lg ${resendMessage.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+              <p className="text-sm">{resendMessage.text}</p>
+            </div>
+          )}
 
           {/* Contact Information */}
           <div className="space-y-4">
@@ -112,14 +148,45 @@ const ViewAttendeeModal: React.FC<ViewAttendeeModalProps> = ({ attendee, isOpen,
               </div>
             </div>
           </div>
+
+          {/* Check-in Date */}
+          {attendee.checked_in_at && (
+            <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+              <FiCheck className="text-green-500" size={18} />
+              <div>
+                <div className="text-sm text-gray-600">Checked In At</div>
+                <div className="text-gray-900">
+                  {new Date(attendee.checked_in_at).toLocaleDateString()} at{' '}
+                  {new Date(attendee.checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="p-6 border-t border-gray-200 flex gap-3">
-          <button className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            Send QR
+        <div className="p-6 border-t border-gray-200 space-y-3">
+          {/* Resend Email Button */}
+          <button
+            onClick={handleResendEmail}
+            disabled={resendLoading || loading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {resendLoading ? (
+              <>
+                <FiRefreshCw className="animate-spin" size={16} />
+                Sending...
+              </>
+            ) : (
+              <>
+                <FiMail size={16} />
+                Resend QR Code Email
+              </>
+            )}
           </button>
-          <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Check In
+
+          {/* Check In Button */}
+          <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            {attendee.status === 'checkedIn' ? 'Check Out' : 'Check In'}
           </button>
         </div>
       </div>

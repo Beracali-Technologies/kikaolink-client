@@ -1,4 +1,3 @@
-// hooks/useAttendees.ts
 import { useState, useEffect } from 'react';
 import { Attendee } from '@/types';
 import { attendeeService, AttendeesResponse } from '@/services/attendees/attendeeService';
@@ -35,6 +34,8 @@ export const useAttendees = (eventId: string | undefined) => {
       setLoading(false);
     }
   };
+
+ 
 
   const refreshCounts = async () => {
     if (!eventId) return;

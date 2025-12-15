@@ -1,4 +1,3 @@
-// Template3.tsx - Elegant Dark Theme
 import React from 'react';
 import { TemplateProps } from './templateProps';
 import { Link } from 'react-router-dom';
@@ -21,6 +20,7 @@ const Template3: React.FC<TemplateProps> = ({ event, registrationLink }) => {
     });
   };
 
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       {/* Navigation */}
