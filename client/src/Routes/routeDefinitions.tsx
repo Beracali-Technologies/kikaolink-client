@@ -117,8 +117,8 @@ export const routes: RouteObject[] = [
       path: 'events/:eventId/external-data',
       children: [
         { index: true, element: <ExternalDataSources /> },
-        { path: '/google-oauth/success', element: <GoogleOAuthSuccess /> },
-        { path: '/google-oauth/error', element: <GoogleOAuthError /> },
+        { path: 'google-oauth/success', element: <GoogleOAuthSuccess /> },
+        { path: 'google-oauth/error', element: <GoogleOAuthError /> },
         
       ],
     }
