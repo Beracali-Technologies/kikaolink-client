@@ -42,6 +42,10 @@ const EventWebsiteTemplatesPage  = lazy(() => import('../Features/Dashboard/Even
 const PrivacyPolicy = lazy(() => import('../Features/Landing/Legal/PrivacyPolicy/PrivacyPolicyPage'));
 const TermsOfService = lazy(() => import('../Features/Landing/Legal/TermsOfService/TermsOfServicePage'));
 
+//google
+const GoogleOAuthSuccess = lazy(() => import('../Features/ExternalData/pages/GoogleOAuthSuccess'));
+const GoogleOAuthError = lazy(() => import('../Features/ExternalData/pages/GoogleOAuthError'));
+
 
 // --- THE DEFINITIVE ROUTE CONFIGURATION ARRAY ---
 export const routes: RouteObject[] = [
@@ -113,6 +117,8 @@ export const routes: RouteObject[] = [
       path: 'events/:eventId/external-data',
       children: [
         { index: true, element: <ExternalDataSources /> },
+        { path: '/google-oauth/success', element: <GoogleOAuthSuccess /> },
+        { path: '/google-oauth/error', element: <GoogleOAuthError /> },
         
       ],
     }
