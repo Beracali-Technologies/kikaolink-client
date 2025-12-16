@@ -18,6 +18,7 @@ export const SyncLogsModal: React.FC<Props> = ({ dataSource, onClose }) => {
   const loadLogs = async () => {
     try {
       const response = await externalDataApi.getSyncLogs(dataSource.id);
+
       setLogs(response.data.data);
     } catch (error) {
       console.error('Failed to load sync logs:', error);
