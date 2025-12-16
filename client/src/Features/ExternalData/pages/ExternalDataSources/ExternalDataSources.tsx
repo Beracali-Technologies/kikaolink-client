@@ -95,15 +95,7 @@ export const ExternalDataSources: React.FC = () => {
       gradient: 'from-blue-500 to-blue-600',
       onConnect: () => setShowConnectForm(true),
     },
-    {
-      id: 'typeform',
-      title: 'Typeform',
-      description: 'Sync Typeform responses automatically (Coming Soon)',
-      icon: FiDownloadCloud,
-      status: 'coming-soon',
-      bg: 'bg-gray-50 border-gray-200',
-      gradient: 'from-gray-400 to-gray-500',
-    },
+  
     {
       id: 'webhook',
       title: 'Webhook',
