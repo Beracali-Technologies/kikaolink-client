@@ -66,6 +66,10 @@ export const routes: RouteObject[] = [
               //legal pages - public
             { path: `/privacy-policy`, element: <PrivacyPolicy />},
             { path: `/terms-of-service`, element: <TermsOfService /> },
+
+            //OAuth callback routes
+            { path: '/google-oauth/success', element: <GoogleOAuthSuccess /> },
+            { path: '/google-oauth/error', element: <GoogleOAuthError /> },
         ]
     },
 
@@ -117,8 +121,6 @@ export const routes: RouteObject[] = [
       path: 'events/:eventId/external-data',
       children: [
         { index: true, element: <ExternalDataSources /> },
-        { path: 'google-oauth/success', element: <GoogleOAuthSuccess /> },
-        { path: 'google-oauth/error', element: <GoogleOAuthError /> },
         
       ],
     }
