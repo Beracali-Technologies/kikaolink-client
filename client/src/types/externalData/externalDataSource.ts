@@ -23,4 +23,8 @@ export interface ExternalDataSource {
   latest_sync_log?: ExternalDataSyncLog;
 }
 
-
+export interface SourceInfo {
+  name: string;
+  type: string;
+  last_synced: string | null;
+}

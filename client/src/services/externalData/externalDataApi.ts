@@ -1,6 +1,6 @@
 
 import api from '@/lib/axios';
-import { ExternalDataSource, ExternalDataSyncLog } from '@/types';
+import { ExternalDataSource, ExternalDataSyncLog, SourceInfo } from '@/types';
 
 export const externalDataApi = {
   // Data Sources
@@ -61,5 +61,35 @@ export const externalDataApi = {
           };
         } 
       }>(`/api/external-data-sources/${id}/fields`),
+
+      getDataSourceResponses: (id: number) => 
+        api.get<{ 
+          success: boolean; 
+          data: {
+            responses: Array<{
+              response_id: string;
+              create_time: string;
+              last_submitted_time: string;
+              answers: Record<string, string>;
+            }>;
+            total_responses: number;
+            source_info: SourceInfo;
+          } 
+        }>(`/api/external-data-sources/${id}/responses`),
       
+      getDataSourceChartData: (id: number) => 
+        api.get<{ 
+          success: boolean; 
+          data: {
+            charts: Array<{
+              question_id: string;
+              title: string;
+              type: string;
+              data: any; // Chart.js data structure
+            }>;
+            total_responses: number;
+            source_info: SourceInfo;
+          } 
+        }>(`/api/external-data-sources/${id}/chart-data`),
+
 };
