@@ -41,50 +41,44 @@ export const GoogleOAuthFlow: React.FC<Props> = ({ onAuthSuccess, onBack }) => {
     }
   };
 
-
-
-// In GoogleOAuthFlow.tsx - update the useEffect
-useEffect(() => {
-  const handleMessage = async (event: MessageEvent) => {
-    if (event.origin !== window.location.origin) return;
-    
-    if (event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.tokenId) {
-      try {
-        setLoading(true);
-        // Call your API to get tokens using tokenId
-        const response = await fetch(`/api/google-oauth/tokens/${event.data.tokenId}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          onAuthSuccess({
-            access_token: data.access_token,
-            refresh_token: data.refresh_token,
-            expires_in: data.expires_in,
-            token_type: 'Bearer'
-          });
-        } else {
-          setError('Failed to retrieve tokens');
+  // Listen for OAuth callback
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'GOOGLE_OAUTH_SUCCESS' && event.data.tokenId) {
+        try {
+          setLoading(true);
+          
+          // Call API to retrieve tokens using tokenId
+          const response = await googleOAuthApi.getTokens(event.data.tokenId);
+          
+          if (response.data.success) {
+            onAuthSuccess({
+              access_token: response.data.access_token,
+              refresh_token: response.data.refresh_token,
+              expires_in: response.data.expires_in,
+              token_type: response.data.token_type || 'Bearer'
+            });
+          } else {
+            setError(response.data.error || 'Failed to retrieve tokens');
+          }
+        } catch (error: any) {
+          setError('Failed to retrieve authentication tokens: ' + error.message);
+          console.error('Token retrieval error:', error);
+        } finally {
+          setLoading(false);
+          authWindow?.close();
         }
-      } catch (error) {
-        setError('Failed to complete authentication');
-        console.error('Token retrieval error:', error);
-      } finally {
-        setLoading(false);
+      } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
+        setError(event.data.error || 'Authentication failed');
         authWindow?.close();
       }
-    } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
-      setError(event.data.error || 'Authentication failed');
-      authWindow?.close();
-    }
-  };
+    };
 
-  window.addEventListener('message', handleMessage);
-  return () => window.removeEventListener('message', handleMessage);
-}, [authWindow, onAuthSuccess]);
-
-
-
-
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [authWindow, onAuthSuccess]);
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
