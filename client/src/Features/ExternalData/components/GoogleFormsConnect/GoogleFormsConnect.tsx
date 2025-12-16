@@ -4,7 +4,6 @@ import { externalDataApi } from '@/services/externalData/externalDataApi';
 import { GoogleOAuthFlow } from './GoogleOAuthFlow';
 import { FormSelector } from './FormSelector';
 import { SyncMethodSelector } from './SyncMethodSelector';
-import { FieldMapper } from './FieldMapper';
 import { DataSourceConfig } from './DataSourceConfig';
 
 interface Props {
@@ -13,7 +12,7 @@ interface Props {
   onCancel: () => void;
 }
 
-type Step = 'oauth' | 'select-form' | 'select-method' | 'map-fields' | 'config';
+type Step = 'oauth' | 'select-form' | 'select-method' | 'config';
 
 export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCancel }) => {
   const [currentStep, setCurrentStep] = useState<Step>('oauth');
@@ -43,7 +42,7 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
   const handleMethodSelect = (method: 'forms_api' | 'spreadsheet', preview: SyncPreviewData) => {
     setSyncMethod(method);
     setPreviewData(preview);
-    setCurrentStep('map-fields');
+    setCurrentStep('config');
     
     // Initialize field mapping with empty values
     const initialMapping: Record<string, string> = {};
@@ -53,9 +52,6 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
     setFieldMapping(initialMapping);
   };
 
-  const handleFieldMappingChange = (mapping: Record<string, string>) => {
-    setFieldMapping(mapping);
-  };
 
   const handleSaveConfig = async (config: any) => {
     if (!tokens || !selectedForm) {
@@ -67,6 +63,10 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
     setError('');
     
     try {
+
+          //Auto-generate field mapping based on preview data
+          const fieldMapping = generateAutoFieldMapping(previewData);
+
       const payload = {
         event_id: eventId,
         name: config.name || `${selectedForm.name} Connection`,
@@ -78,7 +78,7 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
           sync_schedule: config.sync_schedule || 'manual',
           ...(config.spreadsheet_id && { spreadsheet_id: config.spreadsheet_id })
         },
-        field_mapping: fieldMapping,
+        field_mapping: fieldMapping,  //auto-generated mapping
         sync_method: config.sync_method || 'forms_api',
         sync_schedule: config.sync_schedule || 'manual'
       };
@@ -99,6 +99,47 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
     }
   };
 
+
+
+  // Auto-generate field mapping based on Google Form fields
+  const generateAutoFieldMapping = (previewData: SyncPreviewData | null): Record<string, string> => {
+    if (!previewData || !previewData.headers) {
+      return {};
+    }
+    
+    const mapping: Record<string, string> = {};
+    
+    // Auto-map common fields
+    previewData.headers.forEach((header: string, index: number) => {
+      const headerLower = header.toLowerCase();
+      
+      // Common field name mappings
+      if (headerLower.includes('name') || headerLower.includes('full name')) {
+        mapping['name'] = header;
+      } else if (headerLower.includes('email')) {
+        mapping['email'] = header;
+      } else if (headerLower.includes('phone') || headerLower.includes('mobile')) {
+        mapping['phone'] = header;
+      } else if (headerLower.includes('company') || headerLower.includes('organization')) {
+        mapping['company'] = header;
+      } else if (headerLower.includes('position') || headerLower.includes('title') || headerLower.includes('job')) {
+        mapping['position'] = header;
+      } else if (headerLower.includes('ticket') || headerLower.includes('type') || headerLower.includes('category')) {
+        mapping['ticket_type'] = header;
+      } else if (headerLower.includes('notes') || headerLower.includes('comment') || headerLower.includes('message')) {
+        mapping['notes'] = header;
+      } else {
+        // Map remaining fields to custom fields
+        const customKey = `custom_${index}`;
+        mapping[customKey] = header;
+      }
+    });
+    
+    return mapping;
+  };
+
+
+
   const goBack = () => {
     switch (currentStep) {
       case 'select-form':
@@ -107,11 +148,8 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
       case 'select-method':
         setCurrentStep('select-form');
         break;
-      case 'map-fields':
-        setCurrentStep('select-method');
-        break;
       case 'config':
-        setCurrentStep('map-fields');
+        setCurrentStep('select-method');
         break;
     }
   };
@@ -121,7 +159,6 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
       case 'oauth': return 'Connect Google Account';
       case 'select-form': return 'Select Google Form';
       case 'select-method': return 'Choose Sync Method';
-      case 'map-fields': return 'Map Fields';
       case 'config': return 'Configuration';
       default: return 'Connect Google Form';
     }
@@ -157,21 +194,18 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
               <span className={currentStep === 'select-method' ? 'text-blue-600 font-medium' : ''}>
                 3. Method
               </span>
-              <span className={currentStep === 'map-fields' ? 'text-blue-600 font-medium' : ''}>
-                4. Map Fields
-              </span>
+              
               <span className={currentStep === 'config' ? 'text-blue-600 font-medium' : ''}>
-                5. Configure
+                4. Configure
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ 
-                  width: currentStep === 'oauth' ? '20%' :
-                         currentStep === 'select-form' ? '40%' :
-                         currentStep === 'select-method' ? '60%' :
-                         currentStep === 'map-fields' ? '80%' : '100%'
+                  width: currentStep === 'oauth' ? '25%' :
+                         currentStep === 'select-form' ? '50%' :
+                         currentStep === 'select-method' ? '75%' : '100%'
                 }}
               ></div>
             </div>
@@ -211,16 +245,6 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
             />
           )}
 
-          {currentStep === 'map-fields' && previewData && (
-            <FieldMapper
-              sourceFields={previewData.headers}
-              kikaFields={kikaFields}
-              initialMapping={fieldMapping}
-              onMappingChange={handleFieldMappingChange}
-              onBack={goBack}
-              onNext={() => setCurrentStep('config')}
-            />
-          )}
 
           {currentStep === 'config' && selectedForm && syncMethod && (
             <DataSourceConfig
@@ -233,6 +257,8 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
               onSave={handleSaveConfig}
               onBack={goBack}
               loading={loading}
+              //showing auto-mapped fields info
+              autoMappedFields={generateAutoFieldMapping(previewData)}
             />
           )}
         </div>

@@ -18,6 +18,7 @@ interface Props {
   }) => void;
   onBack: () => void;
   loading?: boolean;
+  autoMappedFields?: Record<string, string>; //auto mapped fields
 }
 
 export const DataSourceConfig: React.FC<Props> = ({
@@ -27,7 +28,8 @@ export const DataSourceConfig: React.FC<Props> = ({
   syncMethod,
   onSave,
   onBack,
-  loading = false
+  loading = false,
+  autoMappedFields = {}
 }) => {
   const [name, setName] = useState(formName);
   const [syncSchedule, setSyncSchedule] = useState<'realtime' | '5min' | '15min' | '30min' | '1hour' | 'manual'>('realtime');
@@ -43,11 +45,14 @@ export const DataSourceConfig: React.FC<Props> = ({
         sync_method: syncMethod,
         sync_schedule: syncSchedule,
       },
-      field_mapping: fieldMapping,
+      field_mapping: autoMappedFields,
       sync_method: syncMethod,
       sync_schedule: syncSchedule,
     });
   };
+
+      //getting mapped field count
+  const mappedFieldCount = Object.keys(autoMappedFields).length;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -129,6 +134,51 @@ export const DataSourceConfig: React.FC<Props> = ({
             ))}
           </div>
         </div>
+
+
+
+            {/* Auto-mapped fields preview */}
+        {mappedFieldCount > 0 && (
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 mb-3 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Auto-Mapped Fields ({mappedFieldCount} fields)
+            </h4>
+            <p className="text-blue-700 text-sm mb-3">
+              Fields from your Google Form have been automatically mapped to Kikaolink attendee fields.
+            </p>
+            <div className="bg-white rounded border border-blue-200 max-h-40 overflow-y-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-blue-50">
+                  <tr>
+                    <th className="px-3 py-2 text-left font-medium text-blue-900">Google Form Field</th>
+                    <th className="px-3 py-2 text-left font-medium text-blue-900">→</th>
+                    <th className="px-3 py-2 text-left font-medium text-blue-900">Kikaolink Field</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(autoMappedFields).map(([kikaField, googleField], index) => (
+                    <tr key={index} className="border-t border-blue-100">
+                      <td className="px-3 py-2 text-gray-700">{googleField}</td>
+                      <td className="px-3 py-2 text-blue-500 text-center">→</td>
+                      <td className="px-3 py-2">
+                        <span className="font-medium text-gray-900 capitalize">{kikaField}</span>
+                        {['name', 'email'].includes(kikaField) && (
+                          <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                            Required
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
 
         <div className="bg-gray-50 rounded-lg p-4">
           <h4 className="font-medium text-gray-900 mb-3">Configuration Summary</h4>
