@@ -40,4 +40,26 @@ export const externalDataApi = {
       `/api/external-data-sources/${id}/sync-logs`,
       { params: { page } }
     ),
+
+    getDataSourceFields: (id: number) => 
+      api.get<{ 
+        success: boolean; 
+        data: {
+          available_fields: Array<{
+            id: string;
+            title: string;
+            question_id: string;
+            type: string;
+            required: boolean;
+            options?: string[];
+          }>;
+          current_mapping: Record<string, string>;
+          source_info: {
+            name: string;
+            type: string;
+            last_synced: string | null;
+          };
+        } 
+      }>(`/api/external-data-sources/${id}/fields`),
+      
 };
