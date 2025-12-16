@@ -7,6 +7,7 @@ interface Props {
   onBack: () => void;
 }
 
+// Handles the OAuth authentication with Google.
 export const GoogleOAuthFlow: React.FC<Props> = ({ onAuthSuccess, onBack }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');

@@ -9,6 +9,10 @@ interface Props {
   onBack: () => void;
 }
 
+
+// Lets user choose between Forms API or Spreadsheet sync.
+
+
 export const SyncMethodSelector: React.FC<Props> = ({ 
   tokens, 
   formDetails, 

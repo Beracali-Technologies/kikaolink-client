@@ -9,6 +9,8 @@ interface Props {
   onBack: () => void;
 }
 
+// Lists user's Google Forms and allows selection.
+
 export const FormSelector: React.FC<Props> = ({ tokens, onFormSelect, onBack }) => {
   const [forms, setForms] = useState<GoogleForm[]>([]);
   const [loading, setLoading] = useState(true);

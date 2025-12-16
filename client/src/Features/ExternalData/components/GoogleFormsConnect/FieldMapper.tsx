@@ -10,6 +10,10 @@ interface Props {
   onNext: () => void;
 }
 
+
+// Maps Google Form fields to KikaoLink attendee fields.
+
+
 export const FieldMapper: React.FC<Props> = ({
   sourceFields,
   kikaFields,

@@ -1,4 +1,3 @@
-// components/external-data/GoogleFormsConnect/GoogleFormsConnect.tsx
 import React, { useState } from 'react';
 import { GoogleOAuthTokens, GoogleForm, GoogleFormDetails, SyncPreviewData } from '@/types';
 import { externalDataApi } from '@/services/externalData/externalDataApi';
@@ -59,35 +58,42 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
   };
 
   const handleSaveConfig = async (config: any) => {
-    if (!tokens) return;
+    if (!tokens || !selectedForm) {
+      setError('Missing required data');
+      return;
+    }
     
     setLoading(true);
     setError('');
     
     try {
-      // Add OAuth tokens to config
-      const fullConfig = {
-        ...config,
+      const payload = {
+        event_id: eventId,
+        name: config.name || `${selectedForm.name} Connection`,
+        type: 'google_forms' as const,
         config: {
-          ...config.config,
           access_tokens: tokens,
-          form_id: selectedForm?.id,
-          ...(previewData?.type === 'spreadsheet' && previewData 
-            ? { spreadsheet_id: (previewData as any).spreadsheet_id } 
-            : {})
-        }
+          form_id: selectedForm.id,
+          sync_method: config.sync_method || 'forms_api',
+          sync_schedule: config.sync_schedule || 'manual',
+          ...(config.spreadsheet_id && { spreadsheet_id: config.spreadsheet_id })
+        },
+        field_mapping: fieldMapping,
+        sync_method: config.sync_method || 'forms_api',
+        sync_schedule: config.sync_schedule || 'manual'
       };
 
-      const response = await externalDataApi.createDataSource(fullConfig);
+      const response = await externalDataApi.createDataSource(payload);
       
       if (response.data.success) {
         onSuccess();
       } else {
+        // Use generic error message since response.data.error doesn't exist
         setError('Failed to create data source');
       }
     } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to connect Google Form');
       console.error('Data source creation error:', error);
+      setError(error.response?.data?.error || error.message || 'Failed to connect Google Form');
     } finally {
       setLoading(false);
     }
@@ -121,12 +127,6 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
     }
   };
 
-  const getProgress = () => {
-    const steps: Step[] = ['oauth', 'select-form', 'select-method', 'map-fields', 'config'];
-    const currentIndex = steps.indexOf(currentStep);
-    return ((currentIndex + 1) / steps.length) * 100;
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
@@ -137,6 +137,7 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
             <button
               onClick={onCancel}
               className="text-gray-400 hover:text-gray-500 transition-colors"
+              aria-label="Close"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -144,19 +145,34 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
             </button>
           </div>
           
-          {/* Progress bar */}
+          {/* Progress indicator */}
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>Connect Account</span>
-              <span>Select Form</span>
-              <span>Sync Method</span>
-              <span>Map Fields</span>
-              <span>Configure</span>
+            <div className="flex justify-between text-xs text-gray-500 mb-2">
+              <span className={currentStep === 'oauth' ? 'text-blue-600 font-medium' : ''}>
+                1. Connect
+              </span>
+              <span className={currentStep === 'select-form' ? 'text-blue-600 font-medium' : ''}>
+                2. Select Form
+              </span>
+              <span className={currentStep === 'select-method' ? 'text-blue-600 font-medium' : ''}>
+                3. Method
+              </span>
+              <span className={currentStep === 'map-fields' ? 'text-blue-600 font-medium' : ''}>
+                4. Map Fields
+              </span>
+              <span className={currentStep === 'config' ? 'text-blue-600 font-medium' : ''}>
+                5. Configure
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${getProgress()}%` }}
+                style={{ 
+                  width: currentStep === 'oauth' ? '20%' :
+                         currentStep === 'select-form' ? '40%' :
+                         currentStep === 'select-method' ? '60%' :
+                         currentStep === 'map-fields' ? '80%' : '100%'
+                }}
               ></div>
             </div>
           </div>
@@ -185,10 +201,11 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
             />
           )}
 
-          {currentStep === 'select-method' && tokens && formDetails && (
+          {currentStep === 'select-method' && tokens && formDetails && selectedForm && (
             <SyncMethodSelector
               tokens={tokens}
               formDetails={formDetails}
+              //form={selectedForm}  
               onMethodSelect={handleMethodSelect}
               onBack={goBack}
             />
@@ -205,12 +222,14 @@ export const GoogleFormsConnect: React.FC<Props> = ({ eventId, onSuccess, onCanc
             />
           )}
 
-          {currentStep === 'config' && selectedForm && (
+          {currentStep === 'config' && selectedForm && syncMethod && (
             <DataSourceConfig
               formName={selectedForm.name}
               eventId={eventId}
               fieldMapping={fieldMapping}
-              syncMethod={syncMethod!}
+              syncMethod={syncMethod}
+              // Remove previewData if the component doesn't expect it
+              // previewData={previewData}
               onSave={handleSaveConfig}
               onBack={goBack}
               loading={loading}
